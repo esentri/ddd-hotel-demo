@@ -60,7 +60,7 @@ Im Demo Projekt wird die "klassische transaktionale Konsistenzerhaltung" beim Ch
 "Reservierung" und "Zimmer" betroffen sind. Sobald eine Reservierung eingecheckt wird, muss ein entsprechendes freies Zimmer belegt werden:
 
 ### Transactional
-- siehe [CheckInService](./src/main/java/com/esentri/rezeption/CheckInService.java)
+- siehe [CheckInService](./src/main/java/com/esentri/rezeption/core/domain/reservierung/CheckInService.java)
 
 ![CheckIn - Klassendiagramm](./images/checkin.png "CheckIn - Klassendiagramm")
 
@@ -80,6 +80,8 @@ Bestätigung oder Ablehnung der Zimmerbelegungsversuche abbilden.
 - siehe [ZimmerDriverImpl.onEvent(ZimmerWartungeingeplant)](./src/main/java/com/esentri/rezeption/inbound/ZimmerDriverImpl.java)
 
 ![Eventual Consistency](./images/eventual.png)
+
+Dies entspricht dem [Saga-Pattern](https://microservices.io/patterns/data/saga.html).
 
 ## DomainCommands
 
@@ -116,7 +118,7 @@ Domain-Driven Design: Tackling Complexity in the Heart of Software, Eric Evans, 
 - Implementing Domain-Driven Design, Vaughn Vernon, 2013
 - https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf
 
--  https://www.archi-lab.io/infopages/ddd/aggregate-design-rules-vernon.html
+- https://www.archi-lab.io/infopages/ddd/aggregate-design-rules-vernon.html
 
 - https://github.com/ddd-crew/aggregate-design-canvas?tab=readme-ov-file
 
