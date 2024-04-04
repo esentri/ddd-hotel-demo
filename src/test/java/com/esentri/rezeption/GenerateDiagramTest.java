@@ -17,13 +17,6 @@
 package com.esentri.rezeption;
 
 import com.esentri.rezeption.core.base.BaseInMemoryRepository;
-import com.esentri.rezeption.core.domain.reservierung.CheckInService;
-import com.esentri.rezeption.core.domain.reservierung.CheckeEin;
-import com.esentri.rezeption.core.domain.reservierung.ErstelleNeueReservierung;
-import com.esentri.rezeption.core.domain.reservierung.NeueReservierungErhalten;
-import com.esentri.rezeption.core.domain.reservierung.ReservierungEingecheckt;
-import com.esentri.rezeption.core.domain.reservierung.ReservierungsEingangService;
-import com.esentri.rezeption.core.domain.reservierung.StorniereReservierung;
 import com.esentri.rezeption.core.domain.zimmer.Belegung;
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
 import com.esentri.rezeption.core.inport.RechnungDriver;
