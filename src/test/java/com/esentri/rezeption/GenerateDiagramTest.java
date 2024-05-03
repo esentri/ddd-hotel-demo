@@ -67,7 +67,7 @@ public class GenerateDiagramTest {
                 .withShowFields(false)
                 .withShowMethods(false)
                 .withShowReadModels(false)
-                .withShowReadModelProviders(false)
+                .withShowQueryClients(false)
                 .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ZimmerDriver.class.getName()))
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
@@ -96,7 +96,7 @@ public class GenerateDiagramTest {
                 .withShowDomainEvents(false)
                 .withShowDomainCommands(false)
                 .withShowRepositories(false)
-                .withShowReadModelProviders(true)
+                .withShowQueryClients(true)
                 .withShowReadModels(true)
                 .withShowReadModelMethods(false)
                 .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ZimmerDriver.class.getName()))

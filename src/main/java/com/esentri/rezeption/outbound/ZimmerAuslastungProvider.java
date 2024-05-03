@@ -20,7 +20,7 @@ import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
 import com.esentri.rezeption.core.outport.ZimmerRepository;
 import lombok.RequiredArgsConstructor;
-import nitrox.dlc.domain.types.ReadModelProvider;
+import nitrox.dlc.domain.types.QueryClient;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Service
-public class ZimmerAuslastungProvider implements ReadModelProvider<ZimmerAuslastung> {
+public class ZimmerAuslastungProvider implements QueryClient<ZimmerAuslastung> {
 
     private final ZimmerRepository zimmerRepository;
 
