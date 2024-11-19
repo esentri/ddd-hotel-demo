@@ -17,6 +17,13 @@
 package com.esentri.rezeption;
 
 import com.esentri.rezeption.core.base.BaseInMemoryRepository;
+import com.esentri.rezeption.core.domain.rechnung.ErstelleRechnungFuerReservierung;
+import com.esentri.rezeption.core.domain.rechnung.ErstelleServiceRechnung;
+import com.esentri.rezeption.core.domain.rechnung.MarkiereRechnungBezahlt;
+import com.esentri.rezeption.core.domain.rechnung.Rechnung;
+import com.esentri.rezeption.core.domain.rechnung.RechnungErstellt;
+import com.esentri.rezeption.core.domain.reservierung.Reservierung;
+import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import com.esentri.rezeption.core.domain.zimmer.Belegung;
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
 import com.esentri.rezeption.core.inport.RechnungUseCases;
@@ -33,7 +40,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-@Disabled
+//@Disabled
 public class GenerateDiagramTest {
 
     @Test
@@ -47,6 +54,68 @@ public class GenerateDiagramTest {
                 .withClassesBlacklist(List.of(BaseInMemoryRepository.class.getName()))
                 .withShowFields(false)
                 .withShowMethods(false)
+                .withCallApplicationServiceDriver(false)
+                .build();
+        DomainDiagramGenerator generator = new DomainDiagramGenerator(
+                diagramConfig);
+
+        String actualDiagramText = generator.generateDiagramText();
+        System.out.println("Diagram:\n" + actualDiagramText);
+    }
+
+    @Test
+    void generateDiagramPDFErstellung() {
+        Domain.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(new ReflectiveDomainMirrorFactory("com.esentri.rezeption"));
+
+
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+                .withContextPackageName("com.esentri.rezeption")
+                .withClassesBlacklist(List.of(
+                        BaseInMemoryRepository.class.getName(),
+                        ErstelleRechnungFuerReservierung.class.getName(),
+                        ErstelleServiceRechnung.class.getName(),
+                        MarkiereRechnungBezahlt.class.getName(),
+                        Reservierung.class.getName(),
+                        Rechnung.class.getName(),
+                        ServiceLeistung.class.getName()
+                ))
+
+                .withShowFields(false)
+                .withShowMethods(false)
+                .withCallApplicationServiceDriver(false)
+                .withShowDomainEvents(false)
+                .withShowRepositories(false)
+                .withShowReadModels(true)
+                .withShowDomainServices(false)
+                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(RechnungUseCases.class.getName()))
+                .build();
+        DomainDiagramGenerator generator = new DomainDiagramGenerator(
+                diagramConfig);
+
+        String actualDiagramText = generator.generateDiagramText();
+        System.out.println("Diagram:\n" + actualDiagramText);
+    }
+
+    @Test
+    void generateDiagramForAppCompleteAggregatesOnly() {
+        Domain.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(new ReflectiveDomainMirrorFactory("com.esentri.rezeption"));
+
+
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+                .withContextPackageName("com.esentri.rezeption")
+                .withClassesBlacklist(List.of(BaseInMemoryRepository.class.getName()))
+                .withShowFields(true)
+                .withShowMethods(true)
+                .withShowApplicationServices(false)
+                .withShowDomainEvents(false)
+                .withShowDomainCommands(false)
+                .withShowReadModels(false)
+                .withShowDomainServices(false)
+                .withShowRepositories(false)
+                .withShowQueryHandlers(false)
+                .withShowOutboundServices(false)
                 .withCallApplicationServiceDriver(false)
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
@@ -88,9 +157,9 @@ public class GenerateDiagramTest {
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
                 .withContextPackageName("com.esentri.rezeption")
                 .withClassesBlacklist(List.of(
-                        BaseInMemoryRepository.class.getName(),
-                        Zimmer.class.getName(),
-                        Belegung.class.getName()
+                        BaseInMemoryRepository.class.getName()//,
+                       // Zimmer.class.getName(),
+                       // Belegung.class.getName()
                 ))
                 .withShowFields(true)
                 .withShowMethods(true)
