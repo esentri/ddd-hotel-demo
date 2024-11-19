@@ -17,7 +17,7 @@
 package com.esentri.rezeption.core.domain.zimmer;
 
 import com.esentri.rezeption.core.domain.WartungsPlanungId;
-import nitrox.dlc.domain.types.DomainEvent;
+import io.domainlifecycles.domain.types.DomainEvent;
 
 import java.time.LocalDate;
 import java.util.List;

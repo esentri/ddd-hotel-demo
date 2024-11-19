@@ -16,15 +16,15 @@
 
 package com.esentri.rezeption.configuration;
 
-import com.esentri.rezeption.core.domain.rechnung.RechnungsErstellungsService;
-import com.esentri.rezeption.core.domain.reservierung.CheckInService;
-import com.esentri.rezeption.core.domain.reservierung.CheckOutService;
-import com.esentri.rezeption.core.domain.reservierung.ReservierungsEingangService;
+import com.esentri.rezeption.core.domain.rechnung.RechnungsErstellung;
+import com.esentri.rezeption.core.domain.reservierung.CheckIn;
+import com.esentri.rezeption.core.domain.reservierung.CheckOut;
+import com.esentri.rezeption.core.domain.reservierung.Reservierungseingang;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
-import com.esentri.rezeption.core.outport.RechnungRepository;
-import com.esentri.rezeption.core.outport.ReservierungRepository;
-import com.esentri.rezeption.core.outport.ServiceLeistungRepository;
-import com.esentri.rezeption.core.outport.ZimmerRepository;
+import com.esentri.rezeption.core.outport.Rechnungen;
+import com.esentri.rezeption.core.outport.Reservierungen;
+import com.esentri.rezeption.core.outport.ServiceLeistungen;
+import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,89 +40,89 @@ public class DomainConfig {
     /**
      * Erstellt und konfiguriert eine Instanz des RechnungsErstellungsServices.
      *
-     * @param rechnungRepository Repository für Rechnungsdetails.
-     * @param reservierungRepository Repository für Reservierungsdetails.
-     * @param serviceLeistungRepository Repository für Serviceleistungsdetails.
+     * @param rechnungen Repository für Rechnungsdetails.
+     * @param reservierungen Repository für Reservierungsdetails.
+     * @param serviceLeistungen Repository für Serviceleistungsdetails.
      * @param domainEventPublisher Objekt zur Veröffentlichung von Domain-Ereignissen.
-     * @return Die Instanz des konfigurierten RechnungsErstellungsService.
+     * @return Die Instanz des konfigurierten RechnungsErstellung.
      */
     @Bean
-    public RechnungsErstellungsService rechnungsErstellungsService(
-            RechnungRepository rechnungRepository,
-            ReservierungRepository reservierungRepository,
-            ServiceLeistungRepository serviceLeistungRepository,
+    public RechnungsErstellung rechnungsErstellungsService(
+            Rechnungen rechnungen,
+            Reservierungen reservierungen,
+            ServiceLeistungen serviceLeistungen,
             DomainEventPublisher domainEventPublisher
     ){
-        return new RechnungsErstellungsService(
-                rechnungRepository,
-                reservierungRepository,
-                serviceLeistungRepository,
+        return new RechnungsErstellung(
+                rechnungen,
+                reservierungen,
+                serviceLeistungen,
                 domainEventPublisher
         );
     }
 
     /**
-     * Erstellt und konfiguriert eine Instanz des CheckInService.
+     * Erstellt und konfiguriert eine Instanz des CheckIn.
      *
-     * @param reservierungRepository Repository für Reservierungsdetails.
-     * @param zimmerRepository Repository für Zimmerdetails.
+     * @param reservierungen Repository für Reservierungsdetails.
+     * @param zimmerVerwaltung Repository für Zimmerdetails.
      * @param domainEventPublisher Objekt zur Veröffentlichung von Domain-Ereignissen.
-     * @return Die Instanz des konfigurierten CheckInService.
+     * @return Die Instanz des konfigurierten CheckIn.
      */
     @Bean
-    public CheckInService checkInService(
-            ReservierungRepository reservierungRepository,
-            ZimmerRepository zimmerRepository,
+    public CheckIn checkInService(
+            Reservierungen reservierungen,
+            ZimmerVerwaltung zimmerVerwaltung,
             DomainEventPublisher domainEventPublisher
     ){
-        return new CheckInService(
-                reservierungRepository,
-                zimmerRepository,
+        return new CheckIn(
+                reservierungen,
+                zimmerVerwaltung,
                 domainEventPublisher
         );
     }
 
     /**
-     * Erstellt und konfiguriert eine Instanz des CheckOutService.
+     * Erstellt und konfiguriert eine Instanz des CheckOut.
      *
-     * @param reservierungRepository Repository für Reservierungsdetails.
-     * @param rechnungRepository Repository für Rechnungsdetails.
-     * @param serviceLeistungRepository Repository für Serviceleistungsdetails.
+     * @param reservierungen Repository für Reservierungsdetails.
+     * @param rechnungen Repository für Rechnungsdetails.
+     * @param serviceLeistungen Repository für Serviceleistungsdetails.
      * @param domainEventPublisher Objekt zur Veröffentlichung von Domain-Ereignissen.
-     * @return Die Instanz des konfigurierten CheckOutService.
+     * @return Die Instanz des konfigurierten CheckOut.
      */
     @Bean
-    public CheckOutService checkOutService(
-            ReservierungRepository reservierungRepository,
-            RechnungRepository rechnungRepository,
-            ServiceLeistungRepository serviceLeistungRepository,
+    public CheckOut checkOutService(
+            Reservierungen reservierungen,
+            Rechnungen rechnungen,
+            ServiceLeistungen serviceLeistungen,
             DomainEventPublisher domainEventPublisher
     ){
-        return new CheckOutService(
-                reservierungRepository,
-                rechnungRepository,
-                serviceLeistungRepository,
+        return new CheckOut(
+                reservierungen,
+                rechnungen,
+                serviceLeistungen,
                 domainEventPublisher
         );
     }
 
     /**
-     * Erstellt und konfiguriert eine Instanz des ReservierungsEingangService.
+     * Erstellt und konfiguriert eine Instanz des Reservierungseingang.
      *
-     * @param reservierungRepository Repository für Reservierungsdetails.
-     * @param zimmerRepository Repository für Zimmerdetails.
+     * @param reservierungen Repository für Reservierungsdetails.
+     * @param zimmerVerwaltung Repository für Zimmerdetails.
      * @param domainEventPublisher Objekt zur Veröffentlichung von Domain-Ereignissen.
-     * @return Die Instanz des konfigurierten ReservierungsEingangService.
+     * @return Die Instanz des konfigurierten Reservierungseingang.
      */
     @Bean
-    public ReservierungsEingangService reservierungsEingangService(
-            ReservierungRepository reservierungRepository,
-            ZimmerRepository zimmerRepository,
+    public Reservierungseingang reservierungsEingangService(
+            Reservierungen reservierungen,
+            ZimmerVerwaltung zimmerVerwaltung,
             DomainEventPublisher domainEventPublisher
     ){
-        return new ReservierungsEingangService(
-                reservierungRepository,
-                zimmerRepository,
+        return new Reservierungseingang(
+                reservierungen,
+                zimmerVerwaltung,
                 domainEventPublisher
         );
     }

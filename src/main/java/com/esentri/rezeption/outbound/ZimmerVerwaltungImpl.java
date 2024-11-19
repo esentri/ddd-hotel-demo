@@ -21,7 +21,7 @@ import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.zimmer.BelegungTyp;
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
-import com.esentri.rezeption.core.outport.ZimmerRepository;
+import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -29,18 +29,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Diese Klasse ist eine Implementierung des {@code ZimmerRepository} Interface und erbt von {@code BaseInMemoryRepository}
+ * Diese Klasse ist eine Implementierung des {@code ZimmerVerwaltung} Interface und erbt von {@code BaseInMemoryRepository}
  * Sie stellt Methoden bereit, um {@code Zimmer} Instanzen zu verwalten.
  *
  * @author Mario Herb
- * @see ZimmerRepository
+ * @see ZimmerVerwaltung
  * @see BaseInMemoryRepository
  */
 @Repository
-public class ZimmerRepositoryImpl extends BaseInMemoryRepository<Zimmer.ZimmerNummer, Zimmer> implements ZimmerRepository {
+public class ZimmerVerwaltungImpl extends BaseInMemoryRepository<Zimmer.ZimmerNummer, Zimmer> implements ZimmerVerwaltung {
 
 
-    public ZimmerRepositoryImpl() {
+    public ZimmerVerwaltungImpl() {
         super(new ArrayList<>());
         var z1 = new Zimmer(
                 TestDataIds.ZIMMER_ID_EINZELZIMMER.id(),
@@ -80,7 +80,7 @@ public class ZimmerRepositoryImpl extends BaseInMemoryRepository<Zimmer.ZimmerNu
      * @return Eine Liste mit Zimmer-Instanzen, die den angegebenen Kriterien entsprechen.
      */
     @Override
-    public List<Zimmer> listZimmerByKategorieAndKapazitaet(Hotel.HotelId hotelId, ZimmerKategorie zimmerKategorie, int kapazitaet) {
+    public List<Zimmer> listZimmerByKategorieAndKapazitaet(Hotel.Id hotelId, ZimmerKategorie zimmerKategorie, int kapazitaet) {
         return allAggregates.stream()
                 .filter(z -> z.getHotelId().equals(hotelId))
                 .filter(z -> z.getKategorie().equals(zimmerKategorie))
@@ -95,7 +95,7 @@ public class ZimmerRepositoryImpl extends BaseInMemoryRepository<Zimmer.ZimmerNu
      * @return Eine Liste von Zimmer-Instanzen im angegebenen Hotel.
      */
     @Override
-    public List<Zimmer> listByHotel(Hotel.HotelId hotelId) {
+    public List<Zimmer> listByHotel(Hotel.Id hotelId) {
         return allAggregates.stream().filter(z -> z.getHotelId().equals(hotelId)).toList();
     }
 }

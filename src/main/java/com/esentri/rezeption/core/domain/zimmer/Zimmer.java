@@ -19,8 +19,8 @@ package com.esentri.rezeption.core.domain.zimmer;
 import com.esentri.rezeption.core.domain.hotel.Hotel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import nitrox.dlc.domain.types.AggregateRoot;
-import nitrox.dlc.domain.types.Identity;
+import io.domainlifecycles.domain.types.AggregateRoot;
+import io.domainlifecycles.domain.types.Identity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class Zimmer implements AggregateRoot<Zimmer.ZimmerNummer> {
     /**
      * Eindeutige Hotel-ID, zu dem das Zimmer gehört.
      */
-    private final Hotel.HotelId hotelId;
+    private final Hotel.Id hotelId;
 
     /**
      * Kategorie des Zimmers.
@@ -84,13 +84,13 @@ public class Zimmer implements AggregateRoot<Zimmer.ZimmerNummer> {
      * @param kapazitaet Die Kapazität des Zimmers.
      * @param stockwerk Das Stockwerk, in dem sich das Zimmer befindet.
      */
-    public Zimmer(ZimmerNummer nummer, Hotel.HotelId hotelId, ZimmerKategorie kategorie, int kapazitaet, int stockwerk) {
+    public Zimmer(ZimmerNummer nummer, Hotel.Id hotelId, ZimmerKategorie kategorie, int kapazitaet, int stockwerk) {
         validateKapazitaet(kapazitaet);
         if (nummer == null) {
             throw new IllegalArgumentException("Die Nummer des Zimmers darf nicht null sein");
         }
         if (hotelId == null) {
-            throw new IllegalArgumentException("Die HotelId darf nicht null sein");
+            throw new IllegalArgumentException("Die Id darf nicht null sein");
         }
         if (kategorie == null) {
             throw new IllegalArgumentException("Die ZimmerKategorie darf nicht null sein");

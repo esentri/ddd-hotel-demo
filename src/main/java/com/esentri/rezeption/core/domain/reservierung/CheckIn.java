@@ -18,11 +18,11 @@ package com.esentri.rezeption.core.domain.reservierung;
 
 import com.esentri.rezeption.core.domain.zimmer.BelegungTyp;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
-import com.esentri.rezeption.core.outport.ReservierungRepository;
-import com.esentri.rezeption.core.outport.ZimmerRepository;
+import com.esentri.rezeption.core.outport.Reservierungen;
+import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
 import lombok.RequiredArgsConstructor;
-import nitrox.dlc.domain.types.DomainService;
-import nitrox.dlc.domain.types.Publishes;
+import io.domainlifecycles.domain.types.DomainService;
+import io.domainlifecycles.domain.types.Publishes;
 
 import java.time.LocalDate;
 
@@ -34,11 +34,11 @@ import java.time.LocalDate;
  * @author Mario Herb
  */
 @RequiredArgsConstructor
-public class CheckInService implements DomainService {
+public class CheckIn implements DomainService {
 
-    private final ReservierungRepository reservierungRepository;
+    private final Reservierungen reservierungen;
 
-    private final ZimmerRepository zimmerRepository;
+    private final ZimmerVerwaltung zimmerVerwaltung;
 
     private final DomainEventPublisher domainEventPublisher;
 
@@ -55,16 +55,16 @@ public class CheckInService implements DomainService {
      */
     @Publishes(domainEventTypes = ReservierungEingecheckt.class)
     public Reservierung.ReservierungsNummer handle(CheckeEin checkeEin){
-        var reservierung = reservierungRepository.findById(checkeEin.reservierungsNummer()).orElseThrow();
-        reservierungRepository.update(reservierung.handle(checkeEin));
+        var reservierung = reservierungen.findById(checkeEin.reservierungsNummer()).orElseThrow();
+        reservierungen.update(reservierung.handle(checkeEin));
 
-        var zimmer = zimmerRepository.findById(checkeEin.zimmerNummer()).orElseThrow();
+        var zimmer = zimmerVerwaltung.findById(checkeEin.zimmerNummer()).orElseThrow();
 
         var checkInAm = LocalDate.now();
         var checkOutAm = LocalDate.now().plusDays(checkeEin.geplanteAnzahlNaechte());
 
         if(zimmer.neueBelegung(LocalDate.now(), checkOutAm, BelegungTyp.GAST)){
-            zimmerRepository.update(zimmer);
+            zimmerVerwaltung.update(zimmer);
             domainEventPublisher.publish(
                     new ReservierungEingecheckt(
                             reservierung.id(),

@@ -19,7 +19,7 @@ package com.esentri.rezeption.core.domain.rechnung;
 import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.reservierung.Reservierung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
-import nitrox.dlc.domain.types.DomainEvent;
+import io.domainlifecycles.domain.types.DomainEvent;
 
 import java.util.List;
 
@@ -32,8 +32,8 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public record RechnungErstellt(Rechnung.RechnungId rechnungId,
+public record RechnungErstellt(Rechnung.Id rechnungId,
                                Reservierung.ReservierungsNummer reservierungsNummer,
                                Preis gesamtNetto,
-                               List<ServiceLeistung.LeistungsId> abgerechneteServices) implements DomainEvent {
+                               List<ServiceLeistung.Id> abgerechneteServices) implements DomainEvent {
 }

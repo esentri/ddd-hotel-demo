@@ -17,7 +17,7 @@
 package com.esentri.rezeption.core.domain;
 
 import lombok.Builder;
-import nitrox.dlc.domain.types.ValueObject;
+import io.domainlifecycles.domain.types.ValueObject;
 
 import java.util.Objects;
 

@@ -18,7 +18,7 @@ package com.esentri.rezeption.core.outport;
 
 import com.esentri.rezeption.core.domain.reservierung.Reservierung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
-import nitrox.dlc.domain.types.Repository;
+import io.domainlifecycles.domain.types.Repository;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public interface ServiceLeistungRepository extends Repository<ServiceLeistung.LeistungsId, ServiceLeistung> {
+public interface ServiceLeistungen extends Repository<ServiceLeistung.Id, ServiceLeistung> {
 
     /**
      * Sucht eine Liste von ServiceLeistungen basierend auf ihrer Reservierungsnummer.

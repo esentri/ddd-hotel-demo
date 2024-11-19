@@ -17,7 +17,7 @@
 package com.esentri.rezeption.core.domain.reservierung;
 
 import com.esentri.rezeption.core.domain.Adresse;
-import nitrox.dlc.domain.types.DomainCommand;
+import io.domainlifecycles.domain.types.DomainCommand;
 
 import java.time.LocalDate;
 

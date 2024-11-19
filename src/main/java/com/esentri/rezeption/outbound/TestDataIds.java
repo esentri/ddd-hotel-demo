@@ -21,7 +21,7 @@ import com.esentri.rezeption.core.domain.reservierung.Gast;
 import com.esentri.rezeption.core.domain.reservierung.Reservierung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
-import nitrox.dlc.domain.types.Identity;
+import io.domainlifecycles.domain.types.Identity;
 
 import java.util.UUID;
 
@@ -38,7 +38,7 @@ import java.util.UUID;
  */
 public enum TestDataIds {
 
-    HOTEL_ID(new Hotel.HotelId(UUID.randomUUID())),
+    HOTEL_ID(new Hotel.Id(UUID.randomUUID())),
     ZIMMER_ID_EINZELZIMMER(new Zimmer.ZimmerNummer("1")),
     ZIMMER_ID_BUSINESS_SUITE(new Zimmer.ZimmerNummer("2")),
     ZIMMER_ID_PRESIDENTIAL_SUITE(new Zimmer.ZimmerNummer("3")),
@@ -46,7 +46,7 @@ public enum TestDataIds {
     GAST_RESERVIERUNG_OFFEN_ID(new Gast.GastId(UUID.randomUUID())),
     RESERVIERUNG_ID_EINGECHECKT(new Reservierung.ReservierungsNummer(UUID.randomUUID())),
     GAST_RESERVIERUNG_EINGECHECKT_ID(new Gast.GastId(UUID.randomUUID())),
-    SERVICE_LEISTUNG_ID(new ServiceLeistung.LeistungsId(UUID.randomUUID()))
+    SERVICE_LEISTUNG_ID(new ServiceLeistung.Id(UUID.randomUUID()))
     ;
 
     private Identity<?> id;

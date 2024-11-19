@@ -18,11 +18,13 @@ package com.esentri.rezeption.inbound;
 
 import com.esentri.rezeption.core.domain.rechnung.ErstelleRechnungFuerReservierung;
 import com.esentri.rezeption.core.domain.rechnung.ErstelleServiceRechnung;
+import com.esentri.rezeption.core.domain.rechnung.LadeRechnungPDF;
 import com.esentri.rezeption.core.domain.rechnung.MarkiereRechnungBezahlt;
 import com.esentri.rezeption.core.domain.rechnung.Rechnung;
-import com.esentri.rezeption.core.domain.rechnung.RechnungsErstellungsService;
-import com.esentri.rezeption.core.inport.RechnungDriver;
-import com.esentri.rezeption.core.outport.RechnungRepository;
+import com.esentri.rezeption.core.domain.rechnung.RechnungsErstellung;
+import com.esentri.rezeption.core.inport.RechnungUseCases;
+import com.esentri.rezeption.core.outport.Rechnungen;
+import com.esentri.rezeption.core.outport.RechnungsPDFErstellung;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,20 +36,22 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @RequiredArgsConstructor
-public class RechnungDriverImpl implements RechnungDriver {
+public class RechnungUseCasesImpl implements RechnungUseCases {
 
-    private final RechnungRepository rechnungRepository;
+    private final Rechnungen rechnungen;
 
-    private final RechnungsErstellungsService rechnungsErstellungsService;
+    private final RechnungsErstellung rechnungsErstellung;
+
+    private final RechnungsPDFErstellung rechnungsPDFErstellung;
 
     /**
      * {@inheritDoc}
      */
     @Override
     @Transactional
-    public Rechnung.RechnungId handle(MarkiereRechnungBezahlt markiereRechnungBezahlt) {
-        return rechnungRepository.findById(markiereRechnungBezahlt.rechnungId())
-            .map(r -> rechnungRepository.update(r.markiereBezahlt()).getId())
+    public Rechnung.Id handle(MarkiereRechnungBezahlt markiereRechnungBezahlt) {
+        return rechnungen.findById(markiereRechnungBezahlt.rechnungId())
+            .map(r -> rechnungen.update(r.markiereBezahlt()).getId())
             .orElseThrow();
     }
 
@@ -56,8 +60,8 @@ public class RechnungDriverImpl implements RechnungDriver {
      */
     @Override
     @Transactional
-    public Rechnung.RechnungId handle(ErstelleRechnungFuerReservierung erstelleRechnungFuerReservierung) {
-        return rechnungsErstellungsService.handle(erstelleRechnungFuerReservierung);
+    public Rechnung.Id handle(ErstelleRechnungFuerReservierung erstelleRechnungFuerReservierung) {
+        return rechnungsErstellung.handle(erstelleRechnungFuerReservierung);
     }
 
     /**
@@ -65,8 +69,16 @@ public class RechnungDriverImpl implements RechnungDriver {
      */
     @Override
     @Transactional
-    public Rechnung.RechnungId handle(ErstelleServiceRechnung erstelleServiceRechnung) {
-        return rechnungsErstellungsService.handle(erstelleServiceRechnung);
+    public Rechnung.Id handle(ErstelleServiceRechnung erstelleServiceRechnung) {
+        return rechnungsErstellung.handle(erstelleServiceRechnung);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] handle(LadeRechnungPDF ladeRechnungPDF) {
+        return rechnungsPDFErstellung.erzeugePDF(ladeRechnungPDF.rechnungsId());
     }
 
 }

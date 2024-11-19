@@ -16,37 +16,37 @@
 
 package com.esentri.rezeption.inbound;
 
-import com.esentri.rezeption.core.domain.reservierung.CheckInService;
-import com.esentri.rezeption.core.domain.reservierung.CheckOutService;
+import com.esentri.rezeption.core.domain.reservierung.CheckIn;
+import com.esentri.rezeption.core.domain.reservierung.CheckOut;
 import com.esentri.rezeption.core.domain.reservierung.CheckeAus;
 import com.esentri.rezeption.core.domain.reservierung.CheckeEin;
 import com.esentri.rezeption.core.domain.reservierung.ErstelleNeueReservierung;
 import com.esentri.rezeption.core.domain.reservierung.Reservierung;
-import com.esentri.rezeption.core.domain.reservierung.ReservierungsEingangService;
+import com.esentri.rezeption.core.domain.reservierung.Reservierungseingang;
 import com.esentri.rezeption.core.domain.reservierung.StorniereReservierung;
 import com.esentri.rezeption.core.domain.reservierung.VervollstaendigeGastDaten;
-import com.esentri.rezeption.core.inport.ReservierungDriver;
-import com.esentri.rezeption.core.outport.ReservierungRepository;
+import com.esentri.rezeption.core.inport.ReservierungUseCases;
+import com.esentri.rezeption.core.outport.Reservierungen;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Implementierung des ReservierungDriver. Verantwortlich für die Verarbeitung von Reservierung-bezogenen Commands.
+ * Implementierung des ReservierungUseCases. Verantwortlich für die Verarbeitung von Reservierung-bezogenen Commands.
  *
  * @author Mario Herb
  */
 @Service
 @AllArgsConstructor
-public class ReservierungDriverImpl implements ReservierungDriver {
+public class ReservierungUseCasesImpl implements ReservierungUseCases {
 
-    private final ReservierungRepository reservierungRepository;
+    private final Reservierungen reservierungen;
 
-    private final ReservierungsEingangService reservierungsEingangService;
+    private final Reservierungseingang reservierungseingang;
 
-    private final CheckInService checkInService;
+    private final CheckIn checkIn;
 
-    private final CheckOutService checkOutService;
+    private final CheckOut checkOut;
 
     /**
      * {@inheritDoc}
@@ -54,7 +54,7 @@ public class ReservierungDriverImpl implements ReservierungDriver {
     @Override
     @Transactional
     public Reservierung.ReservierungsNummer handle(ErstelleNeueReservierung erstelleNeueReservierung) {
-        return reservierungsEingangService.handle(erstelleNeueReservierung);
+        return reservierungseingang.handle(erstelleNeueReservierung);
     }
 
     /**
@@ -63,9 +63,9 @@ public class ReservierungDriverImpl implements ReservierungDriver {
     @Override
     @Transactional
     public Reservierung.ReservierungsNummer handle(VervollstaendigeGastDaten vervollstaendigeGastDaten) {
-        return reservierungRepository.findById(vervollstaendigeGastDaten.reservierungsNummer())
+        return reservierungen.findById(vervollstaendigeGastDaten.reservierungsNummer())
                 .map(r ->
-                        reservierungRepository.update(r.handle(vervollstaendigeGastDaten)))
+                        reservierungen.update(r.handle(vervollstaendigeGastDaten)))
                 .map(Reservierung::id)
                 .orElseThrow();
     }
@@ -76,7 +76,7 @@ public class ReservierungDriverImpl implements ReservierungDriver {
     @Override
     @Transactional
     public Reservierung.ReservierungsNummer handle(CheckeEin checkeEin) {
-        return checkInService.handle(checkeEin);
+        return checkIn.handle(checkeEin);
     }
 
     /**
@@ -85,7 +85,7 @@ public class ReservierungDriverImpl implements ReservierungDriver {
     @Override
     @Transactional
     public Reservierung.ReservierungsNummer handle(CheckeAus checkeAus) {
-        return checkOutService.handle(checkeAus);
+        return checkOut.handle(checkeAus);
     }
 
     /**
@@ -94,9 +94,9 @@ public class ReservierungDriverImpl implements ReservierungDriver {
     @Override
     @Transactional
     public Reservierung.ReservierungsNummer handle(StorniereReservierung storniereReservierung) {
-        return reservierungRepository.findById(storniereReservierung.reservierungsNummer())
+        return reservierungen.findById(storniereReservierung.reservierungsNummer())
                 .map(r ->
-                        reservierungRepository.update(r.storniere()))
+                        reservierungen.update(r.storniere()))
                 .map(Reservierung::id)
                 .orElseThrow();
     }

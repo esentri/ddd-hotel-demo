@@ -16,7 +16,7 @@
 
 package com.esentri.rezeption.core.domain.reservierung;
 
-import nitrox.dlc.domain.types.DomainCommand;
+import io.domainlifecycles.domain.types.DomainCommand;
 
 /**
  * Diese Klasse repräsentiert das Domain Command "StorniereReservierung", welches eine Aktion zur Stornierung einer Hotelreservierung darstellt.

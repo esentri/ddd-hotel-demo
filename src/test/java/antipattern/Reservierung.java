@@ -16,7 +16,6 @@
 
 package antipattern;
 
-import com.esentri.rezeption.core.domain.reservierung.Gast;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
 
 import java.math.BigDecimal;
@@ -45,6 +44,7 @@ public class Reservierung {
     private String postleitzahl;
     private String ort;
     private long concurrencyVersion;
+
     public Reservierung(){
     }
     public Long getReservierungsNummer() {

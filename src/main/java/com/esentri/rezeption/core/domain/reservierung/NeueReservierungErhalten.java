@@ -15,7 +15,7 @@
  */
 
 package com.esentri.rezeption.core.domain.reservierung;
-import nitrox.dlc.domain.types.DomainEvent;
+import io.domainlifecycles.domain.types.DomainEvent;
 
 /**
  * Repräsentiert das Domain-Event, das ausgelöst wird, wenn eine neue Reservierung erhalten wird.

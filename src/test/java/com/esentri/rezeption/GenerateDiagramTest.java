@@ -19,15 +19,15 @@ package com.esentri.rezeption;
 import com.esentri.rezeption.core.base.BaseInMemoryRepository;
 import com.esentri.rezeption.core.domain.zimmer.Belegung;
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
-import com.esentri.rezeption.core.inport.RechnungDriver;
-import com.esentri.rezeption.core.inport.ReservierungDriver;
-import com.esentri.rezeption.core.inport.ServiceLeistungDriver;
-import com.esentri.rezeption.core.inport.ZimmerDriver;
-import nitrox.dlc.diagram.domain.DomainDiagramGenerator;
-import nitrox.dlc.diagram.domain.config.DomainDiagramConfig;
-import nitrox.dlc.mirror.api.Domain;
-import nitrox.dlc.mirror.reflect.ReflectiveDomainMirrorFactory;
-import nitrox.dlc.mirror.resolver.TypeMetaResolver;
+import com.esentri.rezeption.core.inport.RechnungUseCases;
+import com.esentri.rezeption.core.inport.ReservierungUseCases;
+import com.esentri.rezeption.core.inport.ServiceLeistungUseCases;
+import com.esentri.rezeption.core.inport.ZimmerUseCases;
+import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
+import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
+import io.domainlifecycles.mirror.api.Domain;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -47,6 +47,7 @@ public class GenerateDiagramTest {
                 .withClassesBlacklist(List.of(BaseInMemoryRepository.class.getName()))
                 .withShowFields(false)
                 .withShowMethods(false)
+                .withCallApplicationServiceDriver(false)
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig);
@@ -67,8 +68,9 @@ public class GenerateDiagramTest {
                 .withShowFields(false)
                 .withShowMethods(false)
                 .withShowReadModels(false)
-                .withShowQueryClients(false)
-                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ZimmerDriver.class.getName()))
+                .withCallApplicationServiceDriver(false)
+                .withShowQueryHandlers(false)
+                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ZimmerUseCases.class.getName()))
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig);
@@ -96,10 +98,11 @@ public class GenerateDiagramTest {
                 .withShowDomainEvents(false)
                 .withShowDomainCommands(false)
                 .withShowRepositories(false)
-                .withShowQueryClients(true)
+                .withCallApplicationServiceDriver(false)
+                .withShowQueryHandlers(true)
                 .withShowReadModels(true)
                 .withShowReadModelMethods(false)
-                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ZimmerDriver.class.getName()))
+                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ZimmerUseCases.class.getName()))
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig);
@@ -121,7 +124,8 @@ public class GenerateDiagramTest {
                 ))
                 .withShowFields(false)
                 .withShowMethods(false)
-                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ReservierungDriver.class.getName()))
+                .withCallApplicationServiceDriver(false)
+                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ReservierungUseCases.class.getName()))
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig);
@@ -143,7 +147,8 @@ public class GenerateDiagramTest {
                 ))
                 .withShowFields(false)
                 .withShowMethods(false)
-                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(RechnungDriver.class.getName()))
+                .withCallApplicationServiceDriver(false)
+                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(RechnungUseCases.class.getName()))
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig);
@@ -165,7 +170,8 @@ public class GenerateDiagramTest {
                 ))
                 .withShowFields(false)
                 .withShowMethods(false)
-                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ServiceLeistungDriver.class.getName()))
+                .withCallApplicationServiceDriver(false)
+                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ServiceLeistungUseCases.class.getName()))
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig);

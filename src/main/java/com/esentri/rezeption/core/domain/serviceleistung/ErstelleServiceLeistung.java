@@ -18,7 +18,7 @@ package com.esentri.rezeption.core.domain.serviceleistung;
 
 import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.reservierung.Reservierung;
-import nitrox.dlc.domain.types.DomainCommand;
+import io.domainlifecycles.domain.types.DomainCommand;
 
 /**
  * Diese Klasse wird beim Erstellen einer Serviceleistung verwendet.

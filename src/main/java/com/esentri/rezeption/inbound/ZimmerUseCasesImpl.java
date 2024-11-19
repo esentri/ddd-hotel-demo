@@ -26,14 +26,14 @@ import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerWartungAbgelehnt;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerWartungBestaetigt;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerWartungEingeplant;
-import com.esentri.rezeption.core.inport.ZimmerDriver;
+import com.esentri.rezeption.core.inport.ZimmerUseCases;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
-import com.esentri.rezeption.core.outport.ZimmerRepository;
-import com.esentri.rezeption.outbound.ZimmerAuslastung;
-import com.esentri.rezeption.outbound.ZimmerAuslastungProvider;
+import com.esentri.rezeption.core.outport.ZimmerAuslastungen;
+import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
+import com.esentri.rezeption.core.domain.zimmer.ZimmerAuslastung;
 import lombok.RequiredArgsConstructor;
-import nitrox.dlc.domain.types.ListensTo;
-import nitrox.dlc.domain.types.Publishes;
+import io.domainlifecycles.domain.types.ListensTo;
+import io.domainlifecycles.domain.types.Publishes;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -43,20 +43,20 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Die Implementierung der ZimmerDriver-Schnittstelle, die als Einstiegspunkt zum Managen von Zimmern in einem Hotel dient.
+ * Die Implementierung der ZimmerUseCases-Schnittstelle, die als Einstiegspunkt zum Managen von Zimmern in einem Hotel dient.
  * Diese Klasse bietet Funktionen für das Beantragen von Zimmerwartungen und das Abrufen verfügbarer Zimmer.
  *
  * @author Mario Herb
  */
 @Service
 @RequiredArgsConstructor
-public class ZimmerDriverImpl implements ZimmerDriver {
+public class ZimmerUseCasesImpl implements ZimmerUseCases {
 
-    private final ZimmerRepository zimmerRepository;
+    private final ZimmerVerwaltung zimmerVerwaltung;
 
     private final DomainEventPublisher domainEventPublisher;
 
-    private final ZimmerAuslastungProvider zimmerAuslastungProvider;
+    private final ZimmerAuslastungen zimmerAuslastungen;
 
     /**
      * {@inheritDoc}
@@ -82,13 +82,13 @@ public class ZimmerDriverImpl implements ZimmerDriver {
      * {@inheritDoc}
      */
     @Override
-    public List<Zimmer.ZimmerNummer> verfuegbareZimmer(Hotel.HotelId hotelId, LocalDate von, LocalDate bis, ZimmerKategorie zimmerKategorie, int kapazitaet) {
+    public List<Zimmer.ZimmerNummer> verfuegbareZimmer(Hotel.Id hotelId, LocalDate von, LocalDate bis, ZimmerKategorie zimmerKategorie, int kapazitaet) {
         var probeBelegung = new Belegung(
             von,
             bis,
             BelegungTyp.GAST
         );
-        var verfuegbareZimer = zimmerRepository.listZimmerByKategorieAndKapazitaet(
+        var verfuegbareZimer = zimmerVerwaltung.listZimmerByKategorieAndKapazitaet(
                 hotelId,
                 zimmerKategorie,
                 kapazitaet
@@ -108,9 +108,9 @@ public class ZimmerDriverImpl implements ZimmerDriver {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Publishes(domainEventTypes = {ZimmerWartungBestaetigt.class, ZimmerWartungAbgelehnt.class})
     public void handle(BeantrageZimmerWartung beantrageZimmerWartung){
-        var zimmer = zimmerRepository.findById(beantrageZimmerWartung.zimmerNummer()).orElseThrow();
+        var zimmer = zimmerVerwaltung.findById(beantrageZimmerWartung.zimmerNummer()).orElseThrow();
         if(zimmer.neueBelegung(beantrageZimmerWartung.von(), beantrageZimmerWartung.bis(), BelegungTyp.WARTUNG)){
-            zimmerRepository.update(zimmer);
+            zimmerVerwaltung.update(zimmer);
             domainEventPublisher.publish(new ZimmerWartungBestaetigt(beantrageZimmerWartung.wartungsPlanungId(), zimmer.id()));
         }else{
             domainEventPublisher.publish(new ZimmerWartungAbgelehnt(beantrageZimmerWartung.wartungsPlanungId(), zimmer.id()));
@@ -124,15 +124,15 @@ public class ZimmerDriverImpl implements ZimmerDriver {
     @EventListener
     @ListensTo(domainEventType = ReservierungAusgecheckt.class)
     public void onEvent(ReservierungAusgecheckt reservierungAusgecheckt) {
-        var zimmer = zimmerRepository.findById(reservierungAusgecheckt.zimmerNummer()).orElseThrow();
-        zimmerRepository.update(zimmer.aktuelleBelegungBeenden());
+        var zimmer = zimmerVerwaltung.findById(reservierungAusgecheckt.zimmerNummer()).orElseThrow();
+        zimmerVerwaltung.update(zimmer.aktuelleBelegungBeenden());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<ZimmerAuslastung> auslastung(Hotel.HotelId hotelId, LocalDate von, LocalDate bis){
-        return zimmerAuslastungProvider.auslastung(hotelId, von, bis);
+    public List<ZimmerAuslastung> auslastung(Hotel.Id hotelId, LocalDate von, LocalDate bis){
+        return zimmerAuslastungen.auslastung(hotelId, von, bis);
     }
 }

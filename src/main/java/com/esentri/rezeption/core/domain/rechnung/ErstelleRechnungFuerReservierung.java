@@ -19,7 +19,7 @@ package com.esentri.rezeption.core.domain.rechnung;
 import com.esentri.rezeption.core.domain.Adresse;
 import com.esentri.rezeption.core.domain.reservierung.Reservierung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
-import nitrox.dlc.domain.types.DomainCommand;
+import io.domainlifecycles.domain.types.DomainCommand;
 
 import java.util.List;
 
@@ -30,10 +30,10 @@ import java.util.List;
  *
  * @author Mario Herb
  * @see Reservierung.ReservierungsNummer
- * @see ServiceLeistung.LeistungsId
+ * @see ServiceLeistung.Id
  * @see Adresse
  */
 public record ErstelleRechnungFuerReservierung(Reservierung.ReservierungsNummer reservierungsNummer,
-                                               List<ServiceLeistung.LeistungsId> serviceLeistungen,
+                                               List<ServiceLeistung.Id> serviceLeistungen,
                                                Adresse rechnungsAdresse) implements DomainCommand {
 }

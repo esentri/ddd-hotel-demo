@@ -16,10 +16,10 @@
 
 package com.esentri.rezeption.core.domain;
 
-import nitrox.dlc.domain.types.ValueObject;
+import io.domainlifecycles.domain.types.ValueObject;
 
 /**
- * Eine record Klasse die eine WartungsPlanungId eines fremden Systems repräsentiert.
+ * Eine record Klasse, die eine WartungsPlanungId eines fremden Systems repräsentiert.
  *
  * @author Mario Herb
  * @see ValueObject

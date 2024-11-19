@@ -16,7 +16,7 @@
 
 package com.esentri.rezeption.core.domain;
 
-import nitrox.dlc.domain.types.ValueObject;
+import io.domainlifecycles.domain.types.ValueObject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

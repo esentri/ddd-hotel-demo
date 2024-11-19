@@ -20,8 +20,8 @@ import com.esentri.rezeption.core.domain.Adresse;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import nitrox.dlc.domain.types.Entity;
-import nitrox.dlc.domain.types.Identity;
+import io.domainlifecycles.domain.types.Entity;
+import io.domainlifecycles.domain.types.Identity;
 
 import java.time.LocalDate;
 import java.time.Period;

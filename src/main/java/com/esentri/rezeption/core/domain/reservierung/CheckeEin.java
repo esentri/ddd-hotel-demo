@@ -17,7 +17,7 @@
 package com.esentri.rezeption.core.domain.reservierung;
 
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
-import nitrox.dlc.domain.types.DomainCommand;
+import io.domainlifecycles.domain.types.DomainCommand;
 
 /**
  * Record-Klasse für den Check-In-Vorgang in einer Reservierung.

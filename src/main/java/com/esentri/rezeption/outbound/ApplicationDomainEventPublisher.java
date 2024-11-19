@@ -18,7 +18,7 @@ package com.esentri.rezeption.outbound;
 
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
 import lombok.RequiredArgsConstructor;
-import nitrox.dlc.domain.types.DomainEvent;
+import io.domainlifecycles.domain.types.DomainEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 

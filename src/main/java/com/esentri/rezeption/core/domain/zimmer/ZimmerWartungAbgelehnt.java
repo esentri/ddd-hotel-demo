@@ -17,7 +17,7 @@
 package com.esentri.rezeption.core.domain.zimmer;
 
 import com.esentri.rezeption.core.domain.WartungsPlanungId;
-import nitrox.dlc.domain.types.DomainEvent;
+import io.domainlifecycles.domain.types.DomainEvent;
 
 /**
  * ZimmerWartungAbgelehnt repräsentiert das Ereignis, wenn eine Wartung abgelehnt wird.

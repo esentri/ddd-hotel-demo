@@ -17,7 +17,7 @@
 package com.esentri.rezeption.core.domain.reservierung;
 
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
-import nitrox.dlc.domain.types.DomainEvent;
+import io.domainlifecycles.domain.types.DomainEvent;
 
 import java.time.LocalDateTime;
 

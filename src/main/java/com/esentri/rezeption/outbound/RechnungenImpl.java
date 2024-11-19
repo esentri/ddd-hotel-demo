@@ -19,14 +19,14 @@ package com.esentri.rezeption.outbound;
 import com.esentri.rezeption.core.base.BaseInMemoryRepository;
 import com.esentri.rezeption.core.domain.rechnung.Rechnung;
 import com.esentri.rezeption.core.domain.reservierung.Reservierung;
-import com.esentri.rezeption.core.outport.RechnungRepository;
+import com.esentri.rezeption.core.outport.Rechnungen;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Eine konkrete Implementierung des RechnungRepository.
+ * Eine konkrete Implementierung des Rechnungen.
  * Diese Klasse erbt die Funktionalität von BaseInMemoryRepository und implementiert die spezifische Logik
  * zum Abrufen von Rechnungen nach Reservierungsnummern.
  * Es wird mit der @Repository Annotation gekennzeichnet, um die automatische Erkennung
@@ -34,15 +34,15 @@ import java.util.List;
  *
  * @author Mario Herb
  * @see BaseInMemoryRepository
- * @see RechnungRepository
+ * @see Rechnungen
  * @see Rechnung
  * @see Reservierung
  */
 
 @Repository
-public class RechnungRepositoryImpl extends BaseInMemoryRepository<Rechnung.RechnungId, Rechnung> implements RechnungRepository {
+public class RechnungenImpl extends BaseInMemoryRepository<Rechnung.Id, Rechnung> implements Rechnungen {
 
-    public RechnungRepositoryImpl() {
+    public RechnungenImpl() {
         super(new ArrayList<>());
     }
 

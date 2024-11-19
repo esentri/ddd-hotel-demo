@@ -16,7 +16,7 @@
 
 package com.esentri.rezeption.core.domain.reservierung;
 
-import nitrox.dlc.domain.types.DomainCommand;
+import io.domainlifecycles.domain.types.DomainCommand;
 
 /**
  * Die Klasse CheckeAus repräsentiert einen Befehl zum Auschecken einer Reservierung.

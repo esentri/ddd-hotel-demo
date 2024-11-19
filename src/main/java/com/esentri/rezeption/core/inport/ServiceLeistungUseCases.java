@@ -19,24 +19,24 @@ package com.esentri.rezeption.core.inport;
 import com.esentri.rezeption.core.domain.rechnung.RechnungErstellt;
 import com.esentri.rezeption.core.domain.serviceleistung.ErstelleServiceLeistung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
-import nitrox.dlc.domain.types.Driver;
+import io.domainlifecycles.domain.types.ApplicationService;
 
 /**
- * Interface für den ServiceLeistungDriver. Dieses Interface bietet Methoden zur Handhabung von Serviceleistungen.
+ * Interface für den ServiceLeistungUseCases. Dieses Interface bietet Methoden zur Handhabung von Serviceleistungen.
  * Es enthält Methoden, um ServiceLeistungen zu erstellen und auf RechnungErstellt Ereignisse zu reagieren.
  *
  * @author Mario Herb
  *
  */
-public interface ServiceLeistungDriver extends Driver {
+public interface ServiceLeistungUseCases extends ApplicationService {
 
     /**
-     * Erstellt eine Serviceleistung und gibt eine LeistungsId zurück.
+     * Erstellt eine Serviceleistung und gibt eine Id zurück.
      *
      * @param erstelleServiceLeistung Command, das Informationen zum Erstellen einer Serviceleistung enthält.
-     * @return LeistungsId der erstellten Serviceleistung.
+     * @return Id der erstellten Serviceleistung.
      */
-    ServiceLeistung.LeistungsId handle(ErstelleServiceLeistung erstelleServiceLeistung);
+    ServiceLeistung.Id handle(ErstelleServiceLeistung erstelleServiceLeistung);
 
     /**
      * Diese Methode wird aufgerufen, wenn ein RechnungErstellt Ereignis eintritt.

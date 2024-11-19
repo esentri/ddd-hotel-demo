@@ -22,7 +22,7 @@ import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.reservierung.Gast;
 import com.esentri.rezeption.core.domain.reservierung.Reservierung;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
-import com.esentri.rezeption.core.outport.ReservierungRepository;
+import com.esentri.rezeption.core.outport.Reservierungen;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -32,15 +32,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementierung der {@link ReservierungRepository} Klasse.
+ * Implementierung der {@link Reservierungen} Klasse.
  * Speichert alle Reservierungsdaten InMemory
  *
  * @author Mario Herb
  */
 @Repository
-public class ReservierungRepositoryImpl extends BaseInMemoryRepository<Reservierung.ReservierungsNummer, Reservierung> implements ReservierungRepository {
+public class ReservierungenImpl extends BaseInMemoryRepository<Reservierung.ReservierungsNummer, Reservierung> implements Reservierungen {
 
-    public ReservierungRepositoryImpl() {
+    public ReservierungenImpl() {
         super(new ArrayList<>());
         allAggregates.addAll(List.of(
            new Reservierung(
@@ -106,7 +106,7 @@ public class ReservierungRepositoryImpl extends BaseInMemoryRepository<Reservier
      * @return eine Liste von Reservierungen
      */
     @Override
-    public List<Reservierung> listAktiveBuchungenInZeitraum(Hotel.HotelId hotelId, LocalDate von, LocalDate bis, ZimmerKategorie gewuenschteKategorie, int gewuenschteKapazitaet) {
+    public List<Reservierung> listAktiveBuchungenInZeitraum(Hotel.Id hotelId, LocalDate von, LocalDate bis, ZimmerKategorie gewuenschteKategorie, int gewuenschteKapazitaet) {
         return allAggregates.stream()
                 .filter(b -> b.getHotelId().equals(hotelId)
                         && b.getCheckOutAm() == null && b.getStorniertAm() == null

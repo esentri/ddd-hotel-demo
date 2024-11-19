@@ -24,8 +24,8 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import nitrox.dlc.domain.types.AggregateRoot;
-import nitrox.dlc.domain.types.Identity;
+import io.domainlifecycles.domain.types.AggregateRoot;
+import io.domainlifecycles.domain.types.Identity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -43,15 +43,15 @@ import java.util.UUID;
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
-public class Rechnung implements AggregateRoot<Rechnung.RechnungId> {
+public class Rechnung implements AggregateRoot<Rechnung.Id> {
 
     /**
      * Struktur zur Darstellung der eindeutigen Identität einer Rechnung.
      */
-    public record RechnungId(UUID value) implements Identity<UUID> {}
+    public record Id(UUID value) implements Identity<UUID> {}
 
     @EqualsAndHashCode.Include
-    private final RechnungId id;
+    private final Id id;
 
     private final Reservierung.ReservierungsNummer reservierungsNummer;
 
@@ -84,8 +84,8 @@ public class Rechnung implements AggregateRoot<Rechnung.RechnungId> {
      * @param rechnungsAdresse Die Adresse, an die die Rechnung gesendet wird
      */
     @Builder
-    public Rechnung(RechnungId id, Reservierung.ReservierungsNummer reservierungsNummer, Preis zimmerPreis, LocalDateTime erstelltAm, Adresse rechnungsAdresse) {
-        Objects.requireNonNull(id, "Die LeistungsId darf nicht null sein.");
+    public Rechnung(Id id, Reservierung.ReservierungsNummer reservierungsNummer, Preis zimmerPreis, LocalDateTime erstelltAm, Adresse rechnungsAdresse) {
+        Objects.requireNonNull(id, "Die Id darf nicht null sein.");
         Objects.requireNonNull(reservierungsNummer, "Die referenzierte ReservierungsNummer darf nicht null sein.");
         this.id = id;
         this.reservierungsNummer = reservierungsNummer;
@@ -96,7 +96,7 @@ public class Rechnung implements AggregateRoot<Rechnung.RechnungId> {
     }
 
     @Override
-    public RechnungId id() {
+    public Id id() {
         return id;
     }
 
@@ -107,7 +107,7 @@ public class Rechnung implements AggregateRoot<Rechnung.RechnungId> {
      * @param beschreibung Eine Beschreibung der hinzuzufügenden Position
      * @param leistungsId Die Id der Serviceleistung, die hinzugefügt werden soll
      */
-    public Rechnung addRechnungsPosition(Preis nettoPreis, String beschreibung, ServiceLeistung.LeistungsId leistungsId) {
+    public Rechnung addRechnungsPosition(Preis nettoPreis, String beschreibung, ServiceLeistung.Id leistungsId) {
         var neuePosition = new RechnungsPosition(
             new RechnungsPosition.RechnungsPositionId(UUID.randomUUID()),
             nettoPreis,

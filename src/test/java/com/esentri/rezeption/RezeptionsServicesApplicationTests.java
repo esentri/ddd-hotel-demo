@@ -26,14 +26,14 @@ import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import com.esentri.rezeption.core.domain.zimmer.BelegungTyp;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerWartungEingeplant;
-import com.esentri.rezeption.core.inport.RechnungDriver;
-import com.esentri.rezeption.core.inport.ReservierungDriver;
-import com.esentri.rezeption.core.inport.ZimmerDriver;
+import com.esentri.rezeption.core.inport.RechnungUseCases;
+import com.esentri.rezeption.core.inport.ReservierungUseCases;
+import com.esentri.rezeption.core.inport.ZimmerUseCases;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
-import com.esentri.rezeption.core.outport.ReservierungRepository;
-import com.esentri.rezeption.core.outport.ServiceLeistungRepository;
-import com.esentri.rezeption.core.outport.ZimmerRepository;
-import com.esentri.rezeption.outbound.ZimmerAuslastungProvider;
+import com.esentri.rezeption.core.outport.Reservierungen;
+import com.esentri.rezeption.core.outport.ServiceLeistungen;
+import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
+import com.esentri.rezeption.outbound.ZimmerAuslastungenImpl;
 import com.esentri.rezeption.outbound.TestDataIds;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -59,25 +59,25 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class RezeptionsServicesApplicationTests {
 
 	@Autowired
-	private ZimmerAuslastungProvider zimmerAuslastungProvider;
+	private ZimmerAuslastungenImpl zimmerAuslastungenImpl;
 
 	@Autowired
-	private ReservierungDriver reservierungDriver;
+	private ReservierungUseCases reservierungUseCases;
 
 	@Autowired
-	private RechnungDriver rechnungDriver;
+	private RechnungUseCases rechnungUseCases;
 
 	@Autowired
-	private ZimmerDriver zimmerDriver;
+	private ZimmerUseCases zimmerUseCases;
 
 	@Autowired
-	private ReservierungRepository reservierungRepository;
+	private Reservierungen reservierungen;
 
 	@Autowired
-	private ZimmerRepository zimmerRepository;
+	private ZimmerVerwaltung zimmerVerwaltung;
 
 	@Autowired
-	private ServiceLeistungRepository serviceLeistungRepository;
+	private ServiceLeistungen serviceLeistungen;
 
 	@Autowired
 	private DomainEventPublisher domainEventPublisher;
@@ -90,7 +90,7 @@ class RezeptionsServicesApplicationTests {
 	@Test
 	@Order(2)
 	void testVerfuegbareZimmer(){
-		var zimmer = zimmerDriver.verfuegbareZimmer(
+		var zimmer = zimmerUseCases.verfuegbareZimmer(
 				TestDataIds.HOTEL_ID.id(),
 				LocalDate.now(),
 				LocalDate.now().plusDays(2),
@@ -105,7 +105,7 @@ class RezeptionsServicesApplicationTests {
 	@Order(3)
 	void testCheckInFailGeburtsdatumGast(){
 		assertThatThrownBy(()->
-		reservierungDriver.handle(new CheckeEin(
+		reservierungUseCases.handle(new CheckeEin(
 				TestDataIds.RESERVIERUNG_ID_OFFEN.id(),
 				TestDataIds.ZIMMER_ID_BUSINESS_SUITE.id(),
 				3
@@ -115,7 +115,7 @@ class RezeptionsServicesApplicationTests {
 	@Test
 	@Order(4)
 	void testCheckInErfolgreich(){
-		reservierungDriver.handle(new VervollstaendigeGastDaten(
+		reservierungUseCases.handle(new VervollstaendigeGastDaten(
 				TestDataIds.RESERVIERUNG_ID_OFFEN.id(),
 				"Chuck",
 				"Bubu",
@@ -124,16 +124,16 @@ class RezeptionsServicesApplicationTests {
 				null,
 				new Adresse("Am Platz", "1", "55555", "Muggelhausen")
 		));
-		reservierungDriver.handle(new CheckeEin(
+		reservierungUseCases.handle(new CheckeEin(
 				TestDataIds.RESERVIERUNG_ID_OFFEN.id(),
 				TestDataIds.ZIMMER_ID_BUSINESS_SUITE.id(),
 				3
 		));
-		var res = reservierungRepository.findById(TestDataIds.RESERVIERUNG_ID_OFFEN.id());
+		var res = reservierungen.findById(TestDataIds.RESERVIERUNG_ID_OFFEN.id());
 		assertThat(res).isPresent();
 		assertThat(res.get().getCheckInAm().toLocalDate()).isEqualTo(LocalDate.now());
 
-		var zimmer = zimmerRepository.findById(res.get().getZimmerNummer()).orElseThrow();
+		var zimmer = zimmerVerwaltung.findById(res.get().getZimmerNummer()).orElseThrow();
 		assertThat(zimmer.aktuelleBelegung()).isPresent();
 		var belegung = zimmer.aktuelleBelegung().get();
 		assertThat(belegung.belegungTyp()).isEqualTo(BelegungTyp.GAST);
@@ -145,7 +145,7 @@ class RezeptionsServicesApplicationTests {
 	@Test
 	@Order(5)
 	void testCheckInFailDoppelt(){
-		reservierungDriver.handle(new VervollstaendigeGastDaten(
+		reservierungUseCases.handle(new VervollstaendigeGastDaten(
 				TestDataIds.RESERVIERUNG_ID_OFFEN.id(),
 				"Chuck",
 				"Bubu",
@@ -156,12 +156,12 @@ class RezeptionsServicesApplicationTests {
 		));
 
 		assertThatThrownBy( () ->{
-			reservierungDriver.handle(new CheckeEin(
+			reservierungUseCases.handle(new CheckeEin(
 					TestDataIds.RESERVIERUNG_ID_OFFEN.id(),
 					TestDataIds.ZIMMER_ID_BUSINESS_SUITE.id(),
 					3
 			));
-			reservierungDriver.handle(new CheckeEin(
+			reservierungUseCases.handle(new CheckeEin(
 					TestDataIds.RESERVIERUNG_ID_OFFEN.id(),
 					TestDataIds.ZIMMER_ID_BUSINESS_SUITE.id(),
 					3
@@ -172,7 +172,7 @@ class RezeptionsServicesApplicationTests {
 	@Test
 	@Order(6)
 	void testReadModel(){
-		var auslastung = zimmerAuslastungProvider.auslastung(TestDataIds.HOTEL_ID.id(), LocalDate.now(), LocalDate.now().plusDays(5));
+		var auslastung = zimmerAuslastungenImpl.auslastung(TestDataIds.HOTEL_ID.id(), LocalDate.now(), LocalDate.now().plusDays(5));
 
 		var auslastungHeuteEinzelzimmer = auslastung.stream()
 				.filter(a -> a.vom().isEqual(LocalDate.now()))
@@ -212,7 +212,7 @@ class RezeptionsServicesApplicationTests {
 	@Order(7)
 	void testCheckOutFailKeineAbrechnung(){
 		assertThatThrownBy(()->{
-			reservierungDriver.handle(new CheckeAus(
+			reservierungUseCases.handle(new CheckeAus(
 					TestDataIds.RESERVIERUNG_ID_EINGECHECKT.id()
 			));
 		}).hasMessageContaining("Zimmerabrechnung");
@@ -221,24 +221,24 @@ class RezeptionsServicesApplicationTests {
 	@Test
 	@Order(8)
 	void testCheckOutErfolgreich(){
-		var res = reservierungRepository.findById(TestDataIds.RESERVIERUNG_ID_EINGECHECKT.id());
+		var res = reservierungen.findById(TestDataIds.RESERVIERUNG_ID_EINGECHECKT.id());
 		assertThat(res).isPresent();
 
-		var serviceLeistungenZumAbrechnen = serviceLeistungRepository.find(TestDataIds.RESERVIERUNG_ID_EINGECHECKT.id());
+		var serviceLeistungenZumAbrechnen = serviceLeistungen.find(TestDataIds.RESERVIERUNG_ID_EINGECHECKT.id());
 
-		rechnungDriver.handle(new ErstelleRechnungFuerReservierung(
+		rechnungUseCases.handle(new ErstelleRechnungFuerReservierung(
 				TestDataIds.RESERVIERUNG_ID_EINGECHECKT.id(),
 				serviceLeistungenZumAbrechnen.stream().map(ServiceLeistung::id).toList(),
 				res.get().getGast().getHeimAdresse()
 		));
 
-		reservierungDriver.handle(new CheckeAus(
+		reservierungUseCases.handle(new CheckeAus(
 			TestDataIds.RESERVIERUNG_ID_EINGECHECKT.id()
 		));
 
 		assertThat(res.get().getCheckOutAm().toLocalDate()).isEqualTo(LocalDate.now());
 
-		var zimmer = zimmerRepository.findById(res.get().getZimmerNummer()).orElseThrow();
+		var zimmer = zimmerVerwaltung.findById(res.get().getZimmerNummer()).orElseThrow();
 		assertThat(zimmer.aktuelleBelegung()).isEmpty();
 
 		serviceLeistungenZumAbrechnen.forEach(sl -> assertThat(sl.getAbgerechnetPer()).isNotNull());
@@ -255,7 +255,7 @@ class RezeptionsServicesApplicationTests {
 		);
 		domainEventPublisher.publish(wartungGeplant);
 
-		var zimmer = zimmerRepository.findById(TestDataIds.ZIMMER_ID_PRESIDENTIAL_SUITE.id()).orElseThrow();
+		var zimmer = zimmerVerwaltung.findById(TestDataIds.ZIMMER_ID_PRESIDENTIAL_SUITE.id()).orElseThrow();
 		assertThat(zimmer.aktuelleBelegung()).isPresent();
 		assertThat(zimmer.aktuelleBelegung().get().belegungTyp()).isEqualTo(BelegungTyp.WARTUNG);
 

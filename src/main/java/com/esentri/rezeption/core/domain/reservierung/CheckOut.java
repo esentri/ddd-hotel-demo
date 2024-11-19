@@ -18,12 +18,12 @@ package com.esentri.rezeption.core.domain.reservierung;
 
 import com.esentri.rezeption.core.domain.rechnung.Rechnung;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
-import com.esentri.rezeption.core.outport.RechnungRepository;
-import com.esentri.rezeption.core.outport.ReservierungRepository;
-import com.esentri.rezeption.core.outport.ServiceLeistungRepository;
+import com.esentri.rezeption.core.outport.Rechnungen;
+import com.esentri.rezeption.core.outport.Reservierungen;
+import com.esentri.rezeption.core.outport.ServiceLeistungen;
 import lombok.RequiredArgsConstructor;
-import nitrox.dlc.domain.types.DomainService;
-import nitrox.dlc.domain.types.Publishes;
+import io.domainlifecycles.domain.types.DomainService;
+import io.domainlifecycles.domain.types.Publishes;
 
 /**
  * DomainService zur Unterstützung der Abfertigung von Auscheck-Ooperationen.
@@ -33,13 +33,13 @@ import nitrox.dlc.domain.types.Publishes;
  * @author Mario Herb
  */
 @RequiredArgsConstructor
-public class CheckOutService implements DomainService {
+public class CheckOut implements DomainService {
 
-    private final ReservierungRepository reservierungRepository;
+    private final Reservierungen reservierungen;
 
-    private final RechnungRepository rechnungRepository;
+    private final Rechnungen rechnungen;
 
-    private final ServiceLeistungRepository serviceLeistungRepository;
+    private final ServiceLeistungen serviceLeistungen;
 
     private final DomainEventPublisher domainEventPublisher;
 
@@ -56,7 +56,7 @@ public class CheckOutService implements DomainService {
     @Publishes(domainEventTypes = ReservierungAusgecheckt.class)
     public Reservierung.ReservierungsNummer handle(CheckeAus checkeAus){
 
-        var rechnungen = rechnungRepository.findByReservierungsNummer(checkeAus.reservierungsNummer());
+        var rechnungen = this.rechnungen.findByReservierungsNummer(checkeAus.reservierungsNummer());
 
         var zimmerRechnungExistiert = rechnungen.stream().anyMatch(Rechnung::beinhaltetZimmerAbrechnung);
 
@@ -64,16 +64,16 @@ public class CheckOutService implements DomainService {
             throw new IllegalStateException("Vor dem Auschecken muss die Zimmerabrechnung erfolgen!");
         }
 
-        var offeneServiceLeistungenExistieren = serviceLeistungRepository.find(checkeAus.reservierungsNummer())
+        var offeneServiceLeistungenExistieren = serviceLeistungen.find(checkeAus.reservierungsNummer())
                 .stream().anyMatch(sl -> sl.getAbgerechnetPer() == null);
 
         if(offeneServiceLeistungenExistieren){
             throw new IllegalStateException("Es wurden nicht alle ServiceLeistungen der Reservierung abgerechnet!");
         }
 
-        var reservierung = reservierungRepository.findById(checkeAus.reservierungsNummer())
+        var reservierung = reservierungen.findById(checkeAus.reservierungsNummer())
             .map( r ->
-                    reservierungRepository.update(r.checkeAus()))
+                    reservierungen.update(r.checkeAus()))
             .orElseThrow();
 
         domainEventPublisher.publish(new ReservierungAusgecheckt(reservierung.getReservierungsNummer(), reservierung.getCheckOutAm(), reservierung.getZimmerNummer()));

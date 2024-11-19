@@ -20,12 +20,12 @@ import com.esentri.rezeption.core.domain.Adresse;
 import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
-import com.esentri.rezeption.core.outport.RechnungRepository;
-import com.esentri.rezeption.core.outport.ReservierungRepository;
-import com.esentri.rezeption.core.outport.ServiceLeistungRepository;
+import com.esentri.rezeption.core.outport.Rechnungen;
+import com.esentri.rezeption.core.outport.Reservierungen;
+import com.esentri.rezeption.core.outport.ServiceLeistungen;
 import lombok.RequiredArgsConstructor;
-import nitrox.dlc.domain.types.DomainService;
-import nitrox.dlc.domain.types.Publishes;
+import io.domainlifecycles.domain.types.DomainService;
+import io.domainlifecycles.domain.types.Publishes;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,13 +39,13 @@ import java.util.UUID;
  * @author Mario Herb
  */
 @RequiredArgsConstructor
-public class RechnungsErstellungsService implements DomainService {
+public class RechnungsErstellung implements DomainService {
 
-    private final RechnungRepository rechnungRepository;
+    private final Rechnungen rechnungen;
 
-    private final ReservierungRepository reservierungRepository;
+    private final Reservierungen reservierungen;
 
-    private final ServiceLeistungRepository serviceLeistungRepository;
+    private final ServiceLeistungen serviceLeistungen;
 
     private final DomainEventPublisher domainEventPublisher;
 
@@ -58,9 +58,9 @@ public class RechnungsErstellungsService implements DomainService {
      * @return die ID der erstellten Rechnung.
      */
     @Publishes(domainEventTypes = RechnungErstellt.class)
-    public Rechnung.RechnungId handle(ErstelleRechnungFuerReservierung erstelleRechnungFuerReservierung){
-        var reservierung = reservierungRepository.findById(erstelleRechnungFuerReservierung.reservierungsNummer()).orElseThrow();
-        var serviceLeistungen = serviceLeistungRepository.find(erstelleRechnungFuerReservierung.reservierungsNummer())
+    public Rechnung.Id handle(ErstelleRechnungFuerReservierung erstelleRechnungFuerReservierung){
+        var reservierung = reservierungen.findById(erstelleRechnungFuerReservierung.reservierungsNummer()).orElseThrow();
+        var serviceLeistungen = this.serviceLeistungen.find(erstelleRechnungFuerReservierung.reservierungsNummer())
                 .stream().filter(sl -> erstelleRechnungFuerReservierung.serviceLeistungen().contains(sl.id()))
                 .toList();
 
@@ -71,7 +71,7 @@ public class RechnungsErstellungsService implements DomainService {
                 serviceLeistungen
         );
 
-        rechnungRepository.insert(neueRechnung);
+        rechnungen.insert(neueRechnung);
         domainEventPublisher.publish(new RechnungErstellt(
                     neueRechnung.id(),
                     neueRechnung.getReservierungsNummer(),
@@ -91,8 +91,8 @@ public class RechnungsErstellungsService implements DomainService {
      * @return die ID der erstellten Rechnung.
      */
     @Publishes(domainEventTypes = RechnungErstellt.class)
-    public Rechnung.RechnungId handle(ErstelleServiceRechnung erstelleServiceRechnung){
-        var serviceLeistungen = serviceLeistungRepository.find(erstelleServiceRechnung.reservierungsNummer())
+    public Rechnung.Id handle(ErstelleServiceRechnung erstelleServiceRechnung){
+        var serviceLeistungen = this.serviceLeistungen.find(erstelleServiceRechnung.reservierungsNummer())
                 .stream().filter(sl -> erstelleServiceRechnung.serviceLeistungen().contains(sl.id()))
                 .toList();
         var neueRechnung = neueServiceRechnung(
@@ -101,7 +101,7 @@ public class RechnungsErstellungsService implements DomainService {
                 serviceLeistungen
         );
 
-        rechnungRepository.insert(neueRechnung);
+        rechnungen.insert(neueRechnung);
         domainEventPublisher.publish(new RechnungErstellt(
                 neueRechnung.id(),
                 neueRechnung.getReservierungsNummer(),
@@ -116,7 +116,7 @@ public class RechnungsErstellungsService implements DomainService {
                                                         Adresse rechnungsAdresse,
                                                         List<ServiceLeistung> serviceLeistungen){
         var rechnung = new Rechnung(
-                new Rechnung.RechnungId(UUID.randomUUID()),
+                new Rechnung.Id(UUID.randomUUID()),
                 erstelleRechnungFuerReservierung.reservierungsNummer(),
                 zimmerPreis,
                 LocalDateTime.now(),
@@ -131,7 +131,7 @@ public class RechnungsErstellungsService implements DomainService {
                                                 List<ServiceLeistung> serviceLeistungen
     ){
         var rechnung = new Rechnung(
-                new Rechnung.RechnungId(UUID.randomUUID()),
+                new Rechnung.Id(UUID.randomUUID()),
                 erstelleServiceRechnung.reservierungsNummer(),
                 null,
                 LocalDateTime.now(),

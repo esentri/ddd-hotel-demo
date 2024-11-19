@@ -20,8 +20,8 @@ import com.esentri.rezeption.core.domain.Adresse;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import nitrox.dlc.domain.types.AggregateRoot;
-import nitrox.dlc.domain.types.Identity;
+import io.domainlifecycles.domain.types.AggregateRoot;
+import io.domainlifecycles.domain.types.Identity;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -43,17 +43,17 @@ import java.util.UUID;
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
-public class Hotel implements AggregateRoot<Hotel.HotelId> {
+public class Hotel implements AggregateRoot<Hotel.Id> {
 
     /**
      * Eindeutige Identität eines Hotels.
      *
      * @see Identity
      */
-    public record HotelId(UUID value) implements Identity<UUID> {}
+    public record Id(UUID value) implements Identity<UUID> {}
 
     @EqualsAndHashCode.Include
-    private final HotelId id;
+    private final Id id;
 
     private String name;
     private Adresse adresse;
@@ -71,7 +71,7 @@ public class Hotel implements AggregateRoot<Hotel.HotelId> {
      * @throws NullPointerException wenn name oder adresse null sind.
      */
     @Builder
-    public Hotel(HotelId id, String name, Adresse adresse) {
+    public Hotel(Id id, String name, Adresse adresse) {
         if (id == null) throw new IllegalArgumentException("Id darf nicht null sein");
 
         validateName(name);
@@ -134,7 +134,7 @@ public class Hotel implements AggregateRoot<Hotel.HotelId> {
      * @return Eindeutige Identität des Hotels.
      */
     @Override
-    public HotelId id() {
+    public Id id() {
         return id;
     }
 

@@ -22,8 +22,8 @@ import com.esentri.rezeption.core.domain.zimmer.Zimmer;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import nitrox.dlc.domain.types.AggregateRoot;
-import nitrox.dlc.domain.types.Identity;
+import io.domainlifecycles.domain.types.AggregateRoot;
+import io.domainlifecycles.domain.types.Identity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -49,7 +49,7 @@ public class Reservierung implements AggregateRoot<Reservierung.ReservierungsNum
     @EqualsAndHashCode.Include
     private final ReservierungsNummer reservierungsNummer;
 
-    private final Hotel.HotelId hotelId;
+    private final Hotel.Id hotelId;
 
     private final LocalDate geplanteAnkunftAm;
 
@@ -75,7 +75,7 @@ public class Reservierung implements AggregateRoot<Reservierung.ReservierungsNum
 
     public Reservierung(
             ReservierungsNummer reservierungsNummer,
-            Hotel.HotelId hotelId,
+            Hotel.Id hotelId,
             LocalDate geplanteAnkunftAm,
             LocalDateTime checkInAm,
             LocalDateTime checkOutAm,

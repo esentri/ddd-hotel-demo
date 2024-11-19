@@ -22,19 +22,19 @@ import com.esentri.rezeption.core.domain.zimmer.BeantrageZimmerWartung;
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerWartungEingeplant;
-import com.esentri.rezeption.outbound.ZimmerAuslastung;
-import nitrox.dlc.domain.types.Driver;
+import com.esentri.rezeption.core.domain.zimmer.ZimmerAuslastung;
+import io.domainlifecycles.domain.types.ApplicationService;
 
 import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Die Schnittstelle ZimmerDriver ermöglicht den Zugriff und die Manipulation von Zimmerdaten.
+ * Die Schnittstelle ZimmerUseCases ermöglicht den Zugriff und die Manipulation von Zimmerdaten.
  * Sie bietet Methoden zum Abfragen verfügbarer Zimmer und zum Planen der Zimmerwartung.
  *
  * @author Mario Herb
  */
-public interface ZimmerDriver extends Driver {
+public interface ZimmerUseCases extends ApplicationService {
 
     /**
      * Behandelt das Ereignis, dass eine Zimmerwartung geplant wurde.
@@ -65,7 +65,7 @@ public interface ZimmerDriver extends Driver {
      * @param kapazitaet die benötige Kapazität
      * @return eine Liste von Zimmernummern der verfügbaren Zimmer
      */
-    List<Zimmer.ZimmerNummer> verfuegbareZimmer(Hotel.HotelId hotelId, LocalDate von, LocalDate bis, ZimmerKategorie zimmerKategorie, int kapazitaet);
+    List<Zimmer.ZimmerNummer> verfuegbareZimmer(Hotel.Id hotelId, LocalDate von, LocalDate bis, ZimmerKategorie zimmerKategorie, int kapazitaet);
 
     /**
      * Behandelt die Anforderung einer Zimmerwartung.
@@ -85,6 +85,6 @@ public interface ZimmerDriver extends Driver {
      * @return Eine Liste von ZimmerAuslastung Objekten mit der Anzahl der belegten und freien Zimmer für jeden Tag des gewählten Zeitraums.
      * @throws IllegalStateException wenn hotelId, von, bis nicht korrekt definiert sind
      */
-    List<ZimmerAuslastung> auslastung(Hotel.HotelId hotelId, LocalDate von, LocalDate bis);
+    List<ZimmerAuslastung> auslastung(Hotel.Id hotelId, LocalDate von, LocalDate bis);
 
 }

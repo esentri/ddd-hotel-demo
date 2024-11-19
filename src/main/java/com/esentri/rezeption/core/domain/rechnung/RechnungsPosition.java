@@ -20,8 +20,8 @@ import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import nitrox.dlc.domain.types.Entity;
-import nitrox.dlc.domain.types.Identity;
+import io.domainlifecycles.domain.types.Entity;
+import io.domainlifecycles.domain.types.Identity;
 
 import java.util.UUID;
 
@@ -52,7 +52,7 @@ public class RechnungsPosition implements Entity<RechnungsPosition.RechnungsPosi
     /**
      * Der Identifier der ServiceLeistung, die mit dieser Rechnungsposition abgerechnet wird.
      */
-    private final ServiceLeistung.LeistungsId leistungsId;
+    private final ServiceLeistung.Id leistungsId;
 
     /**
      * Eine Beschreibung der Rechnungsposition.
@@ -79,13 +79,13 @@ public class RechnungsPosition implements Entity<RechnungsPosition.RechnungsPosi
     RechnungsPosition(RechnungsPositionId id,
                       Preis preis,
                       String beschreibung,
-                      ServiceLeistung.LeistungsId leistungsId
+                      ServiceLeistung.Id leistungsId
     ) {
         if (preis == null) {
             throw new IllegalArgumentException("Preis darf nicht null sein");
         }
         if (leistungsId == null) {
-            throw new IllegalArgumentException("LeistungsId darf nicht null sein");
+            throw new IllegalArgumentException("Id darf nicht null sein");
         }
         if (beschreibung != null && beschreibung.length() > 1000) {
             throw new IllegalArgumentException("Beschreibung darf nicht mehr als 1000 Zeichen enthalten.");

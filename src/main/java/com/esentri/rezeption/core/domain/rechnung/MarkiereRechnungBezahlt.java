@@ -16,7 +16,7 @@
 
 package com.esentri.rezeption.core.domain.rechnung;
 
-import nitrox.dlc.domain.types.DomainCommand;
+import io.domainlifecycles.domain.types.DomainCommand;
 
 /**
  * Ein DomainCommand zur Markierung einer Rechnung als bezahlt.
@@ -25,10 +25,9 @@ import nitrox.dlc.domain.types.DomainCommand;
  *
  *
  * @param rechnungId Die ID der Rechnung, die als bezahlt markiert werden soll.
- * @see com.esentri.rezeption.ddd.DomainCommand
  * @see com.esentri.rezeption.core.domain.rechnung.Rechnung
  * @author Mario Herb
  */
-public record MarkiereRechnungBezahlt(Rechnung.RechnungId rechnungId) implements DomainCommand {
+public record MarkiereRechnungBezahlt(Rechnung.Id rechnungId) implements DomainCommand {
 
 }

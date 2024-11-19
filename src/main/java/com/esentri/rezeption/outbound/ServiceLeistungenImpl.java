@@ -21,7 +21,7 @@ import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.reservierung.Reservierung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceTyp;
-import com.esentri.rezeption.core.outport.ServiceLeistungRepository;
+import com.esentri.rezeption.core.outport.ServiceLeistungen;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -30,19 +30,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Die Klasse ServiceLeistungRepositoryImpl bietet eine Implementierung des
- * ServiceLeistungRepository-Interfaces. Sie erweitert BaseInMemoryRepository.
+ * Die Klasse ServiceLeistungenImpl bietet eine Implementierung des
+ * ServiceLeistungen-Interfaces. Sie erweitert BaseInMemoryRepository.
  *
  * @author Mario Herb
  */
 @Repository
-public class ServiceLeistungRepositoryImpl extends BaseInMemoryRepository<ServiceLeistung.LeistungsId, ServiceLeistung> implements ServiceLeistungRepository {
+public class ServiceLeistungenImpl extends BaseInMemoryRepository<ServiceLeistung.Id, ServiceLeistung> implements ServiceLeistungen {
 
     /**
      * Der Standardkonstruktor erstellt ein neues Objekt dieses Typs und füllt das Repository
      * mit vordefinierten Daten.
      */
-    public ServiceLeistungRepositoryImpl() {
+    public ServiceLeistungenImpl() {
         super(new ArrayList<>());
         allAggregates.addAll(List.of(
                 new ServiceLeistung(

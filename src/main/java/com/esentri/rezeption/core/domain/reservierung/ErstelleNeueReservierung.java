@@ -19,7 +19,7 @@ package com.esentri.rezeption.core.domain.reservierung;
 import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
-import nitrox.dlc.domain.types.DomainCommand;
+import io.domainlifecycles.domain.types.DomainCommand;
 
 import java.time.LocalDate;
 
@@ -40,12 +40,12 @@ import java.time.LocalDate;
  *
  * @author Mario Herb
  * @see DomainCommand
- * @see Hotel.HotelId
+ * @see Hotel.Id
  * @see ZimmerKategorie
  * @see Preis
  */
 public record ErstelleNeueReservierung(
-                                  Hotel.HotelId hotelId,
+                                  Hotel.Id hotelId,
                                   LocalDate geplanteAnkunftAm,
                                   int geplanteAnzahlNaechte,
                                   Preis angebotenerZimmerpreis,

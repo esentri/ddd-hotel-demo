@@ -17,10 +17,11 @@
 package com.esentri.rezeption.outbound;
 
 import com.esentri.rezeption.core.domain.hotel.Hotel;
+import com.esentri.rezeption.core.domain.zimmer.ZimmerAuslastung;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
-import com.esentri.rezeption.core.outport.ZimmerRepository;
+import com.esentri.rezeption.core.outport.ZimmerAuslastungen;
+import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
 import lombok.RequiredArgsConstructor;
-import nitrox.dlc.domain.types.QueryClient;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -35,9 +36,9 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Service
-public class ZimmerAuslastungProvider implements QueryClient<ZimmerAuslastung> {
+public class ZimmerAuslastungenImpl implements ZimmerAuslastungen {
 
-    private final ZimmerRepository zimmerRepository;
+    private final ZimmerVerwaltung zimmerVerwaltung;
 
     /**
      * Berechnet und liefert eine Liste von ZimmerAuslastungen für ein bestimmtes Hotel und einen bestimmten Zeitraum.
@@ -48,7 +49,7 @@ public class ZimmerAuslastungProvider implements QueryClient<ZimmerAuslastung> {
      * @return Eine Liste von ZimmerAuslastung Objekten mit der Anzahl der belegten und freien Zimmer für jeden Tag des gewählten Zeitraums.
      * @throws IllegalStateException wenn hotelId, von, bis nicht korrekt definiert sind
      */
-    public List<ZimmerAuslastung> auslastung(Hotel.HotelId hotelId, LocalDate von, LocalDate bis){
+    public List<ZimmerAuslastung> auslastung(Hotel.Id hotelId, LocalDate von, LocalDate bis){
         if(hotelId == null){
             throw new IllegalStateException("Auslastung kann nur pro Hotel abgefragt werden!");
         }
@@ -58,7 +59,7 @@ public class ZimmerAuslastungProvider implements QueryClient<ZimmerAuslastung> {
         if(von.isAfter(bis)){
             throw new IllegalStateException("Bei einer Auslastungabfrage darf 'von' nicht nach 'bis' sein!");
         }
-        var alleZimmerGruppiert = zimmerRepository.listByHotel(hotelId).stream()
+        var alleZimmerGruppiert = zimmerVerwaltung.listByHotel(hotelId).stream()
                 .collect(Collectors.groupingBy(z -> new KategorieUndKapazitaet(z.getKategorie(), z.getKapazitaet())));
         var datum = von;
         var auslastungsUebersicht = new ArrayList<ZimmerAuslastung>();

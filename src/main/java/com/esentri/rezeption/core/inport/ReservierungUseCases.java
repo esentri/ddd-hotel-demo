@@ -21,7 +21,7 @@ import com.esentri.rezeption.core.domain.reservierung.ErstelleNeueReservierung;
 import com.esentri.rezeption.core.domain.reservierung.Reservierung;
 import com.esentri.rezeption.core.domain.reservierung.StorniereReservierung;
 import com.esentri.rezeption.core.domain.reservierung.VervollstaendigeGastDaten;
-import nitrox.dlc.domain.types.Driver;
+import io.domainlifecycles.domain.types.ApplicationService;
 
 /**
  * Dieses Interface bietet eine Methode an, um verschiedene Commands für Reservierungen zu handhaben. Diese Commands umfassen die Erstellung
@@ -29,7 +29,7 @@ import nitrox.dlc.domain.types.Driver;
  *
  * @author Mario Herb
  */
-public interface ReservierungDriver extends Driver {
+public interface ReservierungUseCases extends ApplicationService {
 
     /**
      * Behandelt den Command zur Erstellung einer neuen Reservierung.

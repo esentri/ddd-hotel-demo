@@ -14,10 +14,10 @@
  *  limitations under the License.
  */
 
-package com.esentri.rezeption.outbound;
+package com.esentri.rezeption.core.domain.zimmer;
 
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
-import nitrox.dlc.domain.types.ReadModel;
+import io.domainlifecycles.domain.types.ReadModel;
 
 import java.time.LocalDate;
 

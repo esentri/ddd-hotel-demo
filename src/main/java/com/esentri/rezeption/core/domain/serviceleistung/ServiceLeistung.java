@@ -21,8 +21,8 @@ import com.esentri.rezeption.core.domain.rechnung.Rechnung;
 import com.esentri.rezeption.core.domain.reservierung.Reservierung;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import nitrox.dlc.domain.types.AggregateRoot;
-import nitrox.dlc.domain.types.Identity;
+import io.domainlifecycles.domain.types.AggregateRoot;
+import io.domainlifecycles.domain.types.Identity;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -36,16 +36,16 @@ import java.util.UUID;
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
-public class ServiceLeistung implements AggregateRoot<ServiceLeistung.LeistungsId> {
+public class ServiceLeistung implements AggregateRoot<ServiceLeistung.Id> {
 
-    public record LeistungsId(UUID value) implements Identity<UUID> {}
+    public record Id(UUID value) implements Identity<UUID> {}
 
     @EqualsAndHashCode.Include
-    private final LeistungsId id;
+    private final Id id;
 
     private final Reservierung.ReservierungsNummer reservierungsNummer;
 
-    private Rechnung.RechnungId abgerechnetPer;
+    private Rechnung.Id abgerechnetPer;
 
     private final String beschreibung;
     private final ServiceTyp serviceTyp;
@@ -54,14 +54,14 @@ public class ServiceLeistung implements AggregateRoot<ServiceLeistung.LeistungsI
 
     private long concurrencyVersion;
 
-    public ServiceLeistung(LeistungsId id,
+    public ServiceLeistung(Id id,
                            Reservierung.ReservierungsNummer reservierungsNummer,
                            String beschreibung,
                            LocalDateTime erhaltenAm,
                            ServiceTyp serviceTyp,
                            Preis nettoPreis
     ) {
-        Objects.requireNonNull(id, "Die LeistungsId darf nicht null sein.");
+        Objects.requireNonNull(id, "Die Id darf nicht null sein.");
         Objects.requireNonNull(reservierungsNummer, "Die referenzierte ReservierungsNummer darf nicht null sein.");
         Objects.requireNonNull(serviceTyp, "Der ServiceTyp darf nicht null sein.");
         Objects.requireNonNull(nettoPreis, "Der NettoPreis darf nicht null sein.");
@@ -81,12 +81,12 @@ public class ServiceLeistung implements AggregateRoot<ServiceLeistung.LeistungsI
     }
 
     @Override
-    public LeistungsId id() {
+    public Id id() {
         return id;
     }
 
-    public ServiceLeistung abgerechnet(Rechnung.RechnungId rechnungId){
-        Objects.requireNonNull(rechnungId, "Die RechnungId darf nicht null sein.");
+    public ServiceLeistung abgerechnet(Rechnung.Id rechnungId){
+        Objects.requireNonNull(rechnungId, "Die Id darf nicht null sein.");
         this.abgerechnetPer = rechnungId;
         return this;
     }

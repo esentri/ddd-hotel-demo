@@ -17,9 +17,9 @@
 package com.esentri.rezeption.core.base;
 
 
-import nitrox.dlc.domain.types.AggregateRoot;
-import nitrox.dlc.domain.types.Identity;
-import nitrox.dlc.domain.types.Repository;
+import io.domainlifecycles.domain.types.AggregateRoot;
+import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.Repository;
 
 import java.util.List;
 import java.util.Objects;

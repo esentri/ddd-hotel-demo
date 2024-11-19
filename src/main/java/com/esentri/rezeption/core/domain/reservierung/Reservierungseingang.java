@@ -19,11 +19,11 @@ package com.esentri.rezeption.core.domain.reservierung;
 import com.esentri.rezeption.core.domain.zimmer.Belegung;
 import com.esentri.rezeption.core.domain.zimmer.BelegungTyp;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
-import com.esentri.rezeption.core.outport.ReservierungRepository;
-import com.esentri.rezeption.core.outport.ZimmerRepository;
+import com.esentri.rezeption.core.outport.Reservierungen;
+import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
 import lombok.RequiredArgsConstructor;
-import nitrox.dlc.domain.types.DomainService;
-import nitrox.dlc.domain.types.Publishes;
+import io.domainlifecycles.domain.types.DomainService;
+import io.domainlifecycles.domain.types.Publishes;
 
 import java.util.UUID;
 
@@ -33,11 +33,11 @@ import java.util.UUID;
  * @author Mario Herb
  */
 @RequiredArgsConstructor
-public class ReservierungsEingangService implements DomainService {
+public class Reservierungseingang implements DomainService {
 
-    private final ReservierungRepository reservierungRepository;
+    private final Reservierungen reservierungen;
 
-    private final ZimmerRepository zimmerRepository;
+    private final ZimmerVerwaltung zimmerVerwaltung;
 
     private final DomainEventPublisher domainEventPublisher;
 
@@ -51,7 +51,7 @@ public class ReservierungsEingangService implements DomainService {
      */
     @Publishes(domainEventTypes = NeueReservierungErhalten.class)
     public Reservierung.ReservierungsNummer handle(ErstelleNeueReservierung erstelleNeueReservierung){
-        var moeglicheZimmmer = zimmerRepository.listZimmerByKategorieAndKapazitaet(
+        var moeglicheZimmmer = zimmerVerwaltung.listZimmerByKategorieAndKapazitaet(
                 erstelleNeueReservierung.hotelId(),
                 erstelleNeueReservierung.gewuenschteZimmerKategorie(),
                 erstelleNeueReservierung.gewuenschteKapazitaet()
@@ -63,7 +63,7 @@ public class ReservierungsEingangService implements DomainService {
         );
         var anzahlUnbelegteZimmer = moeglicheZimmmer.stream().filter(z -> !z.hatUeberschneidendeBelegung(probeBelegung)).count();
         if(anzahlUnbelegteZimmer>0) {
-            var reservierung = reservierungRepository.insert(neueReservierung(erstelleNeueReservierung));
+            var reservierung = reservierungen.insert(neueReservierung(erstelleNeueReservierung));
             domainEventPublisher.publish(new NeueReservierungErhalten(reservierung.id()));
             return reservierung.id();
         }

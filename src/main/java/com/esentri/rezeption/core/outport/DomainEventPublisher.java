@@ -15,7 +15,7 @@
  */
 
 package com.esentri.rezeption.core.outport;
-import nitrox.dlc.domain.types.DomainEvent;
+import io.domainlifecycles.domain.types.DomainEvent;
 
 /**
  * Dies ist die Schnittstelle für den DomainEventPublisher.
