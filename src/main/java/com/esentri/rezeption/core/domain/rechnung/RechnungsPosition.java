@@ -18,10 +18,10 @@ package com.esentri.rezeption.core.domain.rechnung;
 
 import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import io.domainlifecycles.domain.types.Entity;
 import io.domainlifecycles.domain.types.Identity;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.util.UUID;
 

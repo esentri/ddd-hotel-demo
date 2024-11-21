@@ -20,10 +20,10 @@ import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.Identity;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

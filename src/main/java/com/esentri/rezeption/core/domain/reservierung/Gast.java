@@ -17,11 +17,11 @@
 package com.esentri.rezeption.core.domain.reservierung;
 
 import com.esentri.rezeption.core.domain.Adresse;
+import io.domainlifecycles.domain.types.Entity;
+import io.domainlifecycles.domain.types.Identity;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import io.domainlifecycles.domain.types.Entity;
-import io.domainlifecycles.domain.types.Identity;
 
 import java.time.LocalDate;
 import java.time.Period;

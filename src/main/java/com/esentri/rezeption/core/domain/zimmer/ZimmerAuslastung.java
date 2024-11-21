@@ -16,7 +16,6 @@
 
 package com.esentri.rezeption.core.domain.zimmer;
 
-import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
 import io.domainlifecycles.domain.types.ReadModel;
 
 import java.time.LocalDate;

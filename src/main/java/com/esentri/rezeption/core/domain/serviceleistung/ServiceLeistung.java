@@ -19,10 +19,10 @@ package com.esentri.rezeption.core.domain.serviceleistung;
 import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.rechnung.Rechnung;
 import com.esentri.rezeption.core.domain.reservierung.Reservierung;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.Identity;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

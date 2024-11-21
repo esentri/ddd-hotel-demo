@@ -20,12 +20,12 @@ import com.esentri.rezeption.core.domain.Adresse;
 import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.reservierung.Reservierung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
+import io.domainlifecycles.domain.types.AggregateRoot;
+import io.domainlifecycles.domain.types.Identity;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import io.domainlifecycles.domain.types.AggregateRoot;
-import io.domainlifecycles.domain.types.Identity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

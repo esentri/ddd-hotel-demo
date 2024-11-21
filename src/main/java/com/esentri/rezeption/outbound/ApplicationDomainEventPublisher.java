@@ -17,8 +17,8 @@
 package com.esentri.rezeption.outbound;
 
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
-import lombok.RequiredArgsConstructor;
 import io.domainlifecycles.domain.types.DomainEvent;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 

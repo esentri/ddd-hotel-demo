@@ -17,11 +17,11 @@
 package com.esentri.rezeption.core.domain.hotel;
 
 import com.esentri.rezeption.core.domain.Adresse;
+import io.domainlifecycles.domain.types.AggregateRoot;
+import io.domainlifecycles.domain.types.Identity;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import io.domainlifecycles.domain.types.AggregateRoot;
-import io.domainlifecycles.domain.types.Identity;
 
 import java.util.Objects;
 import java.util.UUID;

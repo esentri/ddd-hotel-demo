@@ -2,8 +2,19 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.3'
 	id 'io.spring.dependency-management' version '1.1.4'
-	id 'org.quiltmc.gradle.licenser' version '2.0.1'
+//	id 'io.domainlifecycles.dlc-gradle-plugin' version '1.0.0'
 }
+
+//dlcGradlePlugin {
+//	projectBuildDir = layout.buildDirectory
+//	contextPackages = ["com.esentri"]
+//}
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
 
 group = 'com.esentri'
 version = '0.0.1-SNAPSHOT'
@@ -18,10 +29,7 @@ configurations {
 	}
 }
 
-repositories {
-	mavenCentral()
-	mavenLocal()
-}
+
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
@@ -38,13 +46,10 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-plugins.withId('org.quiltmc.gradle.licenser') {
-	license {
-		checkLicenseMain.enabled(false)
-		checkLicenseTest.enabled(false)
-		// Add a license header rule, at least one must be present.
-		rule file("./copyright/HEADER")
-		// Apply license header ONLY to Java files
-		include '**/*.java'
-	}
-}
+
+
+
+
+
+
+

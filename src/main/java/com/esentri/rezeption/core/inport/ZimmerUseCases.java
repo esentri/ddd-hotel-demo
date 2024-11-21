@@ -20,9 +20,9 @@ import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.reservierung.ReservierungAusgecheckt;
 import com.esentri.rezeption.core.domain.zimmer.BeantrageZimmerWartung;
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
+import com.esentri.rezeption.core.domain.zimmer.ZimmerAuslastung;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerWartungEingeplant;
-import com.esentri.rezeption.core.domain.zimmer.ZimmerAuslastung;
 import io.domainlifecycles.domain.types.ApplicationService;
 
 import java.time.LocalDate;

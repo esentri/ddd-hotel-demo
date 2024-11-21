@@ -21,11 +21,8 @@ import com.esentri.rezeption.core.domain.rechnung.ErstelleRechnungFuerReservieru
 import com.esentri.rezeption.core.domain.rechnung.ErstelleServiceRechnung;
 import com.esentri.rezeption.core.domain.rechnung.MarkiereRechnungBezahlt;
 import com.esentri.rezeption.core.domain.rechnung.Rechnung;
-import com.esentri.rezeption.core.domain.rechnung.RechnungErstellt;
 import com.esentri.rezeption.core.domain.reservierung.Reservierung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
-import com.esentri.rezeption.core.domain.zimmer.Belegung;
-import com.esentri.rezeption.core.domain.zimmer.Zimmer;
 import com.esentri.rezeption.core.inport.RechnungUseCases;
 import com.esentri.rezeption.core.inport.ReservierungUseCases;
 import com.esentri.rezeption.core.inport.ServiceLeistungUseCases;
@@ -40,7 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-//@Disabled
+@Disabled
 public class GenerateDiagramTest {
 
     @Test
