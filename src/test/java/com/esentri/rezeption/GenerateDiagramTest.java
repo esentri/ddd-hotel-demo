@@ -17,14 +17,14 @@
 package com.esentri.rezeption;
 
 import com.esentri.rezeption.core.base.BaseInMemoryRepository;
-import com.esentri.rezeption.core.domain.rechnung.ErstelleRechnungFuerReservierung;
+import com.esentri.rezeption.core.domain.buchung.Buchung;
+import com.esentri.rezeption.core.domain.rechnung.ErstelleRechnungFuerBuchung;
 import com.esentri.rezeption.core.domain.rechnung.ErstelleServiceRechnung;
 import com.esentri.rezeption.core.domain.rechnung.MarkiereRechnungBezahlt;
 import com.esentri.rezeption.core.domain.rechnung.Rechnung;
-import com.esentri.rezeption.core.domain.reservierung.Reservierung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
+import com.esentri.rezeption.core.inport.BuchungUseCases;
 import com.esentri.rezeption.core.inport.RechnungUseCases;
-import com.esentri.rezeption.core.inport.ReservierungUseCases;
 import com.esentri.rezeption.core.inport.ServiceLeistungUseCases;
 import com.esentri.rezeption.core.inport.ZimmerUseCases;
 import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-@Disabled
+//@Disabled
 public class GenerateDiagramTest {
 
     @Test
@@ -70,10 +70,10 @@ public class GenerateDiagramTest {
                 .withContextPackageName("com.esentri.rezeption")
                 .withClassesBlacklist(List.of(
                         BaseInMemoryRepository.class.getName(),
-                        ErstelleRechnungFuerReservierung.class.getName(),
+                        ErstelleRechnungFuerBuchung.class.getName(),
                         ErstelleServiceRechnung.class.getName(),
                         MarkiereRechnungBezahlt.class.getName(),
-                        Reservierung.class.getName(),
+                        Buchung.class.getName(),
                         Rechnung.class.getName(),
                         ServiceLeistung.class.getName()
                 ))
@@ -123,7 +123,7 @@ public class GenerateDiagramTest {
     }
 
     @Test
-    void generateDiagramForAppZimmerDriver() {
+    void generateDiagramForAppZimmerUseCases() {
         Domain.setGenericTypeResolver(new TypeMetaResolver());
         Domain.initialize(new ReflectiveDomainMirrorFactory("com.esentri.rezeption"));
 
@@ -132,7 +132,7 @@ public class GenerateDiagramTest {
                 .withContextPackageName("com.esentri.rezeption")
                 .withClassesBlacklist(List.of(BaseInMemoryRepository.class.getName()))
                 .withShowFields(false)
-                .withShowMethods(false)
+                .withShowMethods(true)
                 .withShowReadModels(false)
                 .withCallApplicationServiceDriver(false)
                 .withShowQueryHandlers(false)
@@ -154,9 +154,7 @@ public class GenerateDiagramTest {
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
                 .withContextPackageName("com.esentri.rezeption")
                 .withClassesBlacklist(List.of(
-                        BaseInMemoryRepository.class.getName()//,
-                       // Zimmer.class.getName(),
-                       // Belegung.class.getName()
+                        BaseInMemoryRepository.class.getName()
                 ))
                 .withShowFields(true)
                 .withShowMethods(true)
@@ -178,7 +176,7 @@ public class GenerateDiagramTest {
     }
 
     @Test
-    void generateDiagramForAppReservierungDriver() {
+    void generateDiagramForAppBuchungUseCases() {
         Domain.setGenericTypeResolver(new TypeMetaResolver());
         Domain.initialize(new ReflectiveDomainMirrorFactory("com.esentri.rezeption"));
 
@@ -189,9 +187,9 @@ public class GenerateDiagramTest {
                         BaseInMemoryRepository.class.getName()
                 ))
                 .withShowFields(false)
-                .withShowMethods(false)
+                .withShowMethods(true)
                 .withCallApplicationServiceDriver(false)
-                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ReservierungUseCases.class.getName()))
+                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(BuchungUseCases.class.getName()))
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig);
@@ -201,7 +199,7 @@ public class GenerateDiagramTest {
     }
 
     @Test
-    void generateDiagramForAppRechnungDriver() {
+    void generateDiagramForAppRechnungUseCases() {
         Domain.setGenericTypeResolver(new TypeMetaResolver());
         Domain.initialize(new ReflectiveDomainMirrorFactory("com.esentri.rezeption"));
 
@@ -224,7 +222,7 @@ public class GenerateDiagramTest {
     }
 
     @Test
-    void generateDiagramForAppServiceLeistungDriver() {
+    void generateDiagramForAppServiceLeistungUseCases() {
         Domain.setGenericTypeResolver(new TypeMetaResolver());
         Domain.initialize(new ReflectiveDomainMirrorFactory("com.esentri.rezeption"));
 

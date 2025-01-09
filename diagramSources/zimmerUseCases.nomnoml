@@ -49,29 +49,79 @@
 // !!! com.esentri.rezeption.core.domain.zimmer.BeantrageZimmerWartung !!!
 [<DC> BeantrageZimmerWartung <<DomainCommand>> ]
 // !!! com.esentri.rezeption.inbound.ZimmerUseCasesImpl !!!
-[<AS> ZimmerUseCases <<ApplicationService>> ]
+[<AS> ZimmerUseCases <<ApplicationService>> |
++ List<ZimmerAuslastung> auslastung(Hotel$Id,LocalDate,LocalDate)
++ void handle(BeantrageZimmerWartung)
++ void onEvent(BuchungAusgecheckt)
++ void onEvent(ZimmerWartungEingeplant)
++ List<Zimmer$ZimmerNummer> verfuegbareZimmer(Hotel$Id,LocalDate,LocalDate,ZimmerKategorie,int)
+]
 // !!! com.esentri.rezeption.core.domain.zimmer.ZimmerWartungEingeplant !!!
 [<DE> ZimmerWartungEingeplant <<DomainEvent>> ]
 // !!! com.esentri.rezeption.core.domain.zimmer.ZimmerWartungAbgelehnt !!!
 [<DE> ZimmerWartungAbgelehnt <<DomainEvent>> ]
-// !!! com.esentri.rezeption.core.domain.reservierung.ReservierungAusgecheckt !!!
-[<DE> ReservierungAusgecheckt <<DomainEvent>> ]
 // !!! com.esentri.rezeption.core.domain.zimmer.ZimmerWartungBestaetigt !!!
 [<DE> ZimmerWartungBestaetigt <<DomainEvent>> ]
+// !!! com.esentri.rezeption.core.domain.buchung.BuchungAusgecheckt !!!
+[<DE> BuchungAusgecheckt <<DomainEvent>> ]
 // !!! {Frame} com.esentri.rezeption.core.domain.zimmer.Zimmer !!!
 [<AF> Zimmer <<Aggregate>>|
 // !!! com.esentri.rezeption.core.domain.zimmer.Zimmer !!!
-[<AR> Zimmer <<AggregateRoot>> ]
+[<AR> Zimmer <<AggregateRoot>> |
++ Optional<Belegung> aktuelleBelegung()
++ Zimmer aktuelleBelegungBeenden()
++ boolean hatUeberschneidendeBelegung(Belegung)
++ boolean neueBelegung(LocalDate,LocalDate,BelegungTyp)
+]
 // !!! com.esentri.rezeption.core.domain.zimmer.Belegung !!!
-[<VO> Belegung <<ValueObject>> ]
+[<VO> Belegung <<ValueObject>> |
++ boolean istBelegtAm(LocalDate)
++ boolean ueberschneidetZeitraum(LocalDate,LocalDate)
+]
 [<AR>Zimmer <<AggregateRoot>>]  o-[<label> belegungen 0..*] - [<VO>Belegung <<ValueObject>>]
 ]
+// !!! {Frame} com.esentri.rezeption.core.domain.buchung.Buchung !!!
+[<AF> Buchung <<Aggregate>>|
+// !!! com.esentri.rezeption.core.domain.buchung.Buchung !!!
+[<AR> Buchung <<AggregateRoot>> |
++ boolean buchungsZeitraumBeinhaltet(LocalDate)
++ Buchung checkeAus()
++ Buchung handle(CheckeEin)
++ Buchung handle(VervollstaendigeGastDaten)
++ Buchung storniere()
+]
+// !!! com.esentri.rezeption.core.domain.buchung.Gast !!!
+[<E> Gast <<Entity>> |
+]
+// !!! com.esentri.rezeption.core.domain.Adresse !!!
+[<VO> Adresse <<ValueObject>> |
+]
+[<AR>Buchung <<AggregateRoot>>]  +-[<label> gast 0..1] - [<E>Gast <<Entity>>]
+[<E>Gast <<Entity>>]  o-[<label> heimAdresse 0..1] - [<VO>Adresse <<ValueObject>>]
+]
+[<AF> Buchung <<Aggregate>>]  -[<label> Buchung.zimmerNummer] -> [<AF> Zimmer <<Aggregate>>]
+// !!! com.esentri.rezeption.outbound.BuchungenImpl !!!
+[<R> Buchungen <<Repository>> |
++ Optional<Buchung> deleteById(Buchung$BuchungsNummer)
++ Optional<Buchung> findById(Buchung$BuchungsNummer)
++ Buchung insert(Buchung)
++ List<Buchung> listAktiveBuchungenInZeitraum(Hotel$Id,LocalDate,LocalDate,ZimmerKategorie,Integer)
++ Buchung update(Buchung)
+]
 // !!! com.esentri.rezeption.outbound.ZimmerVerwaltungImpl !!!
-[<R> ZimmerVerwaltung <<Repository>> ]
+[<R> ZimmerVerwaltung <<Repository>> |
++ Optional<Zimmer> deleteById(Zimmer$ZimmerNummer)
++ Optional<Zimmer> findById(Zimmer$ZimmerNummer)
++ Zimmer insert(Zimmer)
++ List<Zimmer> listByHotel(Hotel$Id)
++ List<Zimmer> listZimmerByKategorieAndKapazitaet(Hotel$Id,ZimmerKategorie,int)
++ Zimmer update(Zimmer)
+]
 [<DC>BeantrageZimmerWartung <<DomainCommand>>]  --> [<AS>ZimmerUseCases <<ApplicationService>>]
 [<DE>ZimmerWartungEingeplant <<DomainEvent>>]  --> [<AS>ZimmerUseCases <<ApplicationService>>]
 [<AS>ZimmerUseCases <<ApplicationService>>]  --> [<DE>ZimmerWartungAbgelehnt <<DomainEvent>>]
-[<DE>ReservierungAusgecheckt <<DomainEvent>>]  --> [<AS>ZimmerUseCases <<ApplicationService>>]
 [<AS>ZimmerUseCases <<ApplicationService>>]  --> [<DE>ZimmerWartungBestaetigt <<DomainEvent>>]
+[<DE>BuchungAusgecheckt <<DomainEvent>>]  --> [<AS>ZimmerUseCases <<ApplicationService>>]
 [<AS>ZimmerUseCases <<ApplicationService>>]  -- [<R>ZimmerVerwaltung <<Repository>>]
+[<R>Buchungen <<Repository>>]  -- [<AF> Buchung <<Aggregate>>]
 [<R>ZimmerVerwaltung <<Repository>>]  -- [<AF> Zimmer <<Aggregate>>]

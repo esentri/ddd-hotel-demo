@@ -16,7 +16,7 @@
 
 package com.esentri.rezeption.inbound;
 
-import com.esentri.rezeption.core.domain.rechnung.ErstelleRechnungFuerReservierung;
+import com.esentri.rezeption.core.domain.rechnung.ErstelleRechnungFuerBuchung;
 import com.esentri.rezeption.core.domain.rechnung.ErstelleServiceRechnung;
 import com.esentri.rezeption.core.domain.rechnung.LadeRechnungPDF;
 import com.esentri.rezeption.core.domain.rechnung.MarkiereRechnungBezahlt;
@@ -60,8 +60,8 @@ public class RechnungUseCasesImpl implements RechnungUseCases {
      */
     @Override
     @Transactional
-    public Rechnung.Id handle(ErstelleRechnungFuerReservierung erstelleRechnungFuerReservierung) {
-        return rechnungsErstellung.handle(erstelleRechnungFuerReservierung);
+    public Rechnung.Id handle(ErstelleRechnungFuerBuchung erstelleRechnungFuerBuchung) {
+        return rechnungsErstellung.handle(erstelleRechnungFuerBuchung);
     }
 
     /**

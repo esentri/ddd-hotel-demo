@@ -18,7 +18,7 @@ package com.esentri.rezeption.core.domain.rechnung;
 
 import com.esentri.rezeption.core.domain.Adresse;
 import com.esentri.rezeption.core.domain.Preis;
-import com.esentri.rezeption.core.domain.reservierung.Reservierung;
+import com.esentri.rezeption.core.domain.buchung.Buchung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.Identity;
@@ -36,7 +36,7 @@ import java.util.UUID;
 
 /**
  * Rechnungsklasse zur Erstellung und Verwaltung von Rechnungen in unserem System, implementiert als DDD AggregateRoot.
- * Eine Rechnung bezieht sich immer auf eine Reservierung und kann verschiedene Rechnungspositionen enthalten.
+ * Eine Rechnung bezieht sich immer auf eine Buchung und kann verschiedene Rechnungspositionen enthalten.
  * Die Klasse verfolgt auch, wann sie erstellt und bezahlt wurde.
  *
  * @author Mario Herb
@@ -53,7 +53,7 @@ public class Rechnung implements AggregateRoot<Rechnung.Id> {
     @EqualsAndHashCode.Include
     private final Id id;
 
-    private final Reservierung.ReservierungsNummer reservierungsNummer;
+    private final Buchung.BuchungsNummer buchungsNummer;
 
     private Preis gesamtNetto;
 
@@ -78,17 +78,17 @@ public class Rechnung implements AggregateRoot<Rechnung.Id> {
      * Erstellt eine neue Rechnung mit den gegebenen Informationen.
      *
      * @param id identifikation der Rechnung
-     * @param reservierungsNummer Reservierungsnummer, auf die sich die Rechnung bezieht
+     * @param buchungsNummer BuchungsNummer, auf die sich die Rechnung bezieht
      * @param zimmerPreis Optionaler Preis für ein Zimmer (wenn vorhanden)
      * @param erstelltAm Datum und Uhrzeit, an dem die Rechnung erstellt wurde
      * @param rechnungsAdresse Die Adresse, an die die Rechnung gesendet wird
      */
     @Builder
-    public Rechnung(Id id, Reservierung.ReservierungsNummer reservierungsNummer, Preis zimmerPreis, LocalDateTime erstelltAm, Adresse rechnungsAdresse) {
+    public Rechnung(Id id, Buchung.BuchungsNummer buchungsNummer, Preis zimmerPreis, LocalDateTime erstelltAm, Adresse rechnungsAdresse) {
         Objects.requireNonNull(id, "Die Id darf nicht null sein.");
-        Objects.requireNonNull(reservierungsNummer, "Die referenzierte ReservierungsNummer darf nicht null sein.");
+        Objects.requireNonNull(buchungsNummer, "Die referenzierte BuchungsNummer darf nicht null sein.");
         this.id = id;
-        this.reservierungsNummer = reservierungsNummer;
+        this.buchungsNummer = buchungsNummer;
         this.zimmerPreis = Optional.ofNullable(zimmerPreis);
         this.erstelltAm = erstelltAm;
         this.rechnungsPositionen = new ArrayList<>();

@@ -19,9 +19,9 @@ package com.esentri.rezeption.core.domain.rechnung;
 import com.esentri.rezeption.core.domain.Adresse;
 import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
+import com.esentri.rezeption.core.outport.Buchungen;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
 import com.esentri.rezeption.core.outport.Rechnungen;
-import com.esentri.rezeption.core.outport.Reservierungen;
 import com.esentri.rezeption.core.outport.ServiceLeistungen;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.Publishes;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Stellt einen Service dar, der zum Erstellen von Rechnungen für Reservierungen und
+ * Stellt einen Service dar, der zum Erstellen von Rechnungen für Buchungen und
  * Serviceleistungen verwendet wird. Abhängigkeiten auf Repositories und EventPublisher
  * sind notwendig.
  *
@@ -43,38 +43,38 @@ public class RechnungsErstellung implements DomainService {
 
     private final Rechnungen rechnungen;
 
-    private final Reservierungen reservierungen;
+    private final Buchungen buchungen;
 
     private final ServiceLeistungen serviceLeistungen;
 
     private final DomainEventPublisher domainEventPublisher;
 
     /**
-     * Verarbeite die Anfrage zur Erstellung einer Rechnung für eine Reservierung.
-     * Die Anforderung enthält die Reservierungsnummer und eventuelle Serviceleistungen.
+     * Verarbeite die Anfrage zur Erstellung einer Rechnung für eine Buchung.
+     * Die Anforderung enthält die BuchungsNummer und eventuelle Serviceleistungen.
      * Nach dem Erstellen der Rechnung wird ein RechnungErstellt-Ereignis veröffentlicht.
      *
-     * @param erstelleRechnungFuerReservierung die Anforderung zur Erstellung einer Rechnung für eine Reservierung.
+     * @param erstelleRechnungFuerBuchung die Anforderung zur Erstellung einer Rechnung für eine Buchung.
      * @return die ID der erstellten Rechnung.
      */
     @Publishes(domainEventTypes = RechnungErstellt.class)
-    public Rechnung.Id handle(ErstelleRechnungFuerReservierung erstelleRechnungFuerReservierung){
-        var reservierung = reservierungen.findById(erstelleRechnungFuerReservierung.reservierungsNummer()).orElseThrow();
-        var serviceLeistungen = this.serviceLeistungen.find(erstelleRechnungFuerReservierung.reservierungsNummer())
-                .stream().filter(sl -> erstelleRechnungFuerReservierung.serviceLeistungen().contains(sl.id()))
+    public Rechnung.Id handle(ErstelleRechnungFuerBuchung erstelleRechnungFuerBuchung){
+        var buchung = buchungen.findById(erstelleRechnungFuerBuchung.buchungsNummer()).orElseThrow();
+        var serviceLeistungen = this.serviceLeistungen.find(erstelleRechnungFuerBuchung.buchungsNummer())
+                .stream().filter(sl -> erstelleRechnungFuerBuchung.serviceLeistungen().contains(sl.id()))
                 .toList();
 
-        var neueRechnung = neueRechnungFuerReservierung(
-                erstelleRechnungFuerReservierung,
-                reservierung.getAngebotenerZimmerpreis(),
-                erstelleRechnungFuerReservierung.rechnungsAdresse(),
+        var neueRechnung = neueRechnungFuerBuchung(
+                erstelleRechnungFuerBuchung,
+                buchung.getAngebotenerZimmerpreis(),
+                erstelleRechnungFuerBuchung.rechnungsAdresse(),
                 serviceLeistungen
         );
 
         rechnungen.insert(neueRechnung);
         domainEventPublisher.publish(new RechnungErstellt(
                     neueRechnung.id(),
-                    neueRechnung.getReservierungsNummer(),
+                    neueRechnung.getBuchungsNummer(),
                     neueRechnung.getGesamtNetto(),
                     serviceLeistungen.stream().map(ServiceLeistung::id).toList()
                 )
@@ -84,7 +84,7 @@ public class RechnungsErstellung implements DomainService {
 
     /**
      * Verarbeitet die Anforderung zum Erstellen einer Rechnung für Serviceleistungen.
-     * Die Anforderung enthält die Reservierungsnummer und Serviceleistungen.
+     * Die Anforderung enthält die BuchungsNummer und Serviceleistungen.
      * Nach der Erstellung der Rechnung wird ein RechnungErstellt-Ereignis veröffentlicht.
      *
      * @param erstelleServiceRechnung die Anforderung zum Erstellen einer Rechnung für eine Serviceleistung.
@@ -92,7 +92,7 @@ public class RechnungsErstellung implements DomainService {
      */
     @Publishes(domainEventTypes = RechnungErstellt.class)
     public Rechnung.Id handle(ErstelleServiceRechnung erstelleServiceRechnung){
-        var serviceLeistungen = this.serviceLeistungen.find(erstelleServiceRechnung.reservierungsNummer())
+        var serviceLeistungen = this.serviceLeistungen.find(erstelleServiceRechnung.buchungsNummer())
                 .stream().filter(sl -> erstelleServiceRechnung.serviceLeistungen().contains(sl.id()))
                 .toList();
         var neueRechnung = neueServiceRechnung(
@@ -104,20 +104,20 @@ public class RechnungsErstellung implements DomainService {
         rechnungen.insert(neueRechnung);
         domainEventPublisher.publish(new RechnungErstellt(
                 neueRechnung.id(),
-                neueRechnung.getReservierungsNummer(),
+                neueRechnung.getBuchungsNummer(),
                 neueRechnung.getGesamtNetto(),
                 serviceLeistungen.stream().map(ServiceLeistung::id).toList()
                 ));
         return neueRechnung.id();
     }
 
-    private static Rechnung neueRechnungFuerReservierung(ErstelleRechnungFuerReservierung erstelleRechnungFuerReservierung,
-                                                        Preis zimmerPreis,
-                                                        Adresse rechnungsAdresse,
-                                                        List<ServiceLeistung> serviceLeistungen){
+    private static Rechnung neueRechnungFuerBuchung(ErstelleRechnungFuerBuchung erstelleRechnungFuerBuchung,
+                                                         Preis zimmerPreis,
+                                                         Adresse rechnungsAdresse,
+                                                         List<ServiceLeistung> serviceLeistungen){
         var rechnung = new Rechnung(
                 new Rechnung.Id(UUID.randomUUID()),
-                erstelleRechnungFuerReservierung.reservierungsNummer(),
+                erstelleRechnungFuerBuchung.buchungsNummer(),
                 zimmerPreis,
                 LocalDateTime.now(),
                 rechnungsAdresse
@@ -132,7 +132,7 @@ public class RechnungsErstellung implements DomainService {
     ){
         var rechnung = new Rechnung(
                 new Rechnung.Id(UUID.randomUUID()),
-                erstelleServiceRechnung.reservierungsNummer(),
+                erstelleServiceRechnung.buchungsNummer(),
                 null,
                 LocalDateTime.now(),
                 rechnungsAdresse

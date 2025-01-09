@@ -17,8 +17,8 @@
 package com.esentri.rezeption.outbound;
 
 import com.esentri.rezeption.core.base.BaseInMemoryRepository;
+import com.esentri.rezeption.core.domain.buchung.Buchung;
 import com.esentri.rezeption.core.domain.rechnung.Rechnung;
-import com.esentri.rezeption.core.domain.reservierung.Reservierung;
 import com.esentri.rezeption.core.outport.Rechnungen;
 import org.springframework.stereotype.Repository;
 
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Eine konkrete Implementierung des Rechnungen.
  * Diese Klasse erbt die Funktionalität von BaseInMemoryRepository und implementiert die spezifische Logik
- * zum Abrufen von Rechnungen nach Reservierungsnummern.
+ * zum Abrufen von Rechnungen nach BuchungsNummer.
  * Es wird mit der @Repository Annotation gekennzeichnet, um die automatische Erkennung
  * durch den Spring Framework Component Scan zu ermöglichen.
  *
@@ -36,7 +36,7 @@ import java.util.List;
  * @see BaseInMemoryRepository
  * @see Rechnungen
  * @see Rechnung
- * @see Reservierung
+ * @see Buchung
  */
 
 @Repository
@@ -47,15 +47,15 @@ public class RechnungenImpl extends BaseInMemoryRepository<Rechnung.Id, Rechnung
     }
 
     /**
-     * Findet und gibt Rechnungsobjekte zurück, die mit der gegebenen Reservierungsnummer verknüpft sind.
+     * Findet und gibt Rechnungsobjekte zurück, die mit der gegebenen BuchungsNummer verknüpft sind.
      * Es verwendet die Java-Stream-API, um den Rechnungen-Stream zu filtern und
      * alle Rechnungen zu sammeln, die die Bedingung erfüllen.
      *
-     * @param reservierungsNummer die Reservierungsnummer, nach der gesucht wird.
-     * @return Eine Liste von Rechnungsobjekten, die mit der angegebenen Reservierungsnummer verknüpft sind.
+     * @param buchungsNummer die BuchungsNummer, nach der gesucht wird.
+     * @return Eine Liste von Rechnungsobjekten, die mit der angegebenen BuchungsNummer verknüpft sind.
      */
     @Override
-    public List<Rechnung> findByReservierungsNummer(Reservierung.ReservierungsNummer reservierungsNummer) {
-        return allAggregates.stream().filter(r -> reservierungsNummer.equals(r.getReservierungsNummer())).toList();
+    public List<Rechnung> findByBuchungsNummer(Buchung.BuchungsNummer buchungsNummer) {
+        return allAggregates.stream().filter(r -> buchungsNummer.equals(r.getBuchungsNummer())).toList();
     }
 }

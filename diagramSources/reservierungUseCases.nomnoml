@@ -46,29 +46,29 @@
 #acycler: greedy
 #ranker: longest-path
 
-// !!! com.esentri.rezeption.core.domain.reservierung.VervollstaendigeGastDaten !!!
+// !!! com.esentri.rezeption.core.domain.buchung.VervollstaendigeGastDaten !!!
 [<DC> VervollstaendigeGastDaten <<DomainCommand>> ]
-// !!! com.esentri.rezeption.core.domain.reservierung.CheckeEin !!!
+// !!! com.esentri.rezeption.core.domain.buchung.CheckeEin !!!
 [<DC> CheckeEin <<DomainCommand>> ]
-// !!! com.esentri.rezeption.core.domain.reservierung.CheckeAus !!!
+// !!! com.esentri.rezeption.core.domain.buchung.CheckeAus !!!
 [<DC> CheckeAus <<DomainCommand>> ]
-// !!! com.esentri.rezeption.core.domain.reservierung.ErstelleNeueReservierung !!!
+// !!! com.esentri.rezeption.core.domain.buchung.ErstelleNeueBuchung !!!
 [<DC> ErstelleNeueReservierung <<DomainCommand>> ]
-// !!! com.esentri.rezeption.core.domain.reservierung.StorniereReservierung !!!
+// !!! com.esentri.rezeption.core.domain.buchung.StorniereBuchung !!!
 [<DC> StorniereReservierung <<DomainCommand>> ]
-// !!! com.esentri.rezeption.inbound.ReservierungUseCasesImpl !!!
+// !!! com.esentri.rezeption.inbound.BuchungUseCasesImpl !!!
 [<AS> ReservierungUseCases <<ApplicationService>> ]
-// !!! com.esentri.rezeption.core.domain.reservierung.Reservierungseingang !!!
+// !!! com.esentri.rezeption.core.domain.buchung.Buchungseingang !!!
 [<DS> Reservierungseingang <<DomainService>> ]
-// !!! com.esentri.rezeption.core.domain.reservierung.CheckIn !!!
+// !!! com.esentri.rezeption.core.domain.buchung.CheckIn !!!
 [<DS> CheckIn <<DomainService>> ]
-// !!! com.esentri.rezeption.core.domain.reservierung.CheckOut !!!
+// !!! com.esentri.rezeption.core.domain.buchung.CheckOut !!!
 [<DS> CheckOut <<DomainService>> ]
-// !!! com.esentri.rezeption.core.domain.reservierung.ReservierungAusgecheckt !!!
+// !!! com.esentri.rezeption.core.domain.buchung.BuchungAusgecheckt !!!
 [<DE> ReservierungAusgecheckt <<DomainEvent>> ]
-// !!! com.esentri.rezeption.core.domain.reservierung.NeueReservierungErhalten !!!
+// !!! com.esentri.rezeption.core.domain.buchung.NeueBuchungErhalten !!!
 [<DE> NeueReservierungErhalten <<DomainEvent>> ]
-// !!! com.esentri.rezeption.core.domain.reservierung.ReservierungEingecheckt !!!
+// !!! com.esentri.rezeption.core.domain.buchung.BuchungEingecheckt !!!
 [<DE> ReservierungEingecheckt <<DomainEvent>> ]
 // !!! {Frame} com.esentri.rezeption.core.domain.zimmer.Zimmer !!!
 [<AF> Zimmer <<Aggregate>>|
@@ -78,11 +78,11 @@
 [<VO> Belegung <<ValueObject>> ]
 [<AR>Zimmer <<AggregateRoot>>]  o-[<label> belegungen 0..*] - [<VO>Belegung <<ValueObject>>]
 ]
-// !!! {Frame} com.esentri.rezeption.core.domain.reservierung.Reservierung !!!
+// !!! {Frame} com.esentri.rezeption.core.domain.buchung.Buchung !!!
 [<AF> Reservierung <<Aggregate>>|
-// !!! com.esentri.rezeption.core.domain.reservierung.Reservierung !!!
+// !!! com.esentri.rezeption.core.domain.buchung.Buchung !!!
 [<AR> Reservierung <<AggregateRoot>> ]
-// !!! com.esentri.rezeption.core.domain.reservierung.Gast !!!
+// !!! com.esentri.rezeption.core.domain.buchung.Gast !!!
 [<E> Gast <<Entity>> ]
 // !!! com.esentri.rezeption.core.domain.Adresse !!!
 [<VO> Adresse <<ValueObject>> ]
@@ -106,15 +106,15 @@
 [<AR>Rechnung <<AggregateRoot>>]  +-[<label> rechnungsPositionen 0..*] - [<E>RechnungsPosition <<Entity>>]
 ]
 [<AF> Reservierung <<Aggregate>>]  -[<label> Reservierung.zimmerNummer] -> [<AF> Zimmer <<Aggregate>>]
-[<AF> ServiceLeistung <<Aggregate>>]  -[<label> ServiceLeistung.reservierungsNummer] -> [<AF> Reservierung <<Aggregate>>]
+[<AF> ServiceLeistung <<Aggregate>>]  -[<label> ServiceLeistung.buchungsNummer] -> [<AF> Reservierung <<Aggregate>>]
 [<AF> ServiceLeistung <<Aggregate>>]  -[<label> ServiceLeistung.abgerechnetPer] -> [<AF> Rechnung <<Aggregate>>]
-[<AF> Rechnung <<Aggregate>>]  -[<label> Rechnung.reservierungsNummer] -> [<AF> Reservierung <<Aggregate>>]
+[<AF> Rechnung <<Aggregate>>]  -[<label> Rechnung.buchungsNummer] -> [<AF> Reservierung <<Aggregate>>]
 [<AF> ServiceLeistung <<Aggregate>>]  <-[<label> RechnungsPosition.leistungsId] - [<AF> Rechnung <<Aggregate>>]
 // !!! com.esentri.rezeption.outbound.ServiceLeistungenImpl !!!
 [<R> ServiceLeistungen <<Repository>> ]
 // !!! com.esentri.rezeption.outbound.RechnungenImpl !!!
 [<R> Rechnungen <<Repository>> ]
-// !!! com.esentri.rezeption.outbound.ReservierungenImpl !!!
+// !!! com.esentri.rezeption.outbound.BuchungenImpl !!!
 [<R> Reservierungen <<Repository>> ]
 // !!! com.esentri.rezeption.outbound.ZimmerVerwaltungImpl !!!
 [<R> ZimmerVerwaltung <<Repository>> ]

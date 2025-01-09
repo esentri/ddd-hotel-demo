@@ -18,7 +18,7 @@ package com.esentri.rezeption.outbound;
 
 import com.esentri.rezeption.core.base.BaseInMemoryRepository;
 import com.esentri.rezeption.core.domain.Preis;
-import com.esentri.rezeption.core.domain.reservierung.Reservierung;
+import com.esentri.rezeption.core.domain.buchung.Buchung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceTyp;
 import com.esentri.rezeption.core.outport.ServiceLeistungen;
@@ -47,7 +47,7 @@ public class ServiceLeistungenImpl extends BaseInMemoryRepository<ServiceLeistun
         allAggregates.addAll(List.of(
                 new ServiceLeistung(
                         TestDataIds.SERVICE_LEISTUNG_ID.id(),
-                        TestDataIds.RESERVIERUNG_ID_EINGECHECKT.id(),
+                        TestDataIds.BUCHUNG_ID_EINGECHECKT.id(),
                         "Flasche Dom Perignon 2013",
                         LocalDateTime.now().minusDays(1),
                         ServiceTyp.BAR,
@@ -58,13 +58,13 @@ public class ServiceLeistungenImpl extends BaseInMemoryRepository<ServiceLeistun
 
     /**
      * Diese Methode findet ServiceLeistung-Instanzen,
-     * die zu der übergebenen Reservierungsnummer gehören.
+     * die zu der übergebenen BuchungsNummer gehören.
      *
-     * @param reservierungsNummer Die Reservierungsnummer, nach der gesucht werden soll.
-     * @return eine Liste von ServiceLeistung-Instanzen, die der angegebenen Reservierungsnummer entsprechen.
+     * @param buchungsNummer Die BuchungsNummer, nach der gesucht werden soll.
+     * @return eine Liste von ServiceLeistung-Instanzen, die der angegebenen BuchungsNummer entsprechen.
      */
     @Override
-    public List<ServiceLeistung> find(Reservierung.ReservierungsNummer reservierungsNummer) {
-        return allAggregates.stream().filter(sl -> reservierungsNummer.equals(sl.getReservierungsNummer())).toList();
+    public List<ServiceLeistung> find(Buchung.BuchungsNummer buchungsNummer) {
+        return allAggregates.stream().filter(sl -> buchungsNummer.equals(sl.getBuchungsNummer())).toList();
     }
 }

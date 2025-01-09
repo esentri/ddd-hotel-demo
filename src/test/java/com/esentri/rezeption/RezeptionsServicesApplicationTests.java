@@ -18,19 +18,19 @@ package com.esentri.rezeption;
 
 import com.esentri.rezeption.core.domain.Adresse;
 import com.esentri.rezeption.core.domain.WartungsPlanungId;
-import com.esentri.rezeption.core.domain.rechnung.ErstelleRechnungFuerReservierung;
-import com.esentri.rezeption.core.domain.reservierung.CheckeAus;
-import com.esentri.rezeption.core.domain.reservierung.CheckeEin;
-import com.esentri.rezeption.core.domain.reservierung.VervollstaendigeGastDaten;
+import com.esentri.rezeption.core.domain.rechnung.ErstelleRechnungFuerBuchung;
+import com.esentri.rezeption.core.domain.buchung.CheckeAus;
+import com.esentri.rezeption.core.domain.buchung.CheckeEin;
+import com.esentri.rezeption.core.domain.buchung.VervollstaendigeGastDaten;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import com.esentri.rezeption.core.domain.zimmer.BelegungTyp;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerWartungEingeplant;
+import com.esentri.rezeption.core.inport.BuchungUseCases;
 import com.esentri.rezeption.core.inport.RechnungUseCases;
-import com.esentri.rezeption.core.inport.ReservierungUseCases;
 import com.esentri.rezeption.core.inport.ZimmerUseCases;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
-import com.esentri.rezeption.core.outport.Reservierungen;
+import com.esentri.rezeption.core.outport.Buchungen;
 import com.esentri.rezeption.core.outport.ServiceLeistungen;
 import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
 import com.esentri.rezeption.outbound.TestDataIds;
@@ -62,7 +62,7 @@ class RezeptionsServicesApplicationTests {
 	private ZimmerAuslastungenImpl zimmerAuslastungenImpl;
 
 	@Autowired
-	private ReservierungUseCases reservierungUseCases;
+	private BuchungUseCases buchungUseCases;
 
 	@Autowired
 	private RechnungUseCases rechnungUseCases;
@@ -71,7 +71,7 @@ class RezeptionsServicesApplicationTests {
 	private ZimmerUseCases zimmerUseCases;
 
 	@Autowired
-	private Reservierungen reservierungen;
+	private Buchungen buchungen;
 
 	@Autowired
 	private ZimmerVerwaltung zimmerVerwaltung;
@@ -105,8 +105,8 @@ class RezeptionsServicesApplicationTests {
 	@Order(3)
 	void testCheckInFailGeburtsdatumGast(){
 		assertThatThrownBy(()->
-		reservierungUseCases.handle(new CheckeEin(
-				TestDataIds.RESERVIERUNG_ID_OFFEN.id(),
+		buchungUseCases.handle(new CheckeEin(
+				TestDataIds.BUCHUNG_ID_OFFEN.id(),
 				TestDataIds.ZIMMER_ID_BUSINESS_SUITE.id(),
 				3
 		))).hasMessageContaining("Geburtsdatum");
@@ -115,8 +115,8 @@ class RezeptionsServicesApplicationTests {
 	@Test
 	@Order(4)
 	void testCheckInErfolgreich(){
-		reservierungUseCases.handle(new VervollstaendigeGastDaten(
-				TestDataIds.RESERVIERUNG_ID_OFFEN.id(),
+		buchungUseCases.handle(new VervollstaendigeGastDaten(
+				TestDataIds.BUCHUNG_ID_OFFEN.id(),
 				"Chuck",
 				"Bubu",
 				LocalDate.of(1980,1,1),
@@ -124,12 +124,12 @@ class RezeptionsServicesApplicationTests {
 				null,
 				new Adresse("Am Platz", "1", "55555", "Muggelhausen")
 		));
-		reservierungUseCases.handle(new CheckeEin(
-				TestDataIds.RESERVIERUNG_ID_OFFEN.id(),
+		buchungUseCases.handle(new CheckeEin(
+				TestDataIds.BUCHUNG_ID_OFFEN.id(),
 				TestDataIds.ZIMMER_ID_BUSINESS_SUITE.id(),
 				3
 		));
-		var res = reservierungen.findById(TestDataIds.RESERVIERUNG_ID_OFFEN.id());
+		var res = buchungen.findById(TestDataIds.BUCHUNG_ID_OFFEN.id());
 		assertThat(res).isPresent();
 		assertThat(res.get().getCheckInAm().toLocalDate()).isEqualTo(LocalDate.now());
 
@@ -145,8 +145,8 @@ class RezeptionsServicesApplicationTests {
 	@Test
 	@Order(5)
 	void testCheckInFailDoppelt(){
-		reservierungUseCases.handle(new VervollstaendigeGastDaten(
-				TestDataIds.RESERVIERUNG_ID_OFFEN.id(),
+		buchungUseCases.handle(new VervollstaendigeGastDaten(
+				TestDataIds.BUCHUNG_ID_OFFEN.id(),
 				"Chuck",
 				"Bubu",
 				LocalDate.of(1980,1,1),
@@ -156,13 +156,13 @@ class RezeptionsServicesApplicationTests {
 		));
 
 		assertThatThrownBy( () ->{
-			reservierungUseCases.handle(new CheckeEin(
-					TestDataIds.RESERVIERUNG_ID_OFFEN.id(),
+			buchungUseCases.handle(new CheckeEin(
+					TestDataIds.BUCHUNG_ID_OFFEN.id(),
 					TestDataIds.ZIMMER_ID_BUSINESS_SUITE.id(),
 					3
 			));
-			reservierungUseCases.handle(new CheckeEin(
-					TestDataIds.RESERVIERUNG_ID_OFFEN.id(),
+			buchungUseCases.handle(new CheckeEin(
+					TestDataIds.BUCHUNG_ID_OFFEN.id(),
 					TestDataIds.ZIMMER_ID_BUSINESS_SUITE.id(),
 					3
 			));
@@ -212,8 +212,8 @@ class RezeptionsServicesApplicationTests {
 	@Order(7)
 	void testCheckOutFailKeineAbrechnung(){
 		assertThatThrownBy(()->{
-			reservierungUseCases.handle(new CheckeAus(
-					TestDataIds.RESERVIERUNG_ID_EINGECHECKT.id()
+			buchungUseCases.handle(new CheckeAus(
+					TestDataIds.BUCHUNG_ID_EINGECHECKT.id()
 			));
 		}).hasMessageContaining("Zimmerabrechnung");
 	}
@@ -221,19 +221,19 @@ class RezeptionsServicesApplicationTests {
 	@Test
 	@Order(8)
 	void testCheckOutErfolgreich(){
-		var res = reservierungen.findById(TestDataIds.RESERVIERUNG_ID_EINGECHECKT.id());
+		var res = buchungen.findById(TestDataIds.BUCHUNG_ID_EINGECHECKT.id());
 		assertThat(res).isPresent();
 
-		var serviceLeistungenZumAbrechnen = serviceLeistungen.find(TestDataIds.RESERVIERUNG_ID_EINGECHECKT.id());
+		var serviceLeistungenZumAbrechnen = serviceLeistungen.find(TestDataIds.BUCHUNG_ID_EINGECHECKT.id());
 
-		rechnungUseCases.handle(new ErstelleRechnungFuerReservierung(
-				TestDataIds.RESERVIERUNG_ID_EINGECHECKT.id(),
+		rechnungUseCases.handle(new ErstelleRechnungFuerBuchung(
+				TestDataIds.BUCHUNG_ID_EINGECHECKT.id(),
 				serviceLeistungenZumAbrechnen.stream().map(ServiceLeistung::id).toList(),
 				res.get().getGast().getHeimAdresse()
 		));
 
-		reservierungUseCases.handle(new CheckeAus(
-			TestDataIds.RESERVIERUNG_ID_EINGECHECKT.id()
+		buchungUseCases.handle(new CheckeAus(
+			TestDataIds.BUCHUNG_ID_EINGECHECKT.id()
 		));
 
 		assertThat(res.get().getCheckOutAm().toLocalDate()).isEqualTo(LocalDate.now());

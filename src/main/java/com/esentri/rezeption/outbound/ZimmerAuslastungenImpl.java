@@ -19,6 +19,7 @@ package com.esentri.rezeption.outbound;
 import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerAuslastung;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
+import com.esentri.rezeption.core.outport.Buchungen;
 import com.esentri.rezeption.core.outport.ZimmerAuslastungen;
 import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 public class ZimmerAuslastungenImpl implements ZimmerAuslastungen {
 
     private final ZimmerVerwaltung zimmerVerwaltung;
+    private final Buchungen buchungen;
 
     /**
      * Berechnet und liefert eine Liste von ZimmerAuslastungen für ein bestimmtes Hotel und einen bestimmten Zeitraum.
@@ -67,8 +69,21 @@ public class ZimmerAuslastungenImpl implements ZimmerAuslastungen {
             var datumFinal = datum;
             for(var katUndKapa : alleZimmerGruppiert.keySet()){
                 var zimmer = alleZimmerGruppiert.get(katUndKapa);
-                var belegt = (int)zimmer.stream().flatMap(z -> z.getBelegungen().stream()).filter(b -> b.istBelegtAm(datumFinal)).count();
-                auslastungsUebersicht.add(new ZimmerAuslastung(katUndKapa.zimmerKategorie(), katUndKapa.kapazitaet(), zimmer.size(), belegt, datumFinal));
+                var anzahlZimmerBelegt = (int)zimmer.stream().flatMap(z -> z.getBelegungen().stream()).filter(b -> b.istBelegtAm(datumFinal)).count();
+                var anzahlZimmerZusaetzlichReserviert = buchungen.listAktiveBuchungenInZeitraum(hotelId, von, bis, katUndKapa.zimmerKategorie, katUndKapa.kapazitaet())
+                    .stream()
+                    .filter(b -> b.getCheckInAm() == null)
+                    .filter(b -> b.buchungsZeitraumBeinhaltet(datumFinal))
+                    .toList();
+                auslastungsUebersicht.add(
+                    new ZimmerAuslastung(
+                        katUndKapa.zimmerKategorie(),
+                        katUndKapa.kapazitaet(),
+                        zimmer.size(),
+                        anzahlZimmerBelegt + anzahlZimmerZusaetzlichReserviert.size(),
+                        datumFinal
+                    )
+                );
             }
 
             datum = datum.plusDays(1);

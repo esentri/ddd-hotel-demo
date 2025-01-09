@@ -16,8 +16,8 @@
 
 package com.esentri.rezeption.inbound;
 
+import com.esentri.rezeption.core.domain.buchung.BuchungAusgecheckt;
 import com.esentri.rezeption.core.domain.hotel.Hotel;
-import com.esentri.rezeption.core.domain.reservierung.ReservierungAusgecheckt;
 import com.esentri.rezeption.core.domain.zimmer.BeantrageZimmerWartung;
 import com.esentri.rezeption.core.domain.zimmer.Belegung;
 import com.esentri.rezeption.core.domain.zimmer.BelegungTyp;
@@ -122,9 +122,9 @@ public class ZimmerUseCasesImpl implements ZimmerUseCases {
      */
     @Override
     @EventListener
-    @ListensTo(domainEventType = ReservierungAusgecheckt.class)
-    public void onEvent(ReservierungAusgecheckt reservierungAusgecheckt) {
-        var zimmer = zimmerVerwaltung.findById(reservierungAusgecheckt.zimmerNummer()).orElseThrow();
+    @ListensTo(domainEventType = BuchungAusgecheckt.class)
+    public void onEvent(BuchungAusgecheckt buchungAusgecheckt) {
+        var zimmer = zimmerVerwaltung.findById(buchungAusgecheckt.zimmerNummer()).orElseThrow();
         zimmerVerwaltung.update(zimmer.aktuelleBelegungBeenden());
     }
 

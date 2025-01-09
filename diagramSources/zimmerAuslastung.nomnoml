@@ -1,3 +1,4 @@
+
 #.AF:visual=frame align=left
 #.AF_R:visual=frame align=left;stroke=#FF0000
 #.AF_N:visual=frame align=left;stroke=#108738
@@ -49,37 +50,8 @@
 // !!! com.esentri.rezeption.inbound.ZimmerUseCasesImpl !!!
 [<AS> ZimmerUseCases <<ApplicationService>> |
 + List<ZimmerAuslastung> auslastung(Hotel$Id,LocalDate,LocalDate)
-+ void handle(BeantrageZimmerWartung)
-+ void onEvent(ReservierungAusgecheckt)
-+ void onEvent(ZimmerWartungEingeplant)
-+ List<Zimmer$ZimmerNummer> verfuegbareZimmer(Hotel$Id,LocalDate,LocalDate,ZimmerKategorie,int)
 ]
-// !!! {Frame} com.esentri.rezeption.core.domain.zimmer.Zimmer !!!
-[<AF> Zimmer <<Aggregate>>|
-// !!! com.esentri.rezeption.core.domain.zimmer.Zimmer !!!
-[<AR> Zimmer <<AggregateRoot>> |
-\# +- nummer:<ID> Zimmer$ZimmerNummer
-o +- hotelId:<IDREF> Hotel$Id
-o +- kapazitaet:int
-o +- kategorie:<ENUM> ZimmerKategorie
-o +- stockwerk:int
-|
-+ Optional<Belegung> aktuelleBelegung()
-+ Zimmer aktuelleBelegungBeenden()
-+ boolean hatUeberschneidendeBelegung(Belegung)
-+ boolean neueBelegung(LocalDate,LocalDate,BelegungTyp)
-]
-// !!! com.esentri.rezeption.core.domain.zimmer.Belegung !!!
-[<VO> Belegung <<ValueObject>> |
-o +- belegungTyp:<ENUM> BelegungTyp
-o +- bis:LocalDate
-o +- von:LocalDate
-|
-+ boolean istBelegtAm(LocalDate)
-+ boolean ueberschneidetZeitraum(LocalDate,LocalDate)
-]
-[<AR>Zimmer <<AggregateRoot>>]  o-[<label> belegungen 0..*] - [<VO>Belegung <<ValueObject>>]
-]
+
 // !!! com.esentri.rezeption.core.domain.zimmer.ZimmerAuslastung !!!
 [<RM> ZimmerAuslastung <<ReadModel>> |
 o +- anzahlBelegt:int

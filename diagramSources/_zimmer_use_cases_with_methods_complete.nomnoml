@@ -1,0 +1,127 @@
+#.AF:visual=frame align=left
+#.AF_R:visual=frame align=left;stroke=#FF0000
+#.AF_N:visual=frame align=left;stroke=#108738
+#.AR:fill=#8f8f bold
+#.AR_R:fill=#8f8f bold;stroke=#FF0000
+#.AR_N:fill=#8f8f bold;stroke=#108738
+#.E:fill=#88AAFF bold
+#.E_R:fill=#88AAFF bold;stroke=#FF0000
+#.E_N:fill=#88AAFF bold;stroke=#108738
+#.VO:fill=#FFFFCC bold
+#.VO_R:fill=#FFFFCC bold;stroke=#FF0000
+#.VO_N:fill=#FFFFCC bold;stroke=#108738
+#.V:fill=#FFFFCC bold
+#.V_R:fill=#FFFFCC bold;stroke=#FF0000
+#.V_N:fill=#FFFFCC bold;stroke=#108738
+#.I:fill=#FFFFCC bold
+#.I_R:fill=#FFFFCC bold;stroke=#FF0000
+#.I_N:fill=#FFFFCC bold;stroke=#108738
+#.DC:fill=#FFB266 bold
+#.DC_R:fill=#FFB266 bold;stroke=#FF0000
+#.DC_N:fill=#FFB266 bold;stroke=#108738
+#.DE:fill=#CCFFFF bold
+#.DE_R:fill=#CCFFFF bold;stroke=#FF0000
+#.DE_N:fill=#CCFFFF bold;stroke=#108738
+#.AS:bold
+#.AS_R:bold;stroke=#FF0000
+#.AS_N:bold;stroke=#108738
+#.DS:fill=#E0E0E0 bold
+#.R:fill=#C0C0C0 bold
+#.R_R:fill=#C0C0C0 bold;stroke=#FF0000
+#.R_N:fill=#C0C0C0 bold;stroke=#108738
+#.OS:fill=#C0C0C0 bold
+#.OS_R:fill=#C0C0C0 bold;stroke=#FF0000
+#.OS_N:fill=#C0C0C0 bold;stroke=#108738
+#.SK:fill=#C0C0C0 bold
+#.SK_R:fill=#C0C0C0 bold;stroke=#FF0000
+#.SK_N:fill=#C0C0C0 bold;stroke=#108738
+#.QH:fill=#C0C0C0 bold
+#.QH_R:fill=#C0C0C0 bold;stroke=#FF0000
+#.QH_N:fill=#C0C0C0 bold;stroke=#108738
+#.RM:fill=#FFCCE5 bold
+#.RM_R:fill=#FFCCE5 bold;stroke=#FF0000
+#.RM_N:fill=#FFCCE5 bold;stroke=#108738
+#font:Helvetica
+#direction:down
+#acycler: greedy
+#ranker: longest-path
+
+// !!! com.esentri.rezeption.core.domain.zimmer.BeantrageZimmerWartung !!!
+[<DC> BeantrageZimmerWartung <<DomainCommand>> ]
+// !!! com.esentri.rezeption.inbound.ZimmerUseCasesImpl !!!
+[<AS> ZimmerUseCases <<ApplicationService>> |
++ List<ZimmerAuslastung> auslastung(Hotel$Id,LocalDate,LocalDate)
++ void handle(BeantrageZimmerWartung)
++ void onEvent(BuchungAusgecheckt)
++ void onEvent(ZimmerWartungEingeplant)
++ List<Zimmer$ZimmerNummer> verfuegbareZimmer(Hotel$Id,LocalDate,LocalDate,ZimmerKategorie,int)
+]
+// !!! com.esentri.rezeption.core.domain.zimmer.ZimmerWartungEingeplant !!!
+[<DE> ZimmerWartungEingeplant <<DomainEvent>> ]
+// !!! com.esentri.rezeption.core.domain.zimmer.ZimmerWartungAbgelehnt !!!
+[<DE> ZimmerWartungAbgelehnt <<DomainEvent>> ]
+// !!! com.esentri.rezeption.core.domain.zimmer.ZimmerWartungBestaetigt !!!
+[<DE> ZimmerWartungBestaetigt <<DomainEvent>> ]
+// !!! com.esentri.rezeption.core.domain.buchung.BuchungAusgecheckt !!!
+[<DE> BuchungAusgecheckt <<DomainEvent>> ]
+// !!! {Frame} com.esentri.rezeption.core.domain.zimmer.Zimmer !!!
+[<AF> Zimmer <<Aggregate>>|
+// !!! com.esentri.rezeption.core.domain.zimmer.Zimmer !!!
+[<AR> Zimmer <<AggregateRoot>> |
++ Optional<Belegung> aktuelleBelegung()
++ Zimmer aktuelleBelegungBeenden()
++ boolean hatUeberschneidendeBelegung(Belegung)
++ boolean neueBelegung(LocalDate,LocalDate,BelegungTyp)
+]
+// !!! com.esentri.rezeption.core.domain.zimmer.Belegung !!!
+[<VO> Belegung <<ValueObject>> |
++ boolean istBelegtAm(LocalDate)
++ boolean ueberschneidetZeitraum(LocalDate,LocalDate)
+]
+[<AR>Zimmer <<AggregateRoot>>]  o-[<label> belegungen 0..*] - [<VO>Belegung <<ValueObject>>]
+]
+// !!! {Frame} com.esentri.rezeption.core.domain.buchung.Buchung !!!
+[<AF> Buchung <<Aggregate>>|
+// !!! com.esentri.rezeption.core.domain.buchung.Buchung !!!
+[<AR> Buchung <<AggregateRoot>> |
++ boolean buchungsZeitraumBeinhaltet(LocalDate)
++ Buchung checkeAus()
++ Buchung handle(CheckeEin)
++ Buchung handle(VervollstaendigeGastDaten)
++ Buchung storniere()
+]
+// !!! com.esentri.rezeption.core.domain.buchung.Gast !!!
+[<E> Gast <<Entity>> |
+]
+// !!! com.esentri.rezeption.core.domain.Adresse !!!
+[<VO> Adresse <<ValueObject>> |
+]
+[<AR>Buchung <<AggregateRoot>>]  +-[<label> gast 0..1] - [<E>Gast <<Entity>>]
+[<E>Gast <<Entity>>]  o-[<label> heimAdresse 0..1] - [<VO>Adresse <<ValueObject>>]
+]
+[<AF> Buchung <<Aggregate>>]  -[<label> Buchung.zimmerNummer] -> [<AF> Zimmer <<Aggregate>>]
+// !!! com.esentri.rezeption.outbound.BuchungenImpl !!!
+[<R> Buchungen <<Repository>> |
++ Optional<Buchung> deleteById(Buchung$BuchungsNummer)
++ Optional<Buchung> findById(Buchung$BuchungsNummer)
++ Buchung insert(Buchung)
++ List<Buchung> listAktiveBuchungenInZeitraum(Hotel$Id,LocalDate,LocalDate,ZimmerKategorie,Integer)
++ Buchung update(Buchung)
+]
+// !!! com.esentri.rezeption.outbound.ZimmerVerwaltungImpl !!!
+[<R> ZimmerVerwaltung <<Repository>> |
++ Optional<Zimmer> deleteById(Zimmer$ZimmerNummer)
++ Optional<Zimmer> findById(Zimmer$ZimmerNummer)
++ Zimmer insert(Zimmer)
++ List<Zimmer> listByHotel(Hotel$Id)
++ List<Zimmer> listZimmerByKategorieAndKapazitaet(Hotel$Id,ZimmerKategorie,int)
++ Zimmer update(Zimmer)
+]
+[<DC>BeantrageZimmerWartung <<DomainCommand>>]  --> [<AS>ZimmerUseCases <<ApplicationService>>]
+[<DE>ZimmerWartungEingeplant <<DomainEvent>>]  --> [<AS>ZimmerUseCases <<ApplicationService>>]
+[<AS>ZimmerUseCases <<ApplicationService>>]  --> [<DE>ZimmerWartungAbgelehnt <<DomainEvent>>]
+[<AS>ZimmerUseCases <<ApplicationService>>]  --> [<DE>ZimmerWartungBestaetigt <<DomainEvent>>]
+[<DE>BuchungAusgecheckt <<DomainEvent>>]  --> [<AS>ZimmerUseCases <<ApplicationService>>]
+[<AS>ZimmerUseCases <<ApplicationService>>]  -- [<R>ZimmerVerwaltung <<Repository>>]
+[<R>Buchungen <<Repository>>]  -- [<AF> Buchung <<Aggregate>>]
+[<R>ZimmerVerwaltung <<Repository>>]  -- [<AF> Zimmer <<Aggregate>>]

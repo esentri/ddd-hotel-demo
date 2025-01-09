@@ -17,26 +17,26 @@
 package com.esentri.rezeption.core.domain.rechnung;
 
 import com.esentri.rezeption.core.domain.Adresse;
-import com.esentri.rezeption.core.domain.reservierung.Reservierung;
+import com.esentri.rezeption.core.domain.buchung.Buchung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import io.domainlifecycles.domain.types.DomainCommand;
 
 import java.util.List;
 
 /**
- * Erstellt eine ServiceRechnung inklusive ReservierungsNummer,
+ * Erstellt eine ServiceRechnung inklusive BuchungsNummer,
  * einer Liste von Serviceleistungen und einer RechnungsAdresse.
  * Implementiert das Interface DomainCommand.
  *
  * @author Mario Herb
  *
- * @see Reservierung.ReservierungsNummer
+ * @see Buchung.BuchungsNummer
  * @see ServiceLeistung.Id
  * @see Adresse
  * @see DomainCommand
  */
 public record ErstelleServiceRechnung(
-        Reservierung.ReservierungsNummer reservierungsNummer,
+        Buchung.BuchungsNummer buchungsNummer,
         List<ServiceLeistung.Id> serviceLeistungen,
         Adresse rechnungsAdresse
 ) implements DomainCommand {

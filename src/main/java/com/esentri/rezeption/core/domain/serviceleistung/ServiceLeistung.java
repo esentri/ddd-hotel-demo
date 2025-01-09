@@ -17,8 +17,8 @@
 package com.esentri.rezeption.core.domain.serviceleistung;
 
 import com.esentri.rezeption.core.domain.Preis;
+import com.esentri.rezeption.core.domain.buchung.Buchung;
 import com.esentri.rezeption.core.domain.rechnung.Rechnung;
-import com.esentri.rezeption.core.domain.reservierung.Reservierung;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.Identity;
 import lombok.EqualsAndHashCode;
@@ -43,7 +43,7 @@ public class ServiceLeistung implements AggregateRoot<ServiceLeistung.Id> {
     @EqualsAndHashCode.Include
     private final Id id;
 
-    private final Reservierung.ReservierungsNummer reservierungsNummer;
+    private final Buchung.BuchungsNummer buchungsNummer;
 
     private Rechnung.Id abgerechnetPer;
 
@@ -55,18 +55,18 @@ public class ServiceLeistung implements AggregateRoot<ServiceLeistung.Id> {
     private long concurrencyVersion;
 
     public ServiceLeistung(Id id,
-                           Reservierung.ReservierungsNummer reservierungsNummer,
+                           Buchung.BuchungsNummer buchungsNummer,
                            String beschreibung,
                            LocalDateTime erhaltenAm,
                            ServiceTyp serviceTyp,
                            Preis nettoPreis
     ) {
         Objects.requireNonNull(id, "Die Id darf nicht null sein.");
-        Objects.requireNonNull(reservierungsNummer, "Die referenzierte ReservierungsNummer darf nicht null sein.");
+        Objects.requireNonNull(buchungsNummer, "Die referenzierte BuchungsNummer darf nicht null sein.");
         Objects.requireNonNull(serviceTyp, "Der ServiceTyp darf nicht null sein.");
         Objects.requireNonNull(nettoPreis, "Der NettoPreis darf nicht null sein.");
         this.id = id;
-        this.reservierungsNummer = reservierungsNummer;
+        this.buchungsNummer = buchungsNummer;
         this.validateBeschreibung(beschreibung);
         this.beschreibung = beschreibung;
         this.serviceTyp = serviceTyp;

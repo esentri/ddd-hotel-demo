@@ -17,7 +17,7 @@
 package com.esentri.rezeption.core.domain.rechnung;
 
 import com.esentri.rezeption.core.domain.Preis;
-import com.esentri.rezeption.core.domain.reservierung.Reservierung;
+import com.esentri.rezeption.core.domain.buchung.Buchung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import io.domainlifecycles.domain.types.DomainEvent;
 
@@ -27,13 +27,13 @@ import java.util.List;
  * Die Klasse RechnungErstellt dient dazu, Ereignisse zu repräsentieren, bei denen eine Rechnung erstellt wurde.
  * Sie ist ein record und implementiert das Interface DomainEvent.
  *
- * Eine instanziierte RechnungErstellt enthält eine Rechnungs-ID, eine Reservierungsnummer,
+ * Eine instanziierte RechnungErstellt enthält eine Rechnungs-ID, eine BuchungsNummer,
  * einen Gesamtnettopreis und eine Liste von abgerechneten Dienstleistungen.
  *
  * @author Mario Herb
  */
 public record RechnungErstellt(Rechnung.Id rechnungId,
-                               Reservierung.ReservierungsNummer reservierungsNummer,
+                               Buchung.BuchungsNummer buchungsNummer,
                                Preis gesamtNetto,
                                List<ServiceLeistung.Id> abgerechneteServices) implements DomainEvent {
 }

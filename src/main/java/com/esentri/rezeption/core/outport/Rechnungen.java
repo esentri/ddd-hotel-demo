@@ -16,8 +16,8 @@
 
 package com.esentri.rezeption.core.outport;
 
+import com.esentri.rezeption.core.domain.buchung.Buchung;
 import com.esentri.rezeption.core.domain.rechnung.Rechnung;
-import com.esentri.rezeption.core.domain.reservierung.Reservierung;
 import io.domainlifecycles.domain.types.Repository;
 
 import java.util.List;
@@ -25,18 +25,18 @@ import java.util.List;
 /**
  * Das Rechnungen beschreibt Methoden für den Zugriff auf Rechnungen in der zugrundeliegenden Datenquelle.
  *
- * Es definiert die Möglichkeit, Rechnungen basierend auf der Reservierungsnummer zu finden.
+ * Es definiert die Möglichkeit, Rechnungen basierend auf der BuchungsNummer zu finden.
  *
  * @author Mario Herb
  */
 public interface Rechnungen extends Repository<Rechnung.Id, Rechnung> {
 
     /**
-     * Sucht alle Rechnungen, die der spezifizierten Reservierungsnummer zugeordnet sind.
+     * Sucht alle Rechnungen, die der spezifizierten BuchungsNummer zugeordnet sind.
      *
-     * @param reservierungsNummer Die Reservierungsnummer, nach der gesucht werden soll.
-     * @return Eine Liste von Rechnungen, die der bereitgestellten Reservierungsnummer entsprechen.
+     * @param buchungsNummer Die BuchungsNummer, nach der gesucht werden soll.
+     * @return Eine Liste von Rechnungen, die der bereitgestellten BuchungsNummer entsprechen.
      */
-    List<Rechnung> findByReservierungsNummer(Reservierung.ReservierungsNummer reservierungsNummer);
+    List<Rechnung> findByBuchungsNummer(Buchung.BuchungsNummer buchungsNummer);
 
 }

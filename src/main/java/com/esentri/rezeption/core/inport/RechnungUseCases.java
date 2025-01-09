@@ -16,7 +16,7 @@
 
 package com.esentri.rezeption.core.inport;
 
-import com.esentri.rezeption.core.domain.rechnung.ErstelleRechnungFuerReservierung;
+import com.esentri.rezeption.core.domain.rechnung.ErstelleRechnungFuerBuchung;
 import com.esentri.rezeption.core.domain.rechnung.ErstelleServiceRechnung;
 import com.esentri.rezeption.core.domain.rechnung.LadeRechnungPDF;
 import com.esentri.rezeption.core.domain.rechnung.MarkiereRechnungBezahlt;
@@ -29,7 +29,7 @@ import io.domainlifecycles.domain.types.ApplicationService;
  *
  * @author Mario Herb
  * @see Rechnung
- * @see ErstelleRechnungFuerReservierung
+ * @see ErstelleRechnungFuerBuchung
  * @see ErstelleServiceRechnung
  * @see MarkiereRechnungBezahlt
  */
@@ -44,12 +44,12 @@ public interface RechnungUseCases extends ApplicationService {
     Rechnung.Id handle(MarkiereRechnungBezahlt markiereRechnungBezahlt);
 
     /**
-     * Nimmt einen Command zur Erstellung einer Rechnung für eine Reservierung entgegen und gibt die ID der erstellten Rechnung zurück.
+     * Nimmt einen Command zur Erstellung einer Rechnung für eine Buchung entgegen und gibt die ID der erstellten Rechnung zurück.
      *
-     * @param erstelleRechnungFuerReservierung ein Command, der die Details für die zu erstellende Rechnung angibt
+     * @param erstelleRechnungFuerBuchung ein Command, der die Details für die zu erstellende Rechnung angibt
      * @return die ID der erstellten Rechnung
      */
-    Rechnung.Id handle(ErstelleRechnungFuerReservierung erstelleRechnungFuerReservierung);
+    Rechnung.Id handle(ErstelleRechnungFuerBuchung erstelleRechnungFuerBuchung);
 
     /**
      * Nimmt einen Command zur Erstellung einer Service-Rechnung entgegen und gibt die ID der erstellten Rechnung zurück.

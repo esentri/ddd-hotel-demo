@@ -1,0 +1,10 @@
+#font:Helvetica
+#direction:down
+#acycler: greedy
+#ranker: longest-path
+#spacing: 100
+
+[Zimmer] 1 - 0..* [Belegung]
+[Hotel] 1 - 1..*[Zimmer]
+[Buchung] 1 - 1 [Gast]
+[Hotel] 1 - 0..* [Buchung]

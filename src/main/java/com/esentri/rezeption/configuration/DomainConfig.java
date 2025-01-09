@@ -16,13 +16,13 @@
 
 package com.esentri.rezeption.configuration;
 
+import com.esentri.rezeption.core.domain.buchung.Buchungseingang;
 import com.esentri.rezeption.core.domain.rechnung.RechnungsErstellung;
-import com.esentri.rezeption.core.domain.reservierung.CheckIn;
-import com.esentri.rezeption.core.domain.reservierung.CheckOut;
-import com.esentri.rezeption.core.domain.reservierung.Reservierungseingang;
+import com.esentri.rezeption.core.domain.buchung.CheckIn;
+import com.esentri.rezeption.core.domain.buchung.CheckOut;
+import com.esentri.rezeption.core.outport.Buchungen;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
 import com.esentri.rezeption.core.outport.Rechnungen;
-import com.esentri.rezeption.core.outport.Reservierungen;
 import com.esentri.rezeption.core.outport.ServiceLeistungen;
 import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +41,7 @@ public class DomainConfig {
      * Erstellt und konfiguriert eine Instanz des RechnungsErstellungsServices.
      *
      * @param rechnungen Repository für Rechnungsdetails.
-     * @param reservierungen Repository für Reservierungsdetails.
+     * @param buchungen Repository für Buchungen.
      * @param serviceLeistungen Repository für Serviceleistungsdetails.
      * @param domainEventPublisher Objekt zur Veröffentlichung von Domain-Ereignissen.
      * @return Die Instanz des konfigurierten RechnungsErstellung.
@@ -49,13 +49,13 @@ public class DomainConfig {
     @Bean
     public RechnungsErstellung rechnungsErstellungsService(
             Rechnungen rechnungen,
-            Reservierungen reservierungen,
+            Buchungen buchungen,
             ServiceLeistungen serviceLeistungen,
             DomainEventPublisher domainEventPublisher
     ){
         return new RechnungsErstellung(
                 rechnungen,
-                reservierungen,
+                buchungen,
                 serviceLeistungen,
                 domainEventPublisher
         );
@@ -64,19 +64,19 @@ public class DomainConfig {
     /**
      * Erstellt und konfiguriert eine Instanz des CheckIn.
      *
-     * @param reservierungen Repository für Reservierungsdetails.
+     * @param buchungen Repository für Buchungsdetails.
      * @param zimmerVerwaltung Repository für Zimmerdetails.
      * @param domainEventPublisher Objekt zur Veröffentlichung von Domain-Ereignissen.
      * @return Die Instanz des konfigurierten CheckIn.
      */
     @Bean
     public CheckIn checkInService(
-            Reservierungen reservierungen,
+            Buchungen buchungen,
             ZimmerVerwaltung zimmerVerwaltung,
             DomainEventPublisher domainEventPublisher
     ){
         return new CheckIn(
-                reservierungen,
+                buchungen,
                 zimmerVerwaltung,
                 domainEventPublisher
         );
@@ -85,7 +85,7 @@ public class DomainConfig {
     /**
      * Erstellt und konfiguriert eine Instanz des CheckOut.
      *
-     * @param reservierungen Repository für Reservierungsdetails.
+     * @param buchungen Repository für Buchungsdetails.
      * @param rechnungen Repository für Rechnungsdetails.
      * @param serviceLeistungen Repository für Serviceleistungsdetails.
      * @param domainEventPublisher Objekt zur Veröffentlichung von Domain-Ereignissen.
@@ -93,13 +93,13 @@ public class DomainConfig {
      */
     @Bean
     public CheckOut checkOutService(
-            Reservierungen reservierungen,
+            Buchungen buchungen,
             Rechnungen rechnungen,
             ServiceLeistungen serviceLeistungen,
             DomainEventPublisher domainEventPublisher
     ){
         return new CheckOut(
-                reservierungen,
+                buchungen,
                 rechnungen,
                 serviceLeistungen,
                 domainEventPublisher
@@ -107,21 +107,21 @@ public class DomainConfig {
     }
 
     /**
-     * Erstellt und konfiguriert eine Instanz des Reservierungseingang.
+     * Erstellt und konfiguriert eine Instanz des Buchungseingang.
      *
-     * @param reservierungen Repository für Reservierungsdetails.
+     * @param buchungen Repository für Buchungsdetails.
      * @param zimmerVerwaltung Repository für Zimmerdetails.
      * @param domainEventPublisher Objekt zur Veröffentlichung von Domain-Ereignissen.
-     * @return Die Instanz des konfigurierten Reservierungseingang.
+     * @return Die Instanz des konfigurierten Buchungseingang.
      */
     @Bean
-    public Reservierungseingang reservierungsEingangService(
-            Reservierungen reservierungen,
+    public Buchungseingang buchungsEingangService(
+            Buchungen buchungen,
             ZimmerVerwaltung zimmerVerwaltung,
             DomainEventPublisher domainEventPublisher
     ){
-        return new Reservierungseingang(
-                reservierungen,
+        return new Buchungseingang(
+                buchungen,
                 zimmerVerwaltung,
                 domainEventPublisher
         );

@@ -1,3 +1,4 @@
+
 #.AF:visual=frame align=left
 #.AF_R:visual=frame align=left;stroke=#FF0000
 #.AF_N:visual=frame align=left;stroke=#108738
@@ -50,8 +51,8 @@
 [<DC> ErstelleServiceRechnung <<DomainCommand>> ]
 // !!! com.esentri.rezeption.core.domain.rechnung.LadeRechnungPDF !!!
 [<DC> LadeRechnungPDF <<DomainCommand>> ]
-// !!! com.esentri.rezeption.core.domain.rechnung.ErstelleRechnungFuerReservierung !!!
-[<DC> ErstelleRechnungFuerReservierung <<DomainCommand>> ]
+// !!! com.esentri.rezeption.core.domain.rechnung.ErstelleRechnungFuerBuchung !!!
+[<DC> ErstelleRechnungFuerBuchung <<DomainCommand>> ]
 // !!! com.esentri.rezeption.core.domain.rechnung.MarkiereRechnungBezahlt !!!
 [<DC> MarkiereRechnungBezahlt <<DomainCommand>> ]
 // !!! com.esentri.rezeption.inbound.RechnungUseCasesImpl !!!
@@ -60,21 +61,21 @@
 [<DS> RechnungsErstellung <<DomainService>> ]
 // !!! com.esentri.rezeption.core.domain.rechnung.RechnungErstellt !!!
 [<DE> RechnungErstellt <<DomainEvent>> ]
-// !!! {Frame} com.esentri.rezeption.core.domain.reservierung.Reservierung !!!
-[<AF> Reservierung <<Aggregate>>|
-// !!! com.esentri.rezeption.core.domain.reservierung.Reservierung !!!
-[<AR> Reservierung <<AggregateRoot>> ]
-// !!! com.esentri.rezeption.core.domain.reservierung.Gast !!!
-[<E> Gast <<Entity>> ]
-// !!! com.esentri.rezeption.core.domain.Adresse !!!
-[<VO> Adresse <<ValueObject>> ]
-[<AR>Reservierung <<AggregateRoot>>]  +-[<label> gast 0..1] - [<E>Gast <<Entity>>]
-[<E>Gast <<Entity>>]  o-[<label> heimAdresse 0..1] - [<VO>Adresse <<ValueObject>>]
-]
 // !!! {Frame} com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung !!!
 [<AF> ServiceLeistung <<Aggregate>>|
 // !!! com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung !!!
 [<AR> ServiceLeistung <<AggregateRoot>> ]
+]
+// !!! {Frame} com.esentri.rezeption.core.domain.buchung.Buchung !!!
+[<AF> Buchung <<Aggregate>>|
+// !!! com.esentri.rezeption.core.domain.buchung.Buchung !!!
+[<AR> Buchung <<AggregateRoot>> ]
+// !!! com.esentri.rezeption.core.domain.buchung.Gast !!!
+[<E> Gast <<Entity>> ]
+// !!! com.esentri.rezeption.core.domain.Adresse !!!
+[<VO> Adresse <<ValueObject>> ]
+[<AR>Buchung <<AggregateRoot>>]  +-[<label> gast 0..1] - [<E>Gast <<Entity>>]
+[<E>Gast <<Entity>>]  o-[<label> heimAdresse 0..1] - [<VO>Adresse <<ValueObject>>]
 ]
 // !!! {Frame} com.esentri.rezeption.core.domain.rechnung.Rechnung !!!
 [<AF> Rechnung <<Aggregate>>|
@@ -87,29 +88,29 @@
 [<AR>Rechnung <<AggregateRoot>>]  o-[<label> rechnungsAdresse 0..1] - [<VO>Adresse <<ValueObject>>]
 [<AR>Rechnung <<AggregateRoot>>]  +-[<label> rechnungsPositionen 0..*] - [<E>RechnungsPosition <<Entity>>]
 ]
-[<AF> ServiceLeistung <<Aggregate>>]  -[<label> ServiceLeistung.reservierungsNummer] -> [<AF> Reservierung <<Aggregate>>]
+[<AF> ServiceLeistung <<Aggregate>>]  -[<label> ServiceLeistung.buchungsNummer] -> [<AF> Buchung <<Aggregate>>]
 [<AF> ServiceLeistung <<Aggregate>>]  -[<label> ServiceLeistung.abgerechnetPer] -> [<AF> Rechnung <<Aggregate>>]
-[<AF> Rechnung <<Aggregate>>]  -[<label> Rechnung.reservierungsNummer] -> [<AF> Reservierung <<Aggregate>>]
+[<AF> Rechnung <<Aggregate>>]  -[<label> Rechnung.buchungsNummer] -> [<AF> Buchung <<Aggregate>>]
 [<AF> ServiceLeistung <<Aggregate>>]  <-[<label> RechnungsPosition.leistungsId] - [<AF> Rechnung <<Aggregate>>]
+// !!! com.esentri.rezeption.outbound.BuchungenImpl !!!
+[<R> Buchungen <<Repository>> ]
 // !!! com.esentri.rezeption.outbound.ServiceLeistungenImpl !!!
 [<R> ServiceLeistungen <<Repository>> ]
 // !!! com.esentri.rezeption.outbound.RechnungenImpl !!!
 [<R> Rechnungen <<Repository>> ]
-// !!! com.esentri.rezeption.outbound.ReservierungenImpl !!!
-[<R> Reservierungen <<Repository>> ]
 // !!! com.esentri.rezeption.outbound.RechnungsPDFErstellungImpl !!!
 [<OS> RechnungsPDFErstellung <<OutboundService>> ]
 [<DC>ErstelleServiceRechnung <<DomainCommand>>]  --> [<AS>RechnungUseCases <<ApplicationService>>]
 [<DC>LadeRechnungPDF <<DomainCommand>>]  --> [<AS>RechnungUseCases <<ApplicationService>>]
-[<DC>ErstelleRechnungFuerReservierung <<DomainCommand>>]  --> [<AS>RechnungUseCases <<ApplicationService>>]
+[<DC>ErstelleRechnungFuerBuchung <<DomainCommand>>]  --> [<AS>RechnungUseCases <<ApplicationService>>]
 [<DC>MarkiereRechnungBezahlt <<DomainCommand>>]  --> [<AS>RechnungUseCases <<ApplicationService>>]
 [<DS>RechnungsErstellung <<DomainService>>]  --> [<DE>RechnungErstellt <<DomainEvent>>]
 [<DS>RechnungsErstellung <<DomainService>>]  -- [<R>Rechnungen <<Repository>>]
-[<DS>RechnungsErstellung <<DomainService>>]  -- [<R>Reservierungen <<Repository>>]
+[<DS>RechnungsErstellung <<DomainService>>]  -- [<R>Buchungen <<Repository>>]
 [<DS>RechnungsErstellung <<DomainService>>]  -- [<R>ServiceLeistungen <<Repository>>]
 [<AS>RechnungUseCases <<ApplicationService>>]  -- [<R>Rechnungen <<Repository>>]
 [<AS>RechnungUseCases <<ApplicationService>>]  -- [<DS>RechnungsErstellung <<DomainService>>]
 [<AS>RechnungUseCases <<ApplicationService>>]  -- [<OS>RechnungsPDFErstellung <<OutboundService>>]
+[<R>Buchungen <<Repository>>]  -- [<AF> Buchung <<Aggregate>>]
 [<R>ServiceLeistungen <<Repository>>]  -- [<AF> ServiceLeistung <<Aggregate>>]
 [<R>Rechnungen <<Repository>>]  -- [<AF> Rechnung <<Aggregate>>]
-[<R>Reservierungen <<Repository>>]  -- [<AF> Reservierung <<Aggregate>>]

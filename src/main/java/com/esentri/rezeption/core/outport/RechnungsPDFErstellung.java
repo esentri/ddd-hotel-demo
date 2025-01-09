@@ -11,7 +11,7 @@ import io.domainlifecycles.domain.types.OutboundService;
 public interface RechnungsPDFErstellung extends OutboundService {
 
     /**
-     * Gibt einen byte-Array zurück, der das Rechnungs PDF für die Rechnung mit der übergebenen Id repräsentiert.
+     * Gibt einen byte-Array zurück, der das Rechnungs-PDF für die Rechnung mit der übergebenen Id repräsentiert.
      *
      * @param rechnungsId Id der Rechnung für welche ein PDF erzeugt werden soll.
      * @return byte Array für das Rechnungs PDF

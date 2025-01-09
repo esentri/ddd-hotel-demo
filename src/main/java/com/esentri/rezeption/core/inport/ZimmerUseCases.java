@@ -17,7 +17,7 @@
 package com.esentri.rezeption.core.inport;
 
 import com.esentri.rezeption.core.domain.hotel.Hotel;
-import com.esentri.rezeption.core.domain.reservierung.ReservierungAusgecheckt;
+import com.esentri.rezeption.core.domain.buchung.BuchungAusgecheckt;
 import com.esentri.rezeption.core.domain.zimmer.BeantrageZimmerWartung;
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerAuslastung;
@@ -45,14 +45,14 @@ public interface ZimmerUseCases extends ApplicationService {
     void onEvent(ZimmerWartungEingeplant zimmerWartungEingeplant);
 
     /**
-     * Behandelt das Ereignis, dass eine Reservierung ausgecheckt wurde.
+     * Behandelt das Ereignis, dass eine Buchung ausgecheckt wurde.
      * Diese Methode wird aufgerufen, wenn ein Gast aus seinem reservierten Zimmer ausgecheckt hat.
      *
      * Dabei soll die Belegung des Zimmers beendet werden.
      *
-     * @param reservierungAusgecheckt das Ereignis, das ein ausgechecktes Reservierung repräsentiert
+     * @param buchungAusgecheckt das Ereignis, das ein ausgechecktes Buchung repräsentiert
      */
-    void onEvent(ReservierungAusgecheckt reservierungAusgecheckt);
+    void onEvent(BuchungAusgecheckt buchungAusgecheckt);
 
     /**
      * Gibt eine Liste von verfügbaren Zimmernummer für ein spezifisches Hotel und einen bestimmten Zeitraum zurück.

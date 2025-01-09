@@ -17,8 +17,8 @@ Die zentralen demonstrativen Use Cases drehen sich dabei um den CheckIn und Chec
 Im Rahmen dieses Beispiels wird ein qualitativ hochwertiges objektorientiertes Design angestrebt, im Gegensatz zum 
 klassischen DDD Anti Pattern "Anämisches Domänen Modell" ([Fowler: Anemic Domain Model](https://martinfowler.com/bliki/AnemicDomainModel.html))
 
-Die Gegenüberstellung von [AntiPattern: Reservierung](./src/test/java/antipattern/Reservierung.java)
-und [Reservierung](./src/main/java/com/esentri/rezeption/core/domain/reservierung/Reservierung.java) soll dies zusätzlich verdeutlichen.
+Die Gegenüberstellung von [AntiPattern: Buchung](./src/test/java/antipattern/Buchung.java)
+und [Buchung](./src/main/java/com/esentri/rezeption/core/domain/buchung/Buchung.java) soll dies zusätzlich verdeutlichen.
 
 ## Geschäftsregeln 
 
@@ -32,10 +32,10 @@ Im Beispiel-Szenario könnte man einige davon ungefähr wie folgt formulieren:
   - Anzahl Gäste <= Zimmerkapazität
   - Alter Hauptgast in Buchung >= Mindestalter
   - Zimmerbelegung muss Wartungsarbeiten berücksichtigen
-  - Buchung canceln nach CheckIn nicht mehr möglich
+  - Buchung stornieren ist nach CheckIn nicht mehr möglich
 
 - CheckOut:
-  - Ein Checkout erfordert, dass die Bezahlung sichergestellt ist
+  - Ein CheckOut erfordert, dass die Bezahlung sichergestellt ist
   - Alle in Anspruch genommenen Serviceleistungen müssen beim CheckOut abgerechnet werden
 
 Ein Aggregate bildet eine Gruppe von kohäsiver Entities und ValueObjects, 
@@ -57,10 +57,10 @@ Falls die Einhaltung der Konsistenz in den Aufgabenbereich des Users fällt, wel
 kann tendenziell mit "transaktionaler Konsistenz" (d.h. Aggregate-übergreifenden Transaktionen) gearbeitet werden.
 
 Im Demo Projekt wird die "klassische transaktionale Konsistenzerhaltung" beim Check-In dargestellt, wobei die Aggregate
-"Reservierung" und "Zimmer" betroffen sind. Sobald eine Reservierung eingecheckt wird, muss ein entsprechendes freies Zimmer belegt werden:
+"Buchung" und "Zimmer" betroffen sind. Sobald eine Buchung eingecheckt wird, muss ein entsprechendes freies Zimmer belegt werden:
 
 ### Transactional
-- siehe [CheckInService](./src/main/java/com/esentri/rezeption/core/domain/reservierung/CheckInService.java)
+- siehe [CheckIn](./src/main/java/com/esentri/rezeption/core/domain/buchung/CheckIn.java)
 
 ![CheckIn - Klassendiagramm](./images/checkin.png "CheckIn - Klassendiagramm")
 
@@ -77,7 +77,7 @@ Die hier abgebildeteten "Rezeptionsservices" erhalten ein entsprechendes Domain 
 Zimmer-Belegungen vorzunehmen. Je nach Erfolg werden DomainEvents emittiert, welche die Zimmerbelegung, welche die 
 Bestätigung oder Ablehnung der Zimmerbelegungsversuche abbilden.
 
-- siehe [ZimmerDriverImpl.onEvent(ZimmerWartungeingeplant)](./src/main/java/com/esentri/rezeption/inbound/ZimmerDriverImpl.java)
+- siehe [ZimmerUseCasesImpl.onEvent(ZimmerWartungeingeplant)](./src/main/java/com/esentri/rezeption/inbound/ZimmerUseCasesImpl.java)
 
 ![Eventual Consistency](./images/eventual.png)
 
@@ -107,7 +107,7 @@ Lese-Modell verwendet.
 
 ![CheckOut](./images/checkout.png)
 ![Rechnung](./images/rechnung.png)
-![Reservierung](./images/reservierung.png)
+![Buchung](./images/buchung.png)
 ![Zimmer](./images/zimmer.png)
 ![ServiceLeistung](./images/serviceleistung.png)
 

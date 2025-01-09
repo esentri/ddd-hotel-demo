@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * Dummy-Service der die PDF Erzeugung für eine Rechnung simuliert.
+ * Dummy-Service, der die PDF-Erzeugung für eine Rechnung simuliert.
  *
  * @author Mario Herb
  */
