@@ -17,9 +17,9 @@
 package com.esentri.rezeption.core.domain.buchung;
 
 import com.esentri.rezeption.core.domain.rechnung.Rechnung;
+import com.esentri.rezeption.core.outport.Buchungen;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
 import com.esentri.rezeption.core.outport.Rechnungen;
-import com.esentri.rezeption.core.outport.Buchungen;
 import com.esentri.rezeption.core.outport.ServiceLeistungen;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.Publishes;

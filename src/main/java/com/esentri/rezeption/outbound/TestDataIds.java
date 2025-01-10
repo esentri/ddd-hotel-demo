@@ -17,8 +17,8 @@
 package com.esentri.rezeption.outbound;
 
 import com.esentri.rezeption.core.domain.buchung.Buchung;
-import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.buchung.Gast;
+import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
 import io.domainlifecycles.domain.types.Identity;

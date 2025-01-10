@@ -17,13 +17,14 @@
 package com.esentri.rezeption.configuration;
 
 import com.esentri.rezeption.core.domain.buchung.Buchungseingang;
-import com.esentri.rezeption.core.domain.rechnung.RechnungsErstellung;
 import com.esentri.rezeption.core.domain.buchung.CheckIn;
 import com.esentri.rezeption.core.domain.buchung.CheckOut;
+import com.esentri.rezeption.core.domain.rechnung.RechnungsErstellung;
 import com.esentri.rezeption.core.outport.Buchungen;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
 import com.esentri.rezeption.core.outport.Rechnungen;
 import com.esentri.rezeption.core.outport.ServiceLeistungen;
+import com.esentri.rezeption.core.outport.ZimmerAuslastungen;
 import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -110,19 +111,19 @@ public class DomainConfig {
      * Erstellt und konfiguriert eine Instanz des Buchungseingang.
      *
      * @param buchungen Repository für Buchungsdetails.
-     * @param zimmerVerwaltung Repository für Zimmerdetails.
+     * @param zimmerauslastungen QueryHandler für Zimmerauslastung.
      * @param domainEventPublisher Objekt zur Veröffentlichung von Domain-Ereignissen.
      * @return Die Instanz des konfigurierten Buchungseingang.
      */
     @Bean
     public Buchungseingang buchungsEingangService(
             Buchungen buchungen,
-            ZimmerVerwaltung zimmerVerwaltung,
+            ZimmerAuslastungen zimmerauslastungen,
             DomainEventPublisher domainEventPublisher
     ){
         return new Buchungseingang(
                 buchungen,
-                zimmerVerwaltung,
+                zimmerauslastungen,
                 domainEventPublisher
         );
     }

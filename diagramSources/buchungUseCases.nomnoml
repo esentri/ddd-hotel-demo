@@ -1,0 +1,212 @@
+#.AF:visual=frame align=left
+#.AF_R:visual=frame align=left;stroke=#FF0000
+#.AF_N:visual=frame align=left;stroke=#108738
+#.AR:fill=#8f8f bold
+#.AR_R:fill=#8f8f bold;stroke=#FF0000
+#.AR_N:fill=#8f8f bold;stroke=#108738
+#.E:fill=#88AAFF bold
+#.E_R:fill=#88AAFF bold;stroke=#FF0000
+#.E_N:fill=#88AAFF bold;stroke=#108738
+#.VO:fill=#FFFFCC bold
+#.VO_R:fill=#FFFFCC bold;stroke=#FF0000
+#.VO_N:fill=#FFFFCC bold;stroke=#108738
+#.V:fill=#FFFFCC bold
+#.V_R:fill=#FFFFCC bold;stroke=#FF0000
+#.V_N:fill=#FFFFCC bold;stroke=#108738
+#.I:fill=#FFFFCC bold
+#.I_R:fill=#FFFFCC bold;stroke=#FF0000
+#.I_N:fill=#FFFFCC bold;stroke=#108738
+#.DC:fill=#FFB266 bold
+#.DC_R:fill=#FFB266 bold;stroke=#FF0000
+#.DC_N:fill=#FFB266 bold;stroke=#108738
+#.DE:fill=#CCFFFF bold
+#.DE_R:fill=#CCFFFF bold;stroke=#FF0000
+#.DE_N:fill=#CCFFFF bold;stroke=#108738
+#.AS:bold
+#.AS_R:bold;stroke=#FF0000
+#.AS_N:bold;stroke=#108738
+#.DS:fill=#E0E0E0 bold
+#.R:fill=#C0C0C0 bold
+#.R_R:fill=#C0C0C0 bold;stroke=#FF0000
+#.R_N:fill=#C0C0C0 bold;stroke=#108738
+#.OS:fill=#C0C0C0 bold
+#.OS_R:fill=#C0C0C0 bold;stroke=#FF0000
+#.OS_N:fill=#C0C0C0 bold;stroke=#108738
+#.SK:fill=#C0C0C0 bold
+#.SK_R:fill=#C0C0C0 bold;stroke=#FF0000
+#.SK_N:fill=#C0C0C0 bold;stroke=#108738
+#.QH:fill=#C0C0C0 bold
+#.QH_R:fill=#C0C0C0 bold;stroke=#FF0000
+#.QH_N:fill=#C0C0C0 bold;stroke=#108738
+#.RM:fill=#FFCCE5 bold
+#.RM_R:fill=#FFCCE5 bold;stroke=#FF0000
+#.RM_N:fill=#FFCCE5 bold;stroke=#108738
+#font:Helvetica
+#direction:down
+#acycler: greedy
+#ranker: longest-path
+
+// !!! com.esentri.rezeption.core.domain.buchung.StorniereBuchung !!!
+[<DC> StorniereBuchung <<DomainCommand>> ]
+// !!! com.esentri.rezeption.core.domain.buchung.ErstelleNeueBuchung !!!
+[<DC> ErstelleNeueBuchung <<DomainCommand>> ]
+// !!! com.esentri.rezeption.core.domain.buchung.VervollstaendigeGastDaten !!!
+[<DC> VervollstaendigeGastDaten <<DomainCommand>> ]
+// !!! com.esentri.rezeption.core.domain.buchung.CheckeAus !!!
+[<DC> CheckeAus <<DomainCommand>> ]
+// !!! com.esentri.rezeption.core.domain.buchung.CheckeEin !!!
+[<DC> CheckeEin <<DomainCommand>> ]
+// !!! com.esentri.rezeption.inbound.BuchungUseCasesImpl !!!
+[<AS> BuchungUseCases <<ApplicationService>> |
++ Buchung$BuchungsNummer handle(CheckeAus)
++ Buchung$BuchungsNummer handle(CheckeEin)
++ Buchung$BuchungsNummer handle(ErstelleNeueBuchung)
++ Buchung$BuchungsNummer handle(StorniereBuchung)
++ Buchung$BuchungsNummer handle(VervollstaendigeGastDaten)
++ List<Buchung> listAktiveBuchungenInZeitraum(Hotel$Id,LocalDate,LocalDate,ZimmerKategorie,Integer)
+]
+// !!! com.esentri.rezeption.core.domain.buchung.CheckOut !!!
+[<DS> CheckOut <<DomainService>> |
++ Buchung$BuchungsNummer handle(CheckeAus)
+]
+// !!! com.esentri.rezeption.core.domain.buchung.Buchungseingang !!!
+[<DS> Buchungseingang <<DomainService>> |
++ Buchung$BuchungsNummer handle(ErstelleNeueBuchung)
+]
+// !!! com.esentri.rezeption.core.domain.buchung.CheckIn !!!
+[<DS> CheckIn <<DomainService>> |
++ Buchung$BuchungsNummer handle(CheckeEin)
+]
+// !!! com.esentri.rezeption.core.domain.buchung.NeueBuchungErhalten !!!
+[<DE> NeueBuchungErhalten <<DomainEvent>> ]
+// !!! com.esentri.rezeption.core.domain.buchung.BuchungAusgecheckt !!!
+[<DE> BuchungAusgecheckt <<DomainEvent>> ]
+// !!! com.esentri.rezeption.core.domain.buchung.BuchungEingecheckt !!!
+[<DE> BuchungEingecheckt <<DomainEvent>> ]
+// !!! {Frame} com.esentri.rezeption.core.domain.zimmer.Zimmer !!!
+[<AF> Zimmer <<Aggregate>>|
+// !!! com.esentri.rezeption.core.domain.zimmer.Zimmer !!!
+[<AR> Zimmer <<AggregateRoot>> |
++ Optional<Belegung> aktuelleBelegung()
++ Zimmer aktuelleBelegungBeenden()
++ boolean hatUeberschneidendeBelegung(Belegung)
++ boolean neueBelegung(LocalDate,LocalDate,BelegungTyp)
+]
+// !!! com.esentri.rezeption.core.domain.zimmer.Belegung !!!
+[<VO> Belegung <<ValueObject>> |
++ boolean istBelegtAm(LocalDate)
++ boolean ueberschneidetZeitraum(LocalDate,LocalDate)
+]
+[<AR>Zimmer <<AggregateRoot>>]  o-[<label> belegungen 0..*] - [<VO>Belegung <<ValueObject>>]
+]
+// !!! {Frame} com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung !!!
+[<AF> ServiceLeistung <<Aggregate>>|
+// !!! com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung !!!
+[<AR> ServiceLeistung <<AggregateRoot>> |
++ ServiceLeistung abgerechnet(Rechnung$Id)
+]
+]
+// !!! {Frame} com.esentri.rezeption.core.domain.buchung.Buchung !!!
+[<AF> Buchung <<Aggregate>>|
+// !!! com.esentri.rezeption.core.domain.buchung.Buchung !!!
+[<AR> Buchung <<AggregateRoot>> |
++ boolean buchungsZeitraumBeinhaltet(LocalDate)
++ Buchung checkeAus()
++ Buchung handle(CheckeEin)
++ Buchung handle(VervollstaendigeGastDaten)
++ Buchung storniere()
+]
+// !!! com.esentri.rezeption.core.domain.buchung.Gast !!!
+[<E> Gast <<Entity>> |
+]
+// !!! com.esentri.rezeption.core.domain.Adresse !!!
+[<VO> Adresse <<ValueObject>> |
+]
+[<AR>Buchung <<AggregateRoot>>]  +-[<label> gast 0..1] - [<E>Gast <<Entity>>]
+[<E>Gast <<Entity>>]  o-[<label> heimAdresse 0..1] - [<VO>Adresse <<ValueObject>>]
+]
+// !!! {Frame} com.esentri.rezeption.core.domain.rechnung.Rechnung !!!
+[<AF> Rechnung <<Aggregate>>|
+// !!! com.esentri.rezeption.core.domain.rechnung.Rechnung !!!
+[<AR> Rechnung <<AggregateRoot>> |
++ Rechnung addRechnungsPosition(Preis,String,ServiceLeistung$Id)
++ boolean beinhaltetZimmerAbrechnung()
++ Rechnung markiereBezahlt()
+]
+// !!! com.esentri.rezeption.core.domain.Adresse !!!
+[<VO> Adresse <<ValueObject>> |
+]
+// !!! com.esentri.rezeption.core.domain.rechnung.RechnungsPosition !!!
+[<E> RechnungsPosition <<Entity>> |
+]
+[<AR>Rechnung <<AggregateRoot>>]  o-[<label> rechnungsAdresse 0..1] - [<VO>Adresse <<ValueObject>>]
+[<AR>Rechnung <<AggregateRoot>>]  +-[<label> rechnungsPositionen 0..*] - [<E>RechnungsPosition <<Entity>>]
+]
+[<AF> ServiceLeistung <<Aggregate>>]  -[<label> ServiceLeistung.buchungsNummer] -> [<AF> Buchung <<Aggregate>>]
+[<AF> ServiceLeistung <<Aggregate>>]  -[<label> ServiceLeistung.abgerechnetPer] -> [<AF> Rechnung <<Aggregate>>]
+[<AF> Buchung <<Aggregate>>]  -[<label> Buchung.zimmerNummer] -> [<AF> Zimmer <<Aggregate>>]
+[<AF> Rechnung <<Aggregate>>]  -[<label> Rechnung.buchungsNummer] -> [<AF> Buchung <<Aggregate>>]
+[<AF> ServiceLeistung <<Aggregate>>]  <-[<label> RechnungsPosition.leistungsId] - [<AF> Rechnung <<Aggregate>>]
+// !!! com.esentri.rezeption.outbound.BuchungenImpl !!!
+[<R> Buchungen <<Repository>> |
++ Optional<Buchung> deleteById(Buchung$BuchungsNummer)
++ Optional<Buchung> findById(Buchung$BuchungsNummer)
++ Buchung insert(Buchung)
++ List<Buchung> listAktiveBuchungenInZeitraum(Hotel$Id,LocalDate,LocalDate,ZimmerKategorie,Integer)
++ Buchung update(Buchung)
+]
+// !!! com.esentri.rezeption.outbound.ServiceLeistungenImpl !!!
+[<R> ServiceLeistungen <<Repository>> |
++ Optional<ServiceLeistung> deleteById(ServiceLeistung$Id)
++ List<ServiceLeistung> find(Buchung$BuchungsNummer)
++ Optional<ServiceLeistung> findById(ServiceLeistung$Id)
++ ServiceLeistung insert(ServiceLeistung)
++ ServiceLeistung update(ServiceLeistung)
+]
+// !!! com.esentri.rezeption.outbound.RechnungenImpl !!!
+[<R> Rechnungen <<Repository>> |
++ Optional<Rechnung> deleteById(Rechnung$Id)
++ List<Rechnung> findByBuchungsNummer(Buchung$BuchungsNummer)
++ Optional<Rechnung> findById(Rechnung$Id)
++ Rechnung insert(Rechnung)
++ Rechnung update(Rechnung)
+]
+// !!! com.esentri.rezeption.outbound.ZimmerVerwaltungImpl !!!
+[<R> ZimmerVerwaltung <<Repository>> |
++ Optional<Zimmer> deleteById(Zimmer$ZimmerNummer)
++ Optional<Zimmer> findById(Zimmer$ZimmerNummer)
++ Zimmer insert(Zimmer)
++ List<Zimmer> listByHotel(Hotel$Id)
++ List<Zimmer> listZimmerByKategorieAndKapazitaet(Hotel$Id,ZimmerKategorie,int)
++ Zimmer update(Zimmer)
+]
+// !!! com.esentri.rezeption.core.domain.zimmer.ZimmerAuslastung !!!
+[<RM> ZimmerAuslastung <<ReadModel>> ]
+// !!! com.esentri.rezeption.outbound.ZimmerAuslastungenImpl !!!
+[<QH> ZimmerAuslastungen <<QueryHandler>> ]
+[<DC>StorniereBuchung <<DomainCommand>>]  --> [<AS>BuchungUseCases <<ApplicationService>>]
+[<DC>ErstelleNeueBuchung <<DomainCommand>>]  --> [<AS>BuchungUseCases <<ApplicationService>>]
+[<DC>VervollstaendigeGastDaten <<DomainCommand>>]  --> [<AS>BuchungUseCases <<ApplicationService>>]
+[<DC>CheckeAus <<DomainCommand>>]  --> [<AS>BuchungUseCases <<ApplicationService>>]
+[<DC>CheckeEin <<DomainCommand>>]  --> [<AS>BuchungUseCases <<ApplicationService>>]
+[<DS>Buchungseingang <<DomainService>>]  --> [<DE>NeueBuchungErhalten <<DomainEvent>>]
+[<DS>CheckOut <<DomainService>>]  --> [<DE>BuchungAusgecheckt <<DomainEvent>>]
+[<DS>CheckIn <<DomainService>>]  --> [<DE>BuchungEingecheckt <<DomainEvent>>]
+[<QH>ZimmerAuslastungen <<QueryHandler>>]  -- [<R>ZimmerVerwaltung <<Repository>>]
+[<QH>ZimmerAuslastungen <<QueryHandler>>]  -- [<R>Buchungen <<Repository>>]
+[<AS>BuchungUseCases <<ApplicationService>>]  -- [<R>Buchungen <<Repository>>]
+[<AS>BuchungUseCases <<ApplicationService>>]  -- [<DS>Buchungseingang <<DomainService>>]
+[<AS>BuchungUseCases <<ApplicationService>>]  -- [<DS>CheckIn <<DomainService>>]
+[<AS>BuchungUseCases <<ApplicationService>>]  -- [<DS>CheckOut <<DomainService>>]
+[<DS>CheckOut <<DomainService>>]  -- [<R>Buchungen <<Repository>>]
+[<DS>CheckOut <<DomainService>>]  -- [<R>Rechnungen <<Repository>>]
+[<DS>CheckOut <<DomainService>>]  -- [<R>ServiceLeistungen <<Repository>>]
+[<DS>Buchungseingang <<DomainService>>]  -- [<R>Buchungen <<Repository>>]
+[<DS>Buchungseingang <<DomainService>>]  -- [<QH>ZimmerAuslastungen <<QueryHandler>>]
+[<DS>CheckIn <<DomainService>>]  -- [<R>Buchungen <<Repository>>]
+[<DS>CheckIn <<DomainService>>]  -- [<R>ZimmerVerwaltung <<Repository>>]
+[<R>Buchungen <<Repository>>]  -- [<AF> Buchung <<Aggregate>>]
+[<R>ServiceLeistungen <<Repository>>]  -- [<AF> ServiceLeistung <<Aggregate>>]
+[<R>Rechnungen <<Repository>>]  -- [<AF> Rechnung <<Aggregate>>]
+[<R>ZimmerVerwaltung <<Repository>>]  -- [<AF> Zimmer <<Aggregate>>]
+[<QH>ZimmerAuslastungen <<QueryHandler>>]  -- [<RM>ZimmerAuslastung <<ReadModel>>]

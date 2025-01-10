@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-//@Disabled
+@Disabled
 public class GenerateDiagramTest {
 
     @Test

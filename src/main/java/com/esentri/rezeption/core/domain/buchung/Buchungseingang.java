@@ -16,11 +16,9 @@
 
 package com.esentri.rezeption.core.domain.buchung;
 
-import com.esentri.rezeption.core.domain.zimmer.Belegung;
-import com.esentri.rezeption.core.domain.zimmer.BelegungTyp;
 import com.esentri.rezeption.core.outport.Buchungen;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
-import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
+import com.esentri.rezeption.core.outport.ZimmerAuslastungen;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.Publishes;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +35,7 @@ public class Buchungseingang implements DomainService {
 
     private final Buchungen buchungen;
 
-    private final ZimmerVerwaltung zimmerVerwaltung;
+    private final ZimmerAuslastungen zimmerAuslastungen;
 
     private final DomainEventPublisher domainEventPublisher;
 
@@ -51,18 +49,20 @@ public class Buchungseingang implements DomainService {
      */
     @Publishes(domainEventTypes = NeueBuchungErhalten.class)
     public Buchung.BuchungsNummer handle(ErstelleNeueBuchung erstelleNeueBuchung){
-        var moeglicheZimmmer = zimmerVerwaltung.listZimmerByKategorieAndKapazitaet(
+        var auslastung = zimmerAuslastungen.auslastung(
                 erstelleNeueBuchung.hotelId(),
-                erstelleNeueBuchung.gewuenschteZimmerKategorie(),
-                erstelleNeueBuchung.gewuenschteKapazitaet()
-        );
-        var probeBelegung = new Belegung(
                 erstelleNeueBuchung.geplanteAnkunftAm(),
-                erstelleNeueBuchung.geplanteAnkunftAm().plusDays(erstelleNeueBuchung.geplanteAnzahlNaechte()),
-                BelegungTyp.GAST
+                erstelleNeueBuchung.geplanteAnkunftAm().plusDays(erstelleNeueBuchung.geplanteAnzahlNaechte())
         );
-        var anzahlUnbelegteZimmer = moeglicheZimmmer.stream().filter(z -> !z.hatUeberschneidendeBelegung(probeBelegung)).count();
-        if(anzahlUnbelegteZimmer>0) {
+
+        var zimmerVerfügbar = auslastung.stream()
+                .filter(a ->
+                        a.zimmerKategorie().equals(erstelleNeueBuchung.gewuenschteZimmerKategorie())
+                        && a.kapazitaet() == erstelleNeueBuchung.gewuenschteKapazitaet()
+                )
+                .allMatch(a -> a.anzahlGesamt()-a.anzahlBelegt()>0);
+
+        if(zimmerVerfügbar) {
             var buchung = buchungen.insert(neueBuchung(erstelleNeueBuchung));
             domainEventPublisher.publish(new NeueBuchungErhalten(buchung.id()));
             return buchung.id();
