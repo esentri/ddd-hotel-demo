@@ -30,7 +30,7 @@ import com.esentri.rezeption.core.inport.ZimmerUseCases;
 import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
 import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -42,8 +42,8 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramForAppComplete() {
-        Domain.setGenericTypeResolver(new TypeMetaResolver());
-        Domain.initialize(new ReflectiveDomainMirrorFactory("com.esentri.rezeption"));
+
+        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
 
 
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
@@ -54,7 +54,7 @@ public class GenerateDiagramTest {
                 .withCallApplicationServiceDriver(false)
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-                diagramConfig);
+                diagramConfig, Domain.getDomainModel());
 
         String actualDiagramText = generator.generateDiagramText();
         System.out.println("Diagram:\n" + actualDiagramText);
@@ -62,8 +62,7 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramPDFErstellung() {
-        Domain.setGenericTypeResolver(new TypeMetaResolver());
-        Domain.initialize(new ReflectiveDomainMirrorFactory("com.esentri.rezeption"));
+        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
 
 
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
@@ -88,7 +87,7 @@ public class GenerateDiagramTest {
                 .withTransitiveFilterSeedDomainServiceTypeNames(List.of(RechnungUseCases.class.getName()))
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-                diagramConfig);
+                diagramConfig, Domain.getDomainModel());
 
         String actualDiagramText = generator.generateDiagramText();
         System.out.println("Diagram:\n" + actualDiagramText);
@@ -96,8 +95,8 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramForAppCompleteAggregatesOnly() {
-        Domain.setGenericTypeResolver(new TypeMetaResolver());
-        Domain.initialize(new ReflectiveDomainMirrorFactory("com.esentri.rezeption"));
+
+        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
 
 
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
@@ -116,7 +115,9 @@ public class GenerateDiagramTest {
                 .withCallApplicationServiceDriver(false)
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-                diagramConfig);
+                diagramConfig,
+                Domain.getDomainModel()
+        );
 
         String actualDiagramText = generator.generateDiagramText();
         System.out.println("Diagram:\n" + actualDiagramText);
@@ -124,8 +125,7 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramForAppZimmerUseCases() {
-        Domain.setGenericTypeResolver(new TypeMetaResolver());
-        Domain.initialize(new ReflectiveDomainMirrorFactory("com.esentri.rezeption"));
+        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
 
 
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
@@ -139,7 +139,9 @@ public class GenerateDiagramTest {
                 .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ZimmerUseCases.class.getName()))
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-                diagramConfig);
+                diagramConfig,
+                Domain.getDomainModel()
+        );
 
         String actualDiagramText = generator.generateDiagramText();
         System.out.println("Diagram:\n" + actualDiagramText);
@@ -147,8 +149,7 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramForAppZimmerAuslastung() {
-        Domain.setGenericTypeResolver(new TypeMetaResolver());
-        Domain.initialize(new ReflectiveDomainMirrorFactory("com.esentri.rezeption"));
+        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
 
 
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
@@ -169,7 +170,7 @@ public class GenerateDiagramTest {
                 .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ZimmerUseCases.class.getName()))
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-                diagramConfig);
+                diagramConfig, Domain.getDomainModel());
 
         String actualDiagramText = generator.generateDiagramText();
         System.out.println("Diagram:\n" + actualDiagramText);
@@ -177,8 +178,8 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramForAppBuchungUseCases() {
-        Domain.setGenericTypeResolver(new TypeMetaResolver());
-        Domain.initialize(new ReflectiveDomainMirrorFactory("com.esentri.rezeption"));
+
+        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
 
 
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
@@ -192,7 +193,9 @@ public class GenerateDiagramTest {
                 .withTransitiveFilterSeedDomainServiceTypeNames(List.of(BuchungUseCases.class.getName()))
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-                diagramConfig);
+                diagramConfig,
+                Domain.getDomainModel()
+        );
 
         String actualDiagramText = generator.generateDiagramText();
         System.out.println("Diagram:\n" + actualDiagramText);
@@ -200,8 +203,8 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramForAppRechnungUseCases() {
-        Domain.setGenericTypeResolver(new TypeMetaResolver());
-        Domain.initialize(new ReflectiveDomainMirrorFactory("com.esentri.rezeption"));
+
+        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
 
 
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
@@ -215,7 +218,9 @@ public class GenerateDiagramTest {
                 .withTransitiveFilterSeedDomainServiceTypeNames(List.of(RechnungUseCases.class.getName()))
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-                diagramConfig);
+                diagramConfig,
+                Domain.getDomainModel()
+        );
 
         String actualDiagramText = generator.generateDiagramText();
         System.out.println("Diagram:\n" + actualDiagramText);
@@ -223,8 +228,8 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramForAppServiceLeistungUseCases() {
-        Domain.setGenericTypeResolver(new TypeMetaResolver());
-        Domain.initialize(new ReflectiveDomainMirrorFactory("com.esentri.rezeption"));
+
+        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
 
 
         DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
@@ -238,7 +243,9 @@ public class GenerateDiagramTest {
                 .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ServiceLeistungUseCases.class.getName()))
                 .build();
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-                diagramConfig);
+                diagramConfig,
+                Domain.getDomainModel()
+        );
 
         String actualDiagramText = generator.generateDiagramText();
         System.out.println("Diagram:\n" + actualDiagramText);
