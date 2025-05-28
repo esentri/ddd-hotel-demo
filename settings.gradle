@@ -1,8 +1,18 @@
 pluginManagement {
+
     repositories {
         gradlePluginPortal()
-        mavenLocal()
         mavenCentral()
+        mavenLocal()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "io.domainlifecycles.dlc-gradle-plugin") {
+                useModule("io.domainlifecycles:dlc-gradle-plugin:2.3.0")
+            }
+        }
     }
 }
+
+
 rootProject.name = 'rezeption'

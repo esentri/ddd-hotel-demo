@@ -19,16 +19,37 @@ package com.esentri.rezeption.core.domain.buchung;
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
 import io.domainlifecycles.domain.types.DomainCommand;
 
+import java.util.Objects;
+
 /**
  * Record-Klasse für den Check-In-Vorgang in einer Buchung.
  * Enthält die BuchungsNummer, die ZimmerNummer und die geplante Anzahl an Nächten.
  * Implementiert das DomainCommand Interface.
+ *
  * @author Mario Herb
  */
 public record CheckeEin(
         Buchung.BuchungsNummer buchungsNummer,
         Zimmer.ZimmerNummer zimmerNummer,
-
         int geplanteAnzahlNaechte
         ) implements DomainCommand {
+
+        public CheckeEin(
+                Buchung.BuchungsNummer buchungsNummer,
+                Zimmer.ZimmerNummer zimmerNummer,
+                int geplanteAnzahlNaechte
+        ) {
+                this.buchungsNummer = Objects.requireNonNull(
+                        buchungsNummer,
+                        "Die Angabe einer BuchungsNummer ist für den CheckIn erforderlich!"
+                );
+                this.zimmerNummer = Objects.requireNonNull(
+                        zimmerNummer,
+                        "Die Angabe einer ZimmerNummer ist für den CheckIn erforderlich!"
+                );
+                if(geplanteAnzahlNaechte < 1) {
+                        throw new IllegalArgumentException(" Die geplante Anzahl Naechte muss größer 0 sein!");
+                }
+                this.geplanteAnzahlNaechte = geplanteAnzahlNaechte;
+        }
 }

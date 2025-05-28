@@ -2,12 +2,13 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.3'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id 'io.domainlifecycles.dlc-gradle-plugin' version '2.3.0'
 }
 
 repositories {
 	mavenCentral()
-	mavenLocal()
 }
+
 
 
 group = 'com.esentri'
@@ -23,17 +24,51 @@ configurations {
 	}
 }
 
+dlcGradlePlugin {
+	diagram {
+		fileOutputDir = layout.buildDirectory
+		diagrams{
+			[
+					diagramSvg {
+						domainModelPackages = ["com.esentri"]
+						explicitlyIncludedPackages = ["com.esentri"]
+						format = "svg"
+						fileName = "diagram"
+						aggregateRootStyle = "fill=#333333 bold"
+					},
+					diagramSvg2 {
+						domainModelPackages = ["com.esentri"]
+						explicitlyIncludedPackages = ["com.esentri"]
+						format = "svg"
+						fileName = "diagram3"
+						aggregateRootStyle = "fill=#333333 bold"
+					}
+			]
+		}
+	}
+	jsonModel {
+		fileOutputDir = layout.buildDirectory
+		serializations{
+			[
+					serial{
+						fileName = "model"
+						domainModelPackages = ["com.esentri"]
+					}
+			]
+		}
 
+	}
+}
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework:spring-tx:6.1.3'
-	implementation 'io.domainlifecycles:types:2.0.4'
+	implementation 'io.domainlifecycles:types:2.3.0'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'io.domainlifecycles:mirror:2.0.4'
-	testImplementation 'io.domainlifecycles:domain-diagrammer:2.0.4'
+	testImplementation 'io.domainlifecycles:mirror:2.3.0'
+	testImplementation 'io.domainlifecycles:domain-diagrammer:2.3.0'
 }
 
 tasks.named('test') {

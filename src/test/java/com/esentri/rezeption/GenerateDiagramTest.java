@@ -28,9 +28,11 @@ import com.esentri.rezeption.core.inport.RechnungUseCases;
 import com.esentri.rezeption.core.inport.ServiceLeistungUseCases;
 import com.esentri.rezeption.core.inport.ZimmerUseCases;
 import io.domainlifecycles.diagram.domain.DomainDiagramGenerator;
+import io.domainlifecycles.diagram.domain.config.DiagramTrimSettings;
 import io.domainlifecycles.diagram.domain.config.DomainDiagramConfig;
+import io.domainlifecycles.diagram.domain.config.GeneralVisualSettings;
 import io.domainlifecycles.mirror.api.Domain;
-import io.domainlifecycles.mirror.reflect.ReflectiveDomainModelFactory;
+import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -43,18 +45,28 @@ public class GenerateDiagramTest {
     @Test
     void generateDiagramForAppComplete() {
 
-        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
+        var f = new ReflectiveDomainMirrorFactory( "com.esentri.rezeption");
+        f.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(f);
 
-
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
-                .withContextPackageName("com.esentri.rezeption")
+        DiagramTrimSettings trimSettings = DiagramTrimSettings.builder()
                 .withClassesBlacklist(List.of(BaseInMemoryRepository.class.getName()))
-                .withShowFields(false)
+                .build();
+
+        GeneralVisualSettings visualSettings = GeneralVisualSettings
+                .builder()
                 .withShowMethods(false)
+                .withShowFields(false)
                 .withCallApplicationServiceDriver(false)
                 .build();
+
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+                .withDiagramTrimSettings(trimSettings)
+                .withGeneralVisualSettings(visualSettings)
+                .build();
+
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-                diagramConfig, Domain.getDomainModel());
+                diagramConfig, Domain.getDomainMirror());
 
         String actualDiagramText = generator.generateDiagramText();
         System.out.println("Diagram:\n" + actualDiagramText);
@@ -62,11 +74,11 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramPDFErstellung() {
-        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
+        var f = new ReflectiveDomainMirrorFactory( "com.esentri.rezeption");
+        f.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(f);
 
-
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
-                .withContextPackageName("com.esentri.rezeption")
+        DiagramTrimSettings trimSettings = DiagramTrimSettings.builder()
                 .withClassesBlacklist(List.of(
                         BaseInMemoryRepository.class.getName(),
                         ErstelleRechnungFuerBuchung.class.getName(),
@@ -76,18 +88,27 @@ public class GenerateDiagramTest {
                         Rechnung.class.getName(),
                         ServiceLeistung.class.getName()
                 ))
+                .withIncludeConnectedTo(List.of(RechnungUseCases.class.getName()))
+                .build();
 
-                .withShowFields(false)
+        GeneralVisualSettings visualSettings = GeneralVisualSettings
+                .builder()
                 .withShowMethods(false)
+                .withShowFields(false)
                 .withCallApplicationServiceDriver(false)
                 .withShowDomainEvents(false)
                 .withShowRepositories(false)
                 .withShowReadModels(true)
                 .withShowDomainServices(false)
-                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(RechnungUseCases.class.getName()))
                 .build();
+
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+                .withDiagramTrimSettings(trimSettings)
+                .withGeneralVisualSettings(visualSettings)
+                .build();
+
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-                diagramConfig, Domain.getDomainModel());
+                diagramConfig, Domain.getDomainMirror());
 
         String actualDiagramText = generator.generateDiagramText();
         System.out.println("Diagram:\n" + actualDiagramText);
@@ -95,13 +116,16 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramForAppCompleteAggregatesOnly() {
+        var f = new ReflectiveDomainMirrorFactory( "com.esentri.rezeption");
+        f.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(f);
 
-        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
-
-
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
-                .withContextPackageName("com.esentri.rezeption")
+        DiagramTrimSettings trimSettings = DiagramTrimSettings.builder()
                 .withClassesBlacklist(List.of(BaseInMemoryRepository.class.getName()))
+                .build();
+
+        GeneralVisualSettings visualSettings = GeneralVisualSettings
+                .builder()
                 .withShowFields(true)
                 .withShowMethods(true)
                 .withShowApplicationServices(false)
@@ -114,9 +138,15 @@ public class GenerateDiagramTest {
                 .withShowOutboundServices(false)
                 .withCallApplicationServiceDriver(false)
                 .build();
+
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+                .withDiagramTrimSettings(trimSettings)
+                .withGeneralVisualSettings(visualSettings)
+                .build();
+
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig,
-                Domain.getDomainModel()
+                Domain.getDomainMirror()
         );
 
         String actualDiagramText = generator.generateDiagramText();
@@ -125,22 +155,32 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramForAppZimmerUseCases() {
-        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
+        var f = new ReflectiveDomainMirrorFactory( "com.esentri.rezeption");
+        f.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(f);
 
-
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
-                .withContextPackageName("com.esentri.rezeption")
+        DiagramTrimSettings trimSettings = DiagramTrimSettings.builder()
                 .withClassesBlacklist(List.of(BaseInMemoryRepository.class.getName()))
+                .withIncludeConnectedTo(List.of(ZimmerUseCases.class.getName()))
+                .build();
+
+        GeneralVisualSettings visualSettings = GeneralVisualSettings
+                .builder()
                 .withShowFields(false)
                 .withShowMethods(true)
                 .withShowReadModels(false)
                 .withCallApplicationServiceDriver(false)
                 .withShowQueryHandlers(false)
-                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ZimmerUseCases.class.getName()))
                 .build();
+
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+                .withDiagramTrimSettings(trimSettings)
+                .withGeneralVisualSettings(visualSettings)
+                .build();
+
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig,
-                Domain.getDomainModel()
+                Domain.getDomainMirror()
         );
 
         String actualDiagramText = generator.generateDiagramText();
@@ -149,14 +189,17 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramForAppZimmerAuslastung() {
-        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
+        var f = new ReflectiveDomainMirrorFactory( "com.esentri.rezeption");
+        f.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(f);
 
+        DiagramTrimSettings trimSettings = DiagramTrimSettings.builder()
+                .withClassesBlacklist(List.of(BaseInMemoryRepository.class.getName()))
+                .withIncludeConnectedTo(List.of(ZimmerUseCases.class.getName()))
+                .build();
 
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
-                .withContextPackageName("com.esentri.rezeption")
-                .withClassesBlacklist(List.of(
-                        BaseInMemoryRepository.class.getName()
-                ))
+        GeneralVisualSettings visualSettings = GeneralVisualSettings
+                .builder()
                 .withShowFields(true)
                 .withShowMethods(true)
                 .withShowApplicationServiceMethods(false)
@@ -167,10 +210,15 @@ public class GenerateDiagramTest {
                 .withShowQueryHandlers(true)
                 .withShowReadModels(true)
                 .withShowReadModelMethods(false)
-                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ZimmerUseCases.class.getName()))
                 .build();
+
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+                .withDiagramTrimSettings(trimSettings)
+                .withGeneralVisualSettings(visualSettings)
+                .build();
+
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
-                diagramConfig, Domain.getDomainModel());
+                diagramConfig, Domain.getDomainMirror());
 
         String actualDiagramText = generator.generateDiagramText();
         System.out.println("Diagram:\n" + actualDiagramText);
@@ -178,23 +226,30 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramForAppBuchungUseCases() {
+        var f = new ReflectiveDomainMirrorFactory( "com.esentri.rezeption");
+        f.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(f);
 
-        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
+        DiagramTrimSettings trimSettings = DiagramTrimSettings.builder()
+                .withClassesBlacklist(List.of(BaseInMemoryRepository.class.getName()))
+                .withIncludeConnectedTo(List.of(BuchungUseCases.class.getName()))
+                .build();
 
-
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
-                .withContextPackageName("com.esentri.rezeption")
-                .withClassesBlacklist(List.of(
-                        BaseInMemoryRepository.class.getName()
-                ))
+        GeneralVisualSettings visualSettings = GeneralVisualSettings
+                .builder()
                 .withShowFields(false)
                 .withShowMethods(true)
                 .withCallApplicationServiceDriver(false)
-                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(BuchungUseCases.class.getName()))
                 .build();
+
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+                .withDiagramTrimSettings(trimSettings)
+                .withGeneralVisualSettings(visualSettings)
+                .build();
+
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig,
-                Domain.getDomainModel()
+                Domain.getDomainMirror()
         );
 
         String actualDiagramText = generator.generateDiagramText();
@@ -203,23 +258,30 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramForAppRechnungUseCases() {
+        var f = new ReflectiveDomainMirrorFactory( "com.esentri.rezeption");
+        f.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(f);
 
-        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
+        DiagramTrimSettings trimSettings = DiagramTrimSettings.builder()
+                .withClassesBlacklist(List.of(BaseInMemoryRepository.class.getName()))
+                .withIncludeConnectedTo(List.of(RechnungUseCases.class.getName()))
+                .build();
 
-
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
-                .withContextPackageName("com.esentri.rezeption")
-                .withClassesBlacklist(List.of(
-                        BaseInMemoryRepository.class.getName()
-                ))
+        GeneralVisualSettings visualSettings = GeneralVisualSettings
+                .builder()
                 .withShowFields(false)
                 .withShowMethods(false)
                 .withCallApplicationServiceDriver(false)
-                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(RechnungUseCases.class.getName()))
                 .build();
+
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+                .withDiagramTrimSettings(trimSettings)
+                .withGeneralVisualSettings(visualSettings)
+                .build();
+
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig,
-                Domain.getDomainModel()
+                Domain.getDomainMirror()
         );
 
         String actualDiagramText = generator.generateDiagramText();
@@ -228,23 +290,30 @@ public class GenerateDiagramTest {
 
     @Test
     void generateDiagramForAppServiceLeistungUseCases() {
+        var f = new ReflectiveDomainMirrorFactory( "com.esentri.rezeption");
+        f.setGenericTypeResolver(new TypeMetaResolver());
+        Domain.initialize(f);
 
-        Domain.initialize(new ReflectiveDomainModelFactory(new TypeMetaResolver(), "com.esentri.rezeption"));
+        DiagramTrimSettings trimSettings = DiagramTrimSettings.builder()
+                .withClassesBlacklist(List.of(BaseInMemoryRepository.class.getName()))
+                .withIncludeConnectedTo(List.of(ServiceLeistungUseCases.class.getName()))
+                .build();
 
-
-        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
-                .withContextPackageName("com.esentri.rezeption")
-                .withClassesBlacklist(List.of(
-                        BaseInMemoryRepository.class.getName()
-                ))
+        GeneralVisualSettings visualSettings = GeneralVisualSettings
+                .builder()
                 .withShowFields(false)
                 .withShowMethods(false)
                 .withCallApplicationServiceDriver(false)
-                .withTransitiveFilterSeedDomainServiceTypeNames(List.of(ServiceLeistungUseCases.class.getName()))
                 .build();
+
+        DomainDiagramConfig diagramConfig = DomainDiagramConfig.builder()
+                .withDiagramTrimSettings(trimSettings)
+                .withGeneralVisualSettings(visualSettings)
+                .build();
+
         DomainDiagramGenerator generator = new DomainDiagramGenerator(
                 diagramConfig,
-                Domain.getDomainModel()
+                Domain.getDomainMirror()
         );
 
         String actualDiagramText = generator.generateDiagramText();
