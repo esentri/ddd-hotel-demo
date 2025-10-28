@@ -76,7 +76,7 @@ public class CheckOut implements DomainService {
                     buchungen.update(r.checkeAus()))
             .orElseThrow();
 
-        domainEventPublisher.publish(new BuchungAusgecheckt(buchung.getBuchungsNummer(), buchung.getCheckOutAm(), buchung.getZimmerNummer()));
+        domainEventPublisher.publish(new BuchungAusgecheckt(buchung.getBuchungsNummer(), buchung.getCheckOutAm(), buchung.getZimmerId()));
 
         return  buchung.id();
     }

@@ -21,9 +21,9 @@ import io.domainlifecycles.domain.types.DomainEvent;
 
 /**
  * ZimmerWartungBestaetigt repräsentiert das Ereignis, wenn eine Wartung bestätigt wird.
- * Er enthält die Referenz auf den Wartungsplan und die Zimmernummer, für die die Wartung bestätigt wurde.
+ * Er enthält die Referenz auf den Wartungsplan und die Zimmer Id, für die die Wartung bestätigt wurde.
  *
  * @author Mario Herb
  */
-public record ZimmerWartungBestaetigt(WartungsPlanungId planungsReferenz, Zimmer.ZimmerNummer zimmerNummer) implements DomainEvent {
+public record ZimmerWartungBestaetigt(WartungsPlanungId planungsReferenz, Zimmer.Id zimmerId) implements DomainEvent {
 }

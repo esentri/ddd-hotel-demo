@@ -27,14 +27,14 @@ import java.time.LocalDate;
  * Bei dem Event werden die BuchungsNummer, die ZimmerNummer und der Buchungszeitraum festgehalten.
  *
  * @param buchungsNummer Die Identifikationsnummer der Buchung
- * @param zimmerNummer Die Identifikationsnummer des Zimmers
+ * @param zimmerId Die Identifikationsnummer des Zimmers
  * @param von Das Startdatum der Buchung
  * @param bis Das Enddatum der Buchung
  *
  * @author Mario Herb
  */
 public record BuchungEingecheckt(Buchung.BuchungsNummer buchungsNummer,
-                                 Zimmer.ZimmerNummer zimmerNummer,
+                                 Zimmer.Id zimmerId,
                                  LocalDate von,
                                  LocalDate bis
 ) implements DomainEvent {}

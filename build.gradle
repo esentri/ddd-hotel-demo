@@ -1,8 +1,8 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.2.3'
+	id 'org.springframework.boot' version '3.5.5'
 	id 'io.spring.dependency-management' version '1.1.4'
-	id 'io.domainlifecycles.dlc-gradle-plugin' version '2.3.0'
+	id 'io.domainlifecycles.dlc-gradle-plugin' version '2.5.0.rc'
 }
 
 repositories {
@@ -56,25 +56,34 @@ dlcGradlePlugin {
 					}
 			]
 		}
-
 	}
+    domainModelUpload {
+        domainModelPackages = ["com.esentri"]
+        projectName = "ddd-hotel-demo"
+        apiKey = "93a6be61-1e98-4079-9076-4ca9daa1614b"
+        diagramViewerBaseUrl = "http://localhost:8090"
+    }
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
-	implementation 'org.springframework:spring-tx:6.1.3'
-	implementation 'io.domainlifecycles:types:2.3.0'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'io.domainlifecycles:spring-boot-starter:2.5.0.rc'
+    implementation 'org.springframework:spring-tx:6.1.3'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'io.domainlifecycles:mirror:2.3.0'
-	testImplementation 'io.domainlifecycles:domain-diagrammer:2.3.0'
+	testImplementation 'io.domainlifecycles:mirror:2.5.0.rc'
+	testImplementation 'io.domainlifecycles:domain-diagrammer:2.5.0.rc'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
 
+repositories {
+    mavenLocal()
+}
 
 
 

@@ -16,6 +16,7 @@
 
 package com.esentri.rezeption.core.domain.zimmer;
 
+import com.esentri.rezeption.core.domain.buchung.CheckeEin;
 import com.esentri.rezeption.core.domain.hotel.Hotel;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.Identity;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Zimmerklasse, implementiert als AggregateRoot mit ZimmerNummer, Kapazität und Stockwerk und Belegungen.
@@ -35,18 +37,23 @@ import java.util.Optional;
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
-public class Zimmer implements AggregateRoot<Zimmer.ZimmerNummer> {
+public class Zimmer implements AggregateRoot<Zimmer.Id> {
 
     /**
-     * Innere Klasse zur Repräsentation der ZimmerNummer.
+     * Innere Klasse zur Repräsentation der Zimmer Id.
      */
-    public record ZimmerNummer(String value) implements Identity<String> {}
+    public record Id(UUID value) implements Identity<UUID> {}
 
     /**
-     * Eindeutige Nummer des Zimmers.
+     * Eindeutige Id des Zimmers.
      */
     @EqualsAndHashCode.Include
-    private final ZimmerNummer nummer;
+    private final Id id;
+
+    /**
+     * Die ZimmerNummer
+     */
+    private final ZimmerNummer zimmerNummer;
 
     /**
      * Eindeutige Hotel-ID, zu dem das Zimmer gehört.
@@ -78,13 +85,14 @@ public class Zimmer implements AggregateRoot<Zimmer.ZimmerNummer> {
     /**
      * Konstruktor für die Erstellung eines Zimmer-Objekts.
      *
-     * @param nummer Die eindeutige Nummer des Zimmers.
+     * @param id Die eindeutige Id des Zimmers
+     * @param nummer Die Nummer des Zimmers.
      * @param hotelId Die eindeutige ID des Hotels, zu dem das Zimmer gehört.
      * @param kategorie Die Kategorie des Zimmers.
      * @param kapazitaet Die Kapazität des Zimmers.
      * @param stockwerk Das Stockwerk, in dem sich das Zimmer befindet.
      */
-    public Zimmer(ZimmerNummer nummer, Hotel.Id hotelId, ZimmerKategorie kategorie, int kapazitaet, int stockwerk) {
+    public Zimmer(Id id, ZimmerNummer nummer, Hotel.Id hotelId, ZimmerKategorie kategorie, int kapazitaet, int stockwerk) {
         validateKapazitaet(kapazitaet);
         if (nummer == null) {
             throw new IllegalArgumentException("Die Nummer des Zimmers darf nicht null sein");
@@ -95,7 +103,8 @@ public class Zimmer implements AggregateRoot<Zimmer.ZimmerNummer> {
         if (kategorie == null) {
             throw new IllegalArgumentException("Die ZimmerKategorie darf nicht null sein");
         }
-        this.nummer = nummer;
+        this.id = id;
+        this.zimmerNummer = nummer;
         this.hotelId = hotelId;
         this.kategorie = kategorie;
         this.kapazitaet = kapazitaet;
@@ -115,13 +124,13 @@ public class Zimmer implements AggregateRoot<Zimmer.ZimmerNummer> {
     }
 
     /**
-     * Gibt die eindeutige ZimmerNummer zurück, die als ID des Zimmers dient.
+     * Gibt die eindeutige Zimmer Id zurück.
      *
-     * @return Eindeutige ZimmerNummer.
+     * @return Eindeutige Zimmer Id.
      */
     @Override
-    public ZimmerNummer id() {
-        return nummer;
+    public Id id() {
+        return id;
     }
 
     /**
@@ -140,15 +149,26 @@ public class Zimmer implements AggregateRoot<Zimmer.ZimmerNummer> {
      * @param von Anfangsdatum der Belegung.
      * @param bis Enddatum der Belegung.
      * @param belegungTyp Typ der Belegung.
-     * @return true, wenn eine neue Belegung hinzugefügt wurde, sonst false.
+     * @return Optional mit neuer Belegung, die hinzugefügt wurde, sonst empty.
      */
-    public boolean neueBelegung(LocalDate von, LocalDate bis, BelegungTyp belegungTyp){
+    public Optional<Belegung> neueBelegung(LocalDate von, LocalDate bis, BelegungTyp belegungTyp){
         var neueBelegung = new Belegung(von, bis, belegungTyp);
         if(!hatUeberschneidendeBelegung(neueBelegung)){
             belegungen.add(neueBelegung);
-            return true;
+            return Optional.of(neueBelegung);
         }
-        return false;
+        return Optional.empty();
+    }
+
+    /**
+     * Fügt eine neue Belegung hinzu, wenn keine Überschneidung vorliegt, speziell für den CheckIn.
+     *
+     * @param checkeEin Command für CheckIn des Zimmers
+     * @return Optional mit neuer Belegung, die hinzugefügt wurde, sonst empty.
+     */
+    public Optional<Belegung> neueBelegungFuerCheckIn(CheckeEin checkeEin){
+        var checkOutAm = LocalDate.now().plusDays(checkeEin.geplanteAnzahlNaechte());
+        return neueBelegung(LocalDate.now(), checkOutAm, BelegungTyp.GAST);
     }
 
     /**
@@ -170,10 +190,7 @@ public class Zimmer implements AggregateRoot<Zimmer.ZimmerNummer> {
      */
     public Zimmer aktuelleBelegungBeenden(){
         var aktuellOptional = aktuelleBelegung();
-        if(aktuellOptional.isPresent()){
-            var aktuell = aktuellOptional.get();
-            belegungen.remove(aktuell);
-        }
+        aktuellOptional.ifPresent(belegungen::remove);
         return this;
     }
 

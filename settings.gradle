@@ -8,11 +8,10 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "io.domainlifecycles.dlc-gradle-plugin") {
-                useModule("io.domainlifecycles:dlc-gradle-plugin:2.3.0")
+                useModule("io.domainlifecycles:dlc-gradle-plugin:2.5.0.rc")
             }
         }
     }
 }
-
 
 rootProject.name = 'rezeption'

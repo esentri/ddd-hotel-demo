@@ -55,7 +55,7 @@ public interface ZimmerUseCases extends ApplicationService {
     void onEvent(BuchungAusgecheckt buchungAusgecheckt);
 
     /**
-     * Gibt eine Liste von verfügbaren Zimmernummer für ein spezifisches Hotel und einen bestimmten Zeitraum zurück.
+     * Gibt eine Liste von Ids der verfügbaren Zimmer für ein spezifisches Hotel und einen bestimmten Zeitraum zurück.
      * Diese Methode wird aufgerufen, um zu überprüfen, welche Zimmer zu gegebenen Kriterien verfügbar sind.
      *
      * @param hotelId die ID des Hotels, für das die verfügbaren Zimmer ermittelt werden sollen
@@ -63,9 +63,9 @@ public interface ZimmerUseCases extends ApplicationService {
      * @param bis das Enddatum des Zeitraums
      * @param zimmerKategorie die gewünschte Zimmerkategorie
      * @param kapazitaet die benötige Kapazität
-     * @return eine Liste von Zimmernummern der verfügbaren Zimmer
+     * @return eine Liste von Zimmer Ids der verfügbaren Zimmer
      */
-    List<Zimmer.ZimmerNummer> verfuegbareZimmer(Hotel.Id hotelId, LocalDate von, LocalDate bis, ZimmerKategorie zimmerKategorie, int kapazitaet);
+    List<Zimmer.Id> verfuegbareZimmer(Hotel.Id hotelId, LocalDate von, LocalDate bis, ZimmerKategorie zimmerKategorie, int kapazitaet);
 
     /**
      * Behandelt die Anforderung einer Zimmerwartung.

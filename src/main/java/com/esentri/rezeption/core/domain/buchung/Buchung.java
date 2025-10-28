@@ -69,7 +69,7 @@ public class Buchung implements AggregateRoot<Buchung.BuchungsNummer> {
 
     private final Gast gast;
 
-    private Zimmer.ZimmerNummer zimmerNummer;
+    private Zimmer.Id zimmerId;
 
     private long concurrencyVersion;
 
@@ -85,7 +85,7 @@ public class Buchung implements AggregateRoot<Buchung.BuchungsNummer> {
             ZimmerKategorie gewuenschteZimmerKategorie,
             int gewuenschteKapazitaet,
             Gast gast,
-            Zimmer.ZimmerNummer zimmerNummer,
+            Zimmer.Id zimmerId,
             long concurrencyVersion) {
         this.buchungsNummer = Objects.requireNonNull(buchungsNummer, "Eine BuchungsNummer muss vorhanden sein!");
         this.hotelId = Objects.requireNonNull(hotelId, "Jede Buchung muss sich auf ein konkretes Hotel beziehen!");
@@ -101,7 +101,7 @@ public class Buchung implements AggregateRoot<Buchung.BuchungsNummer> {
             throw new IllegalStateException("Die gewünschte Kapazität muss >0 sein!");
         }
         this.gast = Objects.requireNonNull(gast, "Ein Hauptgast muss von Beginn an angegeben sein!");
-        this.zimmerNummer = zimmerNummer;
+        this.zimmerId = zimmerId;
         this.concurrencyVersion = concurrencyVersion;
     }
 
@@ -134,11 +134,11 @@ public class Buchung implements AggregateRoot<Buchung.BuchungsNummer> {
      * @throws IllegalStateException wenn der Gast bereits eingecheckt ist
      */
     public Buchung handle(CheckeEin checkeEin){
-        if(zimmerNummer == null && checkInAm == null){
+        if(zimmerId == null && checkInAm == null){
             if(gast.getGeburtsDatum() == null){
                 throw new IllegalStateException("Geburtsdatum des Gasts muss spätestens beim Einchecken angegeben werden!");
             }
-            zimmerNummer = checkeEin.zimmerNummer();
+            zimmerId = checkeEin.zimmerId();
             checkInAm = LocalDateTime.now();
             geplanteAnzahlNaechte = checkeEin.geplanteAnzahlNaechte();
             return this;

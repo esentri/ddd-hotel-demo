@@ -32,5 +32,5 @@ public record ZimmerWartungEingeplant(
         WartungsPlanungId planungReferenz,
         LocalDate von,
         LocalDate bis,
-        List<Zimmer.ZimmerNummer> zimmerNummern
+        List<Zimmer.Id> zimmerIds
 ) implements DomainEvent {}

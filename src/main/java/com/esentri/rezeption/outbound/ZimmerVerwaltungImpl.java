@@ -37,13 +37,14 @@ import java.util.List;
  * @see BaseInMemoryRepository
  */
 @Repository
-public class ZimmerVerwaltungImpl extends BaseInMemoryRepository<Zimmer.ZimmerNummer, Zimmer> implements ZimmerVerwaltung {
+public class ZimmerVerwaltungImpl extends BaseInMemoryRepository<Zimmer.Id, Zimmer> implements ZimmerVerwaltung {
 
 
     public ZimmerVerwaltungImpl() {
         super(new ArrayList<>());
         var z1 = new Zimmer(
                 TestDataIds.ZIMMER_ID_EINZELZIMMER.id(),
+                TestDataZimmerNummern.ZIMMER_NUMMER_EINZELZIMMER.nummer(),
                 TestDataIds.HOTEL_ID.id(),
                 ZimmerKategorie.EINZELZIMMER,
                 1,
@@ -55,6 +56,7 @@ public class ZimmerVerwaltungImpl extends BaseInMemoryRepository<Zimmer.ZimmerNu
                     z1,
                     new Zimmer(
                             TestDataIds.ZIMMER_ID_BUSINESS_SUITE.id(),
+                            TestDataZimmerNummern.ZIMMER_NUMMER_BUSINESS_SUITE.nummer(),
                             TestDataIds.HOTEL_ID.id(),
                             ZimmerKategorie.BUSINESS_SUITE,
                             2,
@@ -62,6 +64,7 @@ public class ZimmerVerwaltungImpl extends BaseInMemoryRepository<Zimmer.ZimmerNu
                     ),
                     new Zimmer(
                             TestDataIds.ZIMMER_ID_PRESIDENTIAL_SUITE.id(),
+                            TestDataZimmerNummern.ZIMMER_NUMMER_PRESIDENTIAL_SUITE.nummer(),
                             TestDataIds.HOTEL_ID.id(),
                             ZimmerKategorie.PRESIDENTIAL_SUITE,
                             4,

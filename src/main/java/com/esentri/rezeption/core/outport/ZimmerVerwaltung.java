@@ -29,7 +29,7 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public interface ZimmerVerwaltung extends Repository<Zimmer.ZimmerNummer, Zimmer> {
+public interface ZimmerVerwaltung extends Repository<Zimmer.Id, Zimmer> {
 
     /**
      * Gibt eine Liste der Zimmer einer bestimmten Kategorie und Kapazität für ein spezifiziertes Hotel zurück.

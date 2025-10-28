@@ -133,7 +133,7 @@ class RezeptionsServicesApplicationTests {
 		assertThat(res).isPresent();
 		assertThat(res.get().getCheckInAm().toLocalDate()).isEqualTo(LocalDate.now());
 
-		var zimmer = zimmerVerwaltung.findById(res.get().getZimmerNummer()).orElseThrow();
+		var zimmer = zimmerVerwaltung.findById(res.get().getZimmerId()).orElseThrow();
 		assertThat(zimmer.aktuelleBelegung()).isPresent();
 		var belegung = zimmer.aktuelleBelegung().get();
 		assertThat(belegung.belegungTyp()).isEqualTo(BelegungTyp.GAST);
@@ -238,7 +238,7 @@ class RezeptionsServicesApplicationTests {
 
 		assertThat(res.get().getCheckOutAm().toLocalDate()).isEqualTo(LocalDate.now());
 
-		var zimmer = zimmerVerwaltung.findById(res.get().getZimmerNummer()).orElseThrow();
+		var zimmer = zimmerVerwaltung.findById(res.get().getZimmerId()).orElseThrow();
 		assertThat(zimmer.aktuelleBelegung()).isEmpty();
 
 		serviceLeistungenZumAbrechnen.forEach(sl -> assertThat(sl.getAbgerechnetPer()).isNotNull());

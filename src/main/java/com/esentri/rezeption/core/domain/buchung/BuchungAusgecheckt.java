@@ -25,11 +25,11 @@ import java.time.LocalDateTime;
  * Diese Klasse modelliert das BuchungAusgecheckt-Event einer Buchung.
  * Das Event wird ausgelöst, wenn ein Gast aus seinem gebuchten Zimmer auscheckt.
  * Die Klasse enthält die BuchungsNummer der betroffenen Buchung, das Datum und die Uhrzeit des
- * Auscheckens und die Zimmernummer des betroffenen Zimmers.
+ * Auscheckens und die Id des betroffenen Zimmers.
  *
  * @author Mario Herb
  */
 public record BuchungAusgecheckt(Buchung.BuchungsNummer buchungsNummer,
                                  LocalDateTime am,
-                                 Zimmer.ZimmerNummer zimmerNummer) implements DomainEvent {
+                                 Zimmer.Id zimmerId) implements DomainEvent {
 }

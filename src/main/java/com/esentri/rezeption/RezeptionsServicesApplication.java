@@ -16,6 +16,7 @@
 
 package com.esentri.rezeption;
 
+import io.domainlifecycles.autoconfig.annotation.EnableDlc;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -25,6 +26,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author Mario Herb
  */
 @SpringBootApplication
+@EnableDlc(dlcDomainBasePackages = "com.esentri.rezeption")
 public class RezeptionsServicesApplication {
 
 	public static void main(String[] args) {

@@ -65,14 +65,14 @@ public class ZimmerUseCasesImpl implements ZimmerUseCases {
     @EventListener
     @ListensTo(domainEventType = ZimmerWartungEingeplant.class)
     public void onEvent(ZimmerWartungEingeplant zimmerWartungEingeplant) {
-        zimmerWartungEingeplant.zimmerNummern()
-            .forEach(zimmerNummer ->
+        zimmerWartungEingeplant.zimmerIds()
+            .forEach(zimmerId ->
                 handle(
                     new BeantrageZimmerWartung(
                         zimmerWartungEingeplant.planungReferenz(),
                         zimmerWartungEingeplant.von(),
                         zimmerWartungEingeplant.bis(),
-                        zimmerNummer
+                            zimmerId
                     )
                 )
             );
@@ -82,7 +82,7 @@ public class ZimmerUseCasesImpl implements ZimmerUseCases {
      * {@inheritDoc}
      */
     @Override
-    public List<Zimmer.ZimmerNummer> verfuegbareZimmer(Hotel.Id hotelId, LocalDate von, LocalDate bis, ZimmerKategorie zimmerKategorie, int kapazitaet) {
+    public List<Zimmer.Id> verfuegbareZimmer(Hotel.Id hotelId, LocalDate von, LocalDate bis, ZimmerKategorie zimmerKategorie, int kapazitaet) {
         var probeBelegung = new Belegung(
             von,
             bis,
@@ -108,8 +108,8 @@ public class ZimmerUseCasesImpl implements ZimmerUseCases {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Publishes(domainEventTypes = {ZimmerWartungBestaetigt.class, ZimmerWartungAbgelehnt.class})
     public void handle(BeantrageZimmerWartung beantrageZimmerWartung){
-        var zimmer = zimmerVerwaltung.findById(beantrageZimmerWartung.zimmerNummer()).orElseThrow();
-        if(zimmer.neueBelegung(beantrageZimmerWartung.von(), beantrageZimmerWartung.bis(), BelegungTyp.WARTUNG)){
+        var zimmer = zimmerVerwaltung.findById(beantrageZimmerWartung.zimmerId()).orElseThrow();
+        if(zimmer.neueBelegung(beantrageZimmerWartung.von(), beantrageZimmerWartung.bis(), BelegungTyp.WARTUNG).isPresent()){
             zimmerVerwaltung.update(zimmer);
             domainEventPublisher.publish(new ZimmerWartungBestaetigt(beantrageZimmerWartung.wartungsPlanungId(), zimmer.id()));
         }else{
@@ -124,7 +124,7 @@ public class ZimmerUseCasesImpl implements ZimmerUseCases {
     @EventListener
     @ListensTo(domainEventType = BuchungAusgecheckt.class)
     public void onEvent(BuchungAusgecheckt buchungAusgecheckt) {
-        var zimmer = zimmerVerwaltung.findById(buchungAusgecheckt.zimmerNummer()).orElseThrow();
+        var zimmer = zimmerVerwaltung.findById(buchungAusgecheckt.zimmerId()).orElseThrow();
         zimmerVerwaltung.update(zimmer.aktuelleBelegungBeenden());
     }
 

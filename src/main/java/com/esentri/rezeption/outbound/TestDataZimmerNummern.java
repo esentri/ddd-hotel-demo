@@ -14,20 +14,29 @@
  *  limitations under the License.
  */
 
-package com.esentri.rezeption.core.domain.zimmer;
+package com.esentri.rezeption.outbound;
 
-import com.esentri.rezeption.core.domain.WartungsPlanungId;
-import io.domainlifecycles.domain.types.DomainCommand;
+import com.esentri.rezeption.core.domain.zimmer.ZimmerNummer;
+import io.domainlifecycles.domain.types.Identity;
 
-import java.time.LocalDate;
 
 /**
- * Ein DomainCommand zur Beantragung einer Zimmerwartung.
+ * Diese Enum-Klasse dient zur Bereitstellung von Testdaten-ZimmerNummern.
  *
  * @author Mario Herb
  */
-public record BeantrageZimmerWartung(WartungsPlanungId wartungsPlanungId,
-                                     LocalDate von,
-                                     LocalDate bis,
-                                     Zimmer.Id zimmerId) implements DomainCommand {
+public enum TestDataZimmerNummern {
+    ZIMMER_NUMMER_EINZELZIMMER(new ZimmerNummer("1")),
+    ZIMMER_NUMMER_BUSINESS_SUITE(new ZimmerNummer("2")),
+    ZIMMER_NUMMER_PRESIDENTIAL_SUITE(new ZimmerNummer("3"));
+
+    private final ZimmerNummer zimmerNummer;
+
+    public ZimmerNummer nummer(){
+        return zimmerNummer;
+    }
+
+    TestDataZimmerNummern(ZimmerNummer zimmerNummer) {
+        this.zimmerNummer = zimmerNummer;
+    }
 }

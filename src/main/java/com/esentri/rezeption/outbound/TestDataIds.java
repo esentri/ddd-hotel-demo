@@ -39,9 +39,9 @@ import java.util.UUID;
 public enum TestDataIds {
 
     HOTEL_ID(new Hotel.Id(UUID.randomUUID())),
-    ZIMMER_ID_EINZELZIMMER(new Zimmer.ZimmerNummer("1")),
-    ZIMMER_ID_BUSINESS_SUITE(new Zimmer.ZimmerNummer("2")),
-    ZIMMER_ID_PRESIDENTIAL_SUITE(new Zimmer.ZimmerNummer("3")),
+    ZIMMER_ID_EINZELZIMMER(new Zimmer.Id(UUID.randomUUID())),
+    ZIMMER_ID_BUSINESS_SUITE(new Zimmer.Id(UUID.randomUUID())),
+    ZIMMER_ID_PRESIDENTIAL_SUITE(new Zimmer.Id(UUID.randomUUID())),
     BUCHUNG_ID_OFFEN(new Buchung.BuchungsNummer(UUID.randomUUID())),
     GAST_BUCHUNG_OFFEN_ID(new Gast.GastId(UUID.randomUUID())),
     BUCHUNG_ID_EINGECHECKT(new Buchung.BuchungsNummer(UUID.randomUUID())),
@@ -49,7 +49,7 @@ public enum TestDataIds {
     SERVICE_LEISTUNG_ID(new ServiceLeistung.Id(UUID.randomUUID()))
     ;
 
-    private Identity<?> id;
+    private final Identity<?> id;
 
     TestDataIds(Identity<?> id) {
         this.id = id;

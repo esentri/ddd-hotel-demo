@@ -21,9 +21,9 @@ import io.domainlifecycles.domain.types.DomainEvent;
 
 /**
  * ZimmerWartungAbgelehnt repräsentiert das Ereignis, wenn eine Wartung abgelehnt wird.
- * Er enthält die Referenz auf den Wartungsplan und die Zimmernummer, für die die Wartung abgelehnt wurde.
+ * Er enthält die Referenz auf den Wartungsplan und die Zimmer Id, für die die Wartung abgelehnt wurde.
  *
  * @author Mario Herb
  */
-public record ZimmerWartungAbgelehnt(WartungsPlanungId planungsReferenz, Zimmer.ZimmerNummer zimmerNummer) implements DomainEvent {
+public record ZimmerWartungAbgelehnt(WartungsPlanungId planungsReferenz, Zimmer.Id zimmerId) implements DomainEvent {
 }

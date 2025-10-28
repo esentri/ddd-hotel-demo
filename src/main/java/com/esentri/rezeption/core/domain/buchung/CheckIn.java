@@ -58,19 +58,17 @@ public class CheckIn implements DomainService {
         var buchung = buchungen.findById(checkeEin.buchungsNummer()).orElseThrow();
         buchungen.update(buchung.handle(checkeEin));
 
-        var zimmer = zimmerVerwaltung.findById(checkeEin.zimmerNummer()).orElseThrow();
-
-        var checkInAm = LocalDate.now();
-        var checkOutAm = LocalDate.now().plusDays(checkeEin.geplanteAnzahlNaechte());
-
-        if(zimmer.neueBelegung(LocalDate.now(), checkOutAm, BelegungTyp.GAST)){
+        var zimmer = zimmerVerwaltung.findById(checkeEin.zimmerId()).orElseThrow();
+        var belegungOptional = zimmer.neueBelegungFuerCheckIn(checkeEin);
+        if(belegungOptional.isPresent()){
+            var belegung = belegungOptional.get();
             zimmerVerwaltung.update(zimmer);
             domainEventPublisher.publish(
                     new BuchungEingecheckt(
                             buchung.id(),
-                            checkeEin.zimmerNummer(),
-                            checkInAm,
-                            checkOutAm
+                            checkeEin.zimmerId(),
+                            belegung.von(),
+                            belegung.bis()
                     )
             );
             return  buchung.id();
