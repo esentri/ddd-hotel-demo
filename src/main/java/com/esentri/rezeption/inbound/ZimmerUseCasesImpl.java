@@ -109,10 +109,11 @@ public class ZimmerUseCasesImpl implements ZimmerUseCases {
     @Publishes(domainEventTypes = {ZimmerWartungBestaetigt.class, ZimmerWartungAbgelehnt.class})
     public void handle(BeantrageZimmerWartung beantrageZimmerWartung){
         var zimmer = zimmerVerwaltung.findById(beantrageZimmerWartung.zimmerId()).orElseThrow();
-        if(zimmer.neueBelegung(beantrageZimmerWartung.von(), beantrageZimmerWartung.bis(), BelegungTyp.WARTUNG).isPresent()){
+        try {
+            zimmer.neueBelegung(beantrageZimmerWartung.von(), beantrageZimmerWartung.bis(), BelegungTyp.WARTUNG);
             zimmerVerwaltung.update(zimmer);
             domainEventPublisher.publish(new ZimmerWartungBestaetigt(beantrageZimmerWartung.wartungsPlanungId(), zimmer.id()));
-        }else{
+        }catch (IllegalStateException e) {
             domainEventPublisher.publish(new ZimmerWartungAbgelehnt(beantrageZimmerWartung.wartungsPlanungId(), zimmer.id()));
         };
     }

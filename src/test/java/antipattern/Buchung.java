@@ -33,7 +33,8 @@ public class Buchung {
     private int geplanteAnzahlNaechte;
     private ZimmerKategorie gewuenschteZimmerKategorie;
     private int gewuenschteKapazitaet;
-    private Long zimmerNummer;
+    private Long zimmerId;
+    private String zimmerNummer;
     private String vorname;
     private String nachname;
     private LocalDate geburtsDatum;
@@ -127,11 +128,11 @@ public class Buchung {
         this.gewuenschteKapazitaet = gewuenschteKapazitaet;
     }
 
-    public Long getZimmerNummer() {
+    public String getZimmerNummer() {
         return zimmerNummer;
     }
 
-    public void setZimmerNummer(Long zimmerNummer) {
+    public void setZimmerNummer(String zimmerNummer) {
         this.zimmerNummer = zimmerNummer;
     }
 

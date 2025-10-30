@@ -149,24 +149,26 @@ public class Zimmer implements AggregateRoot<Zimmer.Id> {
      * @param von Anfangsdatum der Belegung.
      * @param bis Enddatum der Belegung.
      * @param belegungTyp Typ der Belegung.
-     * @return Optional mit neuer Belegung, die hinzugefügt wurde, sonst empty.
+     * @return neuer Belegung, die hinzugefügt wurde
+     * @throws IllegalStateException Wenn das Zimmer zum gewünschten Zeitpunkt bereits belegt ist.
      */
-    public Optional<Belegung> neueBelegung(LocalDate von, LocalDate bis, BelegungTyp belegungTyp){
+    public Belegung neueBelegung(LocalDate von, LocalDate bis, BelegungTyp belegungTyp){
         var neueBelegung = new Belegung(von, bis, belegungTyp);
         if(!hatUeberschneidendeBelegung(neueBelegung)){
             belegungen.add(neueBelegung);
-            return Optional.of(neueBelegung);
+            return neueBelegung;
         }
-        return Optional.empty();
+        throw new IllegalStateException("Doppelbelegung des Zimmers!");
     }
 
     /**
      * Fügt eine neue Belegung hinzu, wenn keine Überschneidung vorliegt, speziell für den CheckIn.
      *
      * @param checkeEin Command für CheckIn des Zimmers
-     * @return Optional mit neuer Belegung, die hinzugefügt wurde, sonst empty.
+     * @return neue Belegung, die hinzugefügt wurde
+     * @throws IllegalStateException Wenn das Zimmer zum gewünschten Zeitpunkt bereits belegt ist.
      */
-    public Optional<Belegung> neueBelegungFuerCheckIn(CheckeEin checkeEin){
+    public Belegung neueBelegungFuerCheckIn(CheckeEin checkeEin){
         var checkOutAm = LocalDate.now().plusDays(checkeEin.geplanteAnzahlNaechte());
         return neueBelegung(LocalDate.now(), checkOutAm, BelegungTyp.GAST);
     }

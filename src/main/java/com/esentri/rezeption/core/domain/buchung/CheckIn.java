@@ -57,25 +57,18 @@ public class CheckIn implements DomainService {
     public Buchung.BuchungsNummer handle(CheckeEin checkeEin){
         var buchung = buchungen.findById(checkeEin.buchungsNummer()).orElseThrow();
         buchungen.update(buchung.handle(checkeEin));
-
         var zimmer = zimmerVerwaltung.findById(checkeEin.zimmerId()).orElseThrow();
-        var belegungOptional = zimmer.neueBelegungFuerCheckIn(checkeEin);
-        if(belegungOptional.isPresent()){
-            var belegung = belegungOptional.get();
-            zimmerVerwaltung.update(zimmer);
-            domainEventPublisher.publish(
-                    new BuchungEingecheckt(
-                            buchung.id(),
-                            checkeEin.zimmerId(),
-                            belegung.von(),
-                            belegung.bis()
-                    )
-            );
-            return  buchung.id();
-        }else{
-            throw new IllegalStateException("CheckIn wegen Doppelbelegung des Zimmers abgelehnt!");
-        }
-
+        var belegung = zimmer.neueBelegungFuerCheckIn(checkeEin);
+        zimmerVerwaltung.update(zimmer);
+        domainEventPublisher.publish(
+                new BuchungEingecheckt(
+                        buchung.id(),
+                        checkeEin.zimmerId(),
+                        belegung.von(),
+                        belegung.bis()
+                )
+        );
+        return  buchung.id();
     }
 
 }
