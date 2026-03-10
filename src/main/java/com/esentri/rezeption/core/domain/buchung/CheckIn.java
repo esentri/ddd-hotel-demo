@@ -1,5 +1,5 @@
 /*
- *  Copyright 2024 the original author or authors.
+ *  Copyright 2026 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,15 +16,12 @@
 
 package com.esentri.rezeption.core.domain.buchung;
 
-import com.esentri.rezeption.core.domain.zimmer.BelegungTyp;
 import com.esentri.rezeption.core.outport.Buchungen;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
 import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
 import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.Publishes;
 import lombok.RequiredArgsConstructor;
-
-import java.time.LocalDate;
 
 /**
  * Dieser Service übernimmt die Verarbeitung der CheckIn-Operationen.
