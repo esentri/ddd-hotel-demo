@@ -41,7 +41,7 @@ public interface RechnungUseCases extends ApplicationService {
      * @param markiereRechnungBezahlt ein Command, der die zu zahlende Rechnung angibt
      * @return die ID der bezahlten Rechnung
      */
-    Rechnung.Id handle(MarkiereRechnungBezahlt markiereRechnungBezahlt);
+    Rechnung.Id handleMarkiereRechnungBezahlt(MarkiereRechnungBezahlt markiereRechnungBezahlt);
 
     /**
      * Nimmt einen Command zur Erstellung einer Rechnung für eine Buchung entgegen und gibt die ID der erstellten Rechnung zurück.
@@ -49,7 +49,7 @@ public interface RechnungUseCases extends ApplicationService {
      * @param erstelleRechnungFuerBuchung ein Command, der die Details für die zu erstellende Rechnung angibt
      * @return die ID der erstellten Rechnung
      */
-    Rechnung.Id handle(ErstelleRechnungFuerBuchung erstelleRechnungFuerBuchung);
+    Rechnung.Id handleErstelleRechnungFuerBuchung(ErstelleRechnungFuerBuchung erstelleRechnungFuerBuchung);
 
     /**
      * Nimmt einen Command zur Erstellung einer Service-Rechnung entgegen und gibt die ID der erstellten Rechnung zurück.
@@ -57,7 +57,7 @@ public interface RechnungUseCases extends ApplicationService {
      * @param erstelleServiceRechnung ein Command, der die Details für die zu erstellende Rechnung angibt
      * @return die ID der erstellten Rechnung
      */
-    Rechnung.Id handle(ErstelleServiceRechnung erstelleServiceRechnung);
+    Rechnung.Id handleErstelleServiceRechnung(ErstelleServiceRechnung erstelleServiceRechnung);
 
     /**
      * Verarbeitet den gegebenen LadeRechnungPDF-Befehl und gibt das PDF-Byte-Array der entsprechenden Rechnung zurück.
@@ -65,5 +65,5 @@ public interface RechnungUseCases extends ApplicationService {
      * @param ladeRechnungPDF Der Befehl, der die ID der Rechnung enthält, für die das PDF geladen werden soll
      * @return Das Byte-Array, das das PDF der Rechnung darstellt
      */
-    byte[] handle(LadeRechnungPDF ladeRechnungPDF);
+    byte[] handleLadeRechnungPDF(LadeRechnungPDF ladeRechnungPDF);
 }

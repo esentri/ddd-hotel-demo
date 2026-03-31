@@ -36,12 +36,12 @@ public interface ServiceLeistungUseCases extends ApplicationService {
      * @param erstelleServiceLeistung Command, das Informationen zum Erstellen einer Serviceleistung enthält.
      * @return Id der erstellten Serviceleistung.
      */
-    ServiceLeistung.Id handle(ErstelleServiceLeistung erstelleServiceLeistung);
+    ServiceLeistung.Id handleErstelleServiceLeistung(ErstelleServiceLeistung erstelleServiceLeistung);
 
     /**
      * Diese Methode wird aufgerufen, wenn ein RechnungErstellt Ereignis eintritt.
      *
      * @param rechnungErstellt Das RechnungErstellt Ereignis, auf das die Methode reagiert.
      */
-    void onEvent(RechnungErstellt rechnungErstellt);
+    void onRechnungErstellt(RechnungErstellt rechnungErstellt);
 }

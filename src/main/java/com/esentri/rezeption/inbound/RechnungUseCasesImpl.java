@@ -49,7 +49,7 @@ public class RechnungUseCasesImpl implements RechnungUseCases {
      */
     @Override
     @Transactional
-    public Rechnung.Id handle(MarkiereRechnungBezahlt markiereRechnungBezahlt) {
+    public Rechnung.Id handleMarkiereRechnungBezahlt(MarkiereRechnungBezahlt markiereRechnungBezahlt) {
         return rechnungen.findById(markiereRechnungBezahlt.rechnungId())
             .map(r -> rechnungen.update(r.markiereBezahlt()).getId())
             .orElseThrow();
@@ -60,8 +60,8 @@ public class RechnungUseCasesImpl implements RechnungUseCases {
      */
     @Override
     @Transactional
-    public Rechnung.Id handle(ErstelleRechnungFuerBuchung erstelleRechnungFuerBuchung) {
-        return rechnungsErstellung.handle(erstelleRechnungFuerBuchung);
+    public Rechnung.Id handleErstelleRechnungFuerBuchung(ErstelleRechnungFuerBuchung erstelleRechnungFuerBuchung) {
+        return rechnungsErstellung.handleErstelleRechnungFuerBuchung(erstelleRechnungFuerBuchung);
     }
 
     /**
@@ -69,15 +69,15 @@ public class RechnungUseCasesImpl implements RechnungUseCases {
      */
     @Override
     @Transactional
-    public Rechnung.Id handle(ErstelleServiceRechnung erstelleServiceRechnung) {
-        return rechnungsErstellung.handle(erstelleServiceRechnung);
+    public Rechnung.Id handleErstelleServiceRechnung(ErstelleServiceRechnung erstelleServiceRechnung) {
+        return rechnungsErstellung.handleErstelleServiceRechnung(erstelleServiceRechnung);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public byte[] handle(LadeRechnungPDF ladeRechnungPDF) {
+    public byte[] handleLadeRechnungPDF(LadeRechnungPDF ladeRechnungPDF) {
         return rechnungsPDFErstellung.erzeugePDF(ladeRechnungPDF.rechnungsId());
     }
 

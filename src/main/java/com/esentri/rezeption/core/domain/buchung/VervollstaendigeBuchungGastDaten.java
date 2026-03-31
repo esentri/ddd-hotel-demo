@@ -29,7 +29,7 @@ import java.time.LocalDate;
  *
  * @author Mario Herb
  */
-public record VervollstaendigeGastDaten(
+public record VervollstaendigeBuchungGastDaten(
         Buchung.BuchungsNummer buchungsNummer,
         String vorname,
         String nachname,

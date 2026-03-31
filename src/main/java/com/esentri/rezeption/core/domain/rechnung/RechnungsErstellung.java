@@ -58,7 +58,7 @@ public class RechnungsErstellung implements DomainService {
      * @return die ID der erstellten Rechnung.
      */
     @Publishes(domainEventTypes = RechnungErstellt.class)
-    public Rechnung.Id handle(ErstelleRechnungFuerBuchung erstelleRechnungFuerBuchung){
+    public Rechnung.Id handleErstelleRechnungFuerBuchung(ErstelleRechnungFuerBuchung erstelleRechnungFuerBuchung){
         var buchung = buchungen.findById(erstelleRechnungFuerBuchung.buchungsNummer()).orElseThrow();
         var serviceLeistungen = this.serviceLeistungen.find(erstelleRechnungFuerBuchung.buchungsNummer())
                 .stream().filter(sl -> erstelleRechnungFuerBuchung.serviceLeistungen().contains(sl.id()))
@@ -91,7 +91,7 @@ public class RechnungsErstellung implements DomainService {
      * @return die ID der erstellten Rechnung.
      */
     @Publishes(domainEventTypes = RechnungErstellt.class)
-    public Rechnung.Id handle(ErstelleServiceRechnung erstelleServiceRechnung){
+    public Rechnung.Id handleErstelleServiceRechnung(ErstelleServiceRechnung erstelleServiceRechnung){
         var serviceLeistungen = this.serviceLeistungen.find(erstelleServiceRechnung.buchungsNummer())
                 .stream().filter(sl -> erstelleServiceRechnung.serviceLeistungen().contains(sl.id()))
                 .toList();

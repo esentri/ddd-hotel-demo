@@ -49,14 +49,14 @@ public class CheckOut implements DomainService {
      * Wirft eine IllegalStateException, wenn die Zimmerabrechnung noch nicht erfolgt ist oder Serviceleistungen noch nicht abgerechnet sind.
      * Veröffentlicht ein BuchungAusgecheckt Ereignis.
      *
-     * @param checkeAus Command für den Checkout
+     * @param checkeBuchungAus Command für den Checkout
      * @return Die BuchungsNummer der Auscheck-Operation.
      * @throws IllegalStateException wenn die Zimmerabrechnung noch nicht erfolgt ist oder wenn Serviceleistungen noch nicht abgerechnet sind.
      */
     @Publishes(domainEventTypes = BuchungAusgecheckt.class)
-    public Buchung.BuchungsNummer handle(CheckeAus checkeAus){
+    public Buchung.BuchungsNummer handleCheckeBuchungAus(CheckeBuchungAus checkeBuchungAus){
 
-        var rechnungen = this.rechnungen.findByBuchungsNummer(checkeAus.buchungsNummer());
+        var rechnungen = this.rechnungen.findByBuchungsNummer(checkeBuchungAus.buchungsNummer());
 
         var zimmerRechnungExistiert = rechnungen.stream().anyMatch(Rechnung::beinhaltetZimmerAbrechnung);
 
@@ -64,14 +64,14 @@ public class CheckOut implements DomainService {
             throw new IllegalStateException("Vor dem Auschecken muss die Zimmerabrechnung erfolgen!");
         }
 
-        var offeneServiceLeistungenExistieren = serviceLeistungen.find(checkeAus.buchungsNummer())
+        var offeneServiceLeistungenExistieren = serviceLeistungen.find(checkeBuchungAus.buchungsNummer())
                 .stream().anyMatch(sl -> sl.getAbgerechnetPer() == null);
 
         if(offeneServiceLeistungenExistieren){
             throw new IllegalStateException("Es wurden nicht alle ServiceLeistungen der Buchung abgerechnet!");
         }
 
-        var buchung = buchungen.findById(checkeAus.buchungsNummer())
+        var buchung = buchungen.findById(checkeBuchungAus.buchungsNummer())
             .map( r ->
                     buchungen.update(r.checkeAus()))
             .orElseThrow();

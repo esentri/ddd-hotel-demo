@@ -42,7 +42,7 @@ public interface ZimmerUseCases extends ApplicationService {
      *
      * @param zimmerWartungEingeplant das Ereignis, das eine geplante Zimmerwartung repräsentiert
      */
-    void onEvent(ZimmerWartungEingeplant zimmerWartungEingeplant);
+    void onZimmerWartungEingeplant(ZimmerWartungEingeplant zimmerWartungEingeplant);
 
     /**
      * Behandelt das Ereignis, dass eine Buchung ausgecheckt wurde.
@@ -52,7 +52,7 @@ public interface ZimmerUseCases extends ApplicationService {
      *
      * @param buchungAusgecheckt das Ereignis, das ein ausgechecktes Buchung repräsentiert
      */
-    void onEvent(BuchungAusgecheckt buchungAusgecheckt);
+    void onBuchungAusgecheckt(BuchungAusgecheckt buchungAusgecheckt);
 
     /**
      * Gibt eine Liste von Ids der verfügbaren Zimmer für ein spezifisches Hotel und einen bestimmten Zeitraum zurück.
@@ -73,7 +73,7 @@ public interface ZimmerUseCases extends ApplicationService {
      *
      * @param beantrageZimmerWartung das Command, das eine beantragte Zimmerwartung repräsentiert
      */
-    void handle(BeantrageZimmerWartung beantrageZimmerWartung);
+    void handleBeantrageZimmerWartung(BeantrageZimmerWartung beantrageZimmerWartung);
 
 
     /**

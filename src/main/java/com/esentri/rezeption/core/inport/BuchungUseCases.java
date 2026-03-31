@@ -17,11 +17,11 @@
 package com.esentri.rezeption.core.inport;
 
 import com.esentri.rezeption.core.domain.buchung.Buchung;
-import com.esentri.rezeption.core.domain.buchung.CheckeAus;
-import com.esentri.rezeption.core.domain.buchung.CheckeEin;
+import com.esentri.rezeption.core.domain.buchung.CheckeBuchungAus;
+import com.esentri.rezeption.core.domain.buchung.CheckeBuchungEin;
 import com.esentri.rezeption.core.domain.buchung.ErstelleNeueBuchung;
 import com.esentri.rezeption.core.domain.buchung.StorniereBuchung;
-import com.esentri.rezeption.core.domain.buchung.VervollstaendigeGastDaten;
+import com.esentri.rezeption.core.domain.buchung.VervollstaendigeBuchungGastDaten;
 import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
 import io.domainlifecycles.domain.types.ApplicationService;
@@ -42,35 +42,35 @@ public interface BuchungUseCases extends ApplicationService {
      * @param erstelleNeueBuchung beinhaltet alle notwenigen Informationen zur Erstellung einer neuen Buchung.
      * @return Gibt die Nummer der erstellten Buchung zurück.
      */
-    Buchung.BuchungsNummer handle(ErstelleNeueBuchung erstelleNeueBuchung);
+    Buchung.BuchungsNummer handleErstelleNeueBuchung(ErstelleNeueBuchung erstelleNeueBuchung);
 
     /**
      * Behandelt Command zur der Aktualisierung von Gastdaten.
-     * @param vervollstaendigeGastDaten beinhaltet alle notwenigen Informationen zur Aktualisierung der Gastdaten.
+     * @param vervollstaendigeBuchungGastDaten beinhaltet alle notwenigen Informationen zur Aktualisierung der Gastdaten.
      * @return Gibt die Nummer der Buchung zurück, für die die Gastdaten aktualisiert wurden.
      */
-    Buchung.BuchungsNummer handle(VervollstaendigeGastDaten vervollstaendigeGastDaten);
+    Buchung.BuchungsNummer handleVervollstaendigeBuchungGastDaten(VervollstaendigeBuchungGastDaten vervollstaendigeBuchungGastDaten);
 
     /**
      * Behandelt den Check-In Command.
-     * @param checkeEin beinhaltet alle notwenigen Informationen für den Check-In eines Gastes.
+     * @param checkeBuchungEin beinhaltet alle notwenigen Informationen für den Check-In eines Gastes.
      * @return Gibt die Nummer der Buchung zurück, für die der Check-In durchgeführt wurde.
      */
-    Buchung.BuchungsNummer handle(CheckeEin checkeEin);
+    Buchung.BuchungsNummer handleCheckeBuchungEin(CheckeBuchungEin checkeBuchungEin);
 
     /**
      * Behandelt den Check-Out Command.
-     * @param checkeAus beinhaltet alle notwenigen Informationen für den Check-Out eines Gastes.
+     * @param checkeBuchungAus beinhaltet alle notwenigen Informationen für den Check-Out eines Gastes.
      * @return Gibt die Nummer der Buchung zurück, für die der Check-Out durchgeführt wurde.
      */
-    Buchung.BuchungsNummer handle(CheckeAus checkeAus);
+    Buchung.BuchungsNummer handleCheckeBuchungAus(CheckeBuchungAus checkeBuchungAus);
 
     /**
      * Behandelt das Stornieren einer Buchung.
      * @param storniereBuchung beinhaltet alle notwenigen Informationen um eine Buchung zu stornieren.
      * @return Gibt die Nummer der Buchung zurück, die storniert wurde.
      */
-    Buchung.BuchungsNummer handle(StorniereBuchung storniereBuchung);
+    Buchung.BuchungsNummer handleStorniereBuchung(StorniereBuchung storniereBuchung);
 
     /**
      * Findet und gibt eine Liste von aktiven Buchungen (nicht storniert und nicht beendet) für ein bestimmtes Hotel zurück, die bestimmte Kriterien erfüllen.

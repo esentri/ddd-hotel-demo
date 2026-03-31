@@ -85,7 +85,7 @@
 // !!! com.esentri.rezeption.core.domain.buchung.Buchung !!!
 [<AR> Buchung <<AggregateRoot>> |
 + boolean buchungsZeitraumBeinhaltet(LocalDate)
-+ Buchung checkeAus()
++ Buchung checkeBuchungAus()
 + Buchung handle(CheckeEin)
 + Buchung handle(VervollstaendigeGastDaten)
 + Buchung storniere()

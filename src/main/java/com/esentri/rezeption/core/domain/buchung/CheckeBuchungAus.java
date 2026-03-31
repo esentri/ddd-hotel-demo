@@ -19,7 +19,7 @@ package com.esentri.rezeption.core.domain.buchung;
 import io.domainlifecycles.domain.types.DomainCommand;
 
 /**
- * Die Klasse CheckeAus repräsentiert einen Befehl zum Auschecken einer Buchung.
+ * Die Klasse CheckeBuchungAus repräsentiert einen Befehl zum Auschecken einer Buchung.
  * Es implementiert das Interface DomainCommand und sorgt für die korrekte Ausführung des Ablaufs.
  *
  * Es wird verwendet, um eine Anfrage zum Auschecken einer Buchung zu repräsentieren
@@ -28,5 +28,5 @@ import io.domainlifecycles.domain.types.DomainCommand;
  * @author Mario Herb
  * @see DomainCommand
  */
-public record CheckeAus(Buchung.BuchungsNummer buchungsNummer) implements DomainCommand {
+public record CheckeBuchungAus(Buchung.BuchungsNummer buchungsNummer) implements DomainCommand {
 }

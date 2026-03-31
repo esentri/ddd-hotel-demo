@@ -46,21 +46,21 @@ public class CheckIn implements DomainService {
      * Wenn das Zimmer für den gewünschten Zeitraum zur Verfügung steht, wird ein Check-In durchgeführt und das entsprechende Ereignis veröffentlicht.
      * Ansonsten wird eine IllegalStateException geworfen.
      *
-     * @param checkeEin Informationen zum Check-In-Vorgang.
+     * @param checkeBuchungEin Informationen zum Check-In-Vorgang.
      * @return Buchungsnummer der erfolgreich eingecheckten Buchung.
      * @throws IllegalStateException Wenn das Zimmer zum gewünschten Zeitpunkt bereits belegt ist.
      */
     @Publishes(domainEventTypes = BuchungEingecheckt.class)
-    public Buchung.BuchungsNummer handle(CheckeEin checkeEin){
-        var buchung = buchungen.findById(checkeEin.buchungsNummer()).orElseThrow();
-        buchungen.update(buchung.handle(checkeEin));
-        var zimmer = zimmerVerwaltung.findById(checkeEin.zimmerId()).orElseThrow();
-        var belegung = zimmer.neueBelegungFuerCheckIn(checkeEin);
+    public Buchung.BuchungsNummer handleCheckeBuchungEin(CheckeBuchungEin checkeBuchungEin){
+        var buchung = buchungen.findById(checkeBuchungEin.buchungsNummer()).orElseThrow();
+        buchungen.update(buchung.handleVervollstaendigeBuchungGastDaten(checkeBuchungEin));
+        var zimmer = zimmerVerwaltung.findById(checkeBuchungEin.zimmerId()).orElseThrow();
+        var belegung = zimmer.neueBelegungFuerCheckIn(checkeBuchungEin);
         zimmerVerwaltung.update(zimmer);
         domainEventPublisher.publish(
                 new BuchungEingecheckt(
                         buchung.id(),
-                        checkeEin.zimmerId(),
+                        checkeBuchungEin.zimmerId(),
                         belegung.von(),
                         belegung.bis()
                 )

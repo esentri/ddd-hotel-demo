@@ -47,7 +47,7 @@
 #acycler: greedy
 #ranker: longest-path
 
-// !!! com.esentri.rezeption.core.domain.buchung.CheckeAus !!!
+// !!! com.esentri.rezeption.core.domain.buchung.CheckeBuchungAus !!!
 [<DC> CheckeAus <<DomainCommand>> ]
 // !!! com.esentri.rezeption.inbound.BuchungUseCasesImpl !!!
 [<AS> BuchungUseCases <<ApplicationService>> |
@@ -75,7 +75,7 @@
 [<AF> Buchung <<Aggregate>>|
 // !!! com.esentri.rezeption.core.domain.buchung.Buchung !!!
 [<AR> Buchung <<AggregateRoot>> |
-+ Buchung checkeAus()
++ Buchung checkeBuchungAus()
 ]
 // !!! com.esentri.rezeption.core.domain.buchung.Gast !!!
 [<E> Gast <<Entity>>

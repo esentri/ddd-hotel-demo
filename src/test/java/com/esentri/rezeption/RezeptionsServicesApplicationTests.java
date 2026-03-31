@@ -18,9 +18,9 @@ package com.esentri.rezeption;
 
 import com.esentri.rezeption.core.domain.Adresse;
 import com.esentri.rezeption.core.domain.WartungsPlanungId;
-import com.esentri.rezeption.core.domain.buchung.CheckeAus;
-import com.esentri.rezeption.core.domain.buchung.CheckeEin;
-import com.esentri.rezeption.core.domain.buchung.VervollstaendigeGastDaten;
+import com.esentri.rezeption.core.domain.buchung.CheckeBuchungAus;
+import com.esentri.rezeption.core.domain.buchung.CheckeBuchungEin;
+import com.esentri.rezeption.core.domain.buchung.VervollstaendigeBuchungGastDaten;
 import com.esentri.rezeption.core.domain.rechnung.ErstelleRechnungFuerBuchung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import com.esentri.rezeption.core.domain.zimmer.BelegungTyp;
@@ -105,7 +105,7 @@ class RezeptionsServicesApplicationTests {
 	@Order(3)
 	void testCheckInFailGeburtsdatumGast(){
 		assertThatThrownBy(()->
-		buchungUseCases.handle(new CheckeEin(
+		buchungUseCases.handleCheckeBuchungEin(new CheckeBuchungEin(
 				TestDataIds.BUCHUNG_ID_OFFEN.id(),
 				TestDataIds.ZIMMER_ID_BUSINESS_SUITE.id(),
 				3
@@ -115,7 +115,7 @@ class RezeptionsServicesApplicationTests {
 	@Test
 	@Order(4)
 	void testCheckInErfolgreich(){
-		buchungUseCases.handle(new VervollstaendigeGastDaten(
+		buchungUseCases.handleVervollstaendigeBuchungGastDaten(new VervollstaendigeBuchungGastDaten(
 				TestDataIds.BUCHUNG_ID_OFFEN.id(),
 				"Chuck",
 				"Bubu",
@@ -124,7 +124,7 @@ class RezeptionsServicesApplicationTests {
 				null,
 				new Adresse("Am Platz", "1", "55555", "Muggelhausen")
 		));
-		buchungUseCases.handle(new CheckeEin(
+		buchungUseCases.handleCheckeBuchungEin(new CheckeBuchungEin(
 				TestDataIds.BUCHUNG_ID_OFFEN.id(),
 				TestDataIds.ZIMMER_ID_BUSINESS_SUITE.id(),
 				3
@@ -145,7 +145,7 @@ class RezeptionsServicesApplicationTests {
 	@Test
 	@Order(5)
 	void testCheckInFailDoppelt(){
-		buchungUseCases.handle(new VervollstaendigeGastDaten(
+		buchungUseCases.handleVervollstaendigeBuchungGastDaten(new VervollstaendigeBuchungGastDaten(
 				TestDataIds.BUCHUNG_ID_OFFEN.id(),
 				"Chuck",
 				"Bubu",
@@ -156,12 +156,12 @@ class RezeptionsServicesApplicationTests {
 		));
 
 		assertThatThrownBy( () ->{
-			buchungUseCases.handle(new CheckeEin(
+			buchungUseCases.handleCheckeBuchungEin(new CheckeBuchungEin(
 					TestDataIds.BUCHUNG_ID_OFFEN.id(),
 					TestDataIds.ZIMMER_ID_BUSINESS_SUITE.id(),
 					3
 			));
-			buchungUseCases.handle(new CheckeEin(
+			buchungUseCases.handleCheckeBuchungEin(new CheckeBuchungEin(
 					TestDataIds.BUCHUNG_ID_OFFEN.id(),
 					TestDataIds.ZIMMER_ID_BUSINESS_SUITE.id(),
 					3
@@ -212,7 +212,7 @@ class RezeptionsServicesApplicationTests {
 	@Order(7)
 	void testCheckOutFailKeineAbrechnung(){
 		assertThatThrownBy(()->{
-			buchungUseCases.handle(new CheckeAus(
+			buchungUseCases.handleCheckeBuchungAus(new CheckeBuchungAus(
 					TestDataIds.BUCHUNG_ID_EINGECHECKT.id()
 			));
 		}).hasMessageContaining("Zimmerabrechnung");
@@ -226,13 +226,13 @@ class RezeptionsServicesApplicationTests {
 
 		var serviceLeistungenZumAbrechnen = serviceLeistungen.find(TestDataIds.BUCHUNG_ID_EINGECHECKT.id());
 
-		rechnungUseCases.handle(new ErstelleRechnungFuerBuchung(
+		rechnungUseCases.handleErstelleRechnungFuerBuchung(new ErstelleRechnungFuerBuchung(
 				TestDataIds.BUCHUNG_ID_EINGECHECKT.id(),
 				serviceLeistungenZumAbrechnen.stream().map(ServiceLeistung::id).toList(),
 				res.get().getGast().getHeimAdresse()
 		));
 
-		buchungUseCases.handle(new CheckeAus(
+		buchungUseCases.handleCheckeBuchungAus(new CheckeBuchungAus(
 			TestDataIds.BUCHUNG_ID_EINGECHECKT.id()
 		));
 

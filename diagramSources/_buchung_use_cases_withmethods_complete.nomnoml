@@ -51,11 +51,11 @@
 [<DC> StorniereBuchung <<DomainCommand>> ]
 // !!! com.esentri.rezeption.core.domain.buchung.ErstelleNeueBuchung !!!
 [<DC> ErstelleNeueBuchung <<DomainCommand>> ]
-// !!! com.esentri.rezeption.core.domain.buchung.VervollstaendigeGastDaten !!!
+// !!! com.esentri.rezeption.core.domain.buchung.VervollstaendigeBuchungGastDaten !!!
 [<DC> VervollstaendigeGastDaten <<DomainCommand>> ]
-// !!! com.esentri.rezeption.core.domain.buchung.CheckeAus !!!
+// !!! com.esentri.rezeption.core.domain.buchung.CheckeBuchungAus !!!
 [<DC> CheckeAus <<DomainCommand>> ]
-// !!! com.esentri.rezeption.core.domain.buchung.CheckeEin !!!
+// !!! com.esentri.rezeption.core.domain.buchung.CheckeBuchungEin !!!
 [<DC> CheckeEin <<DomainCommand>> ]
 // !!! com.esentri.rezeption.inbound.BuchungUseCasesImpl !!!
 [<AS> BuchungUseCases <<ApplicationService>> |
@@ -112,7 +112,7 @@
 // !!! com.esentri.rezeption.core.domain.buchung.Buchung !!!
 [<AR> Buchung <<AggregateRoot>> |
 + boolean buchungsZeitraumBeinhaltet(LocalDate)
-+ Buchung checkeAus()
++ Buchung checkeBuchungAus()
 + Buchung handle(CheckeEin)
 + Buchung handle(VervollstaendigeGastDaten)
 + Buchung storniere()

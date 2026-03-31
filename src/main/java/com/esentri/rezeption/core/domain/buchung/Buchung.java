@@ -113,34 +113,34 @@ public class Buchung implements AggregateRoot<Buchung.BuchungsNummer> {
     /**
      * Methode zum Hinzufügen oder Aktualisieren der Gastdaten in einer Buchung.
      *
-     * @param vervollstaendigeGastDaten Gastdaten
+     * @param vervollstaendigeBuchungGastDaten Gastdaten
      * @return Buchung
      */
-    public Buchung handle(VervollstaendigeGastDaten vervollstaendigeGastDaten){
-        gast.setEmailAdresse(vervollstaendigeGastDaten.emailAdresse())
-            .setGeburtsDatum(vervollstaendigeGastDaten.geburtsdatum())
-            .setVorname(vervollstaendigeGastDaten.vorname())
-            .setNachname(vervollstaendigeGastDaten.nachname())
-            .setTelefonNummer(vervollstaendigeGastDaten.telefonNummer())
-            .setHeimAdresse(vervollstaendigeGastDaten.heimAdresse());
+    public Buchung handleVervollstaendigeBuchungGastDaten(VervollstaendigeBuchungGastDaten vervollstaendigeBuchungGastDaten){
+        gast.setEmailAdresse(vervollstaendigeBuchungGastDaten.emailAdresse())
+            .setGeburtsDatum(vervollstaendigeBuchungGastDaten.geburtsdatum())
+            .setVorname(vervollstaendigeBuchungGastDaten.vorname())
+            .setNachname(vervollstaendigeBuchungGastDaten.nachname())
+            .setTelefonNummer(vervollstaendigeBuchungGastDaten.telefonNummer())
+            .setHeimAdresse(vervollstaendigeBuchungGastDaten.heimAdresse());
         return this;
     }
 
     /**
      * Methode zum Einchecken eines Gastes.
      *
-     * @param checkeEin Daten fürs Einchecken
+     * @param checkeBuchungEin Daten fürs Einchecken
      * @return Buchung
      * @throws IllegalStateException wenn der Gast bereits eingecheckt ist
      */
-    public Buchung handle(CheckeEin checkeEin){
+    public Buchung handleVervollstaendigeBuchungGastDaten(CheckeBuchungEin checkeBuchungEin){
         if(zimmerId == null && checkInAm == null){
             if(gast.getGeburtsDatum() == null){
                 throw new IllegalStateException("Geburtsdatum des Gasts muss spätestens beim Einchecken angegeben werden!");
             }
-            zimmerId = checkeEin.zimmerId();
+            zimmerId = checkeBuchungEin.zimmerId();
             checkInAm = LocalDateTime.now();
-            geplanteAnzahlNaechte = checkeEin.geplanteAnzahlNaechte();
+            geplanteAnzahlNaechte = checkeBuchungEin.geplanteAnzahlNaechte();
             return this;
         }
         throw new IllegalStateException("Buchung bereits eingecheckt!");

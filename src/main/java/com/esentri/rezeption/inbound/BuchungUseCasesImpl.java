@@ -20,11 +20,11 @@ import com.esentri.rezeption.core.domain.buchung.Buchung;
 import com.esentri.rezeption.core.domain.buchung.Buchungseingang;
 import com.esentri.rezeption.core.domain.buchung.CheckIn;
 import com.esentri.rezeption.core.domain.buchung.CheckOut;
-import com.esentri.rezeption.core.domain.buchung.CheckeAus;
-import com.esentri.rezeption.core.domain.buchung.CheckeEin;
+import com.esentri.rezeption.core.domain.buchung.CheckeBuchungAus;
+import com.esentri.rezeption.core.domain.buchung.CheckeBuchungEin;
 import com.esentri.rezeption.core.domain.buchung.ErstelleNeueBuchung;
 import com.esentri.rezeption.core.domain.buchung.StorniereBuchung;
-import com.esentri.rezeption.core.domain.buchung.VervollstaendigeGastDaten;
+import com.esentri.rezeption.core.domain.buchung.VervollstaendigeBuchungGastDaten;
 import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
 import com.esentri.rezeption.core.inport.BuchungUseCases;
@@ -58,7 +58,7 @@ public class BuchungUseCasesImpl implements BuchungUseCases {
      */
     @Override
     @Transactional
-    public Buchung.BuchungsNummer handle(ErstelleNeueBuchung erstelleNeueBuchung) {
+    public Buchung.BuchungsNummer handleErstelleNeueBuchung(ErstelleNeueBuchung erstelleNeueBuchung) {
         return buchungseingang.handle(erstelleNeueBuchung);
     }
 
@@ -67,15 +67,15 @@ public class BuchungUseCasesImpl implements BuchungUseCases {
      */
     @Override
     @Transactional
-    public Buchung.BuchungsNummer handle(VervollstaendigeGastDaten vervollstaendigeGastDaten) {
-        return buchungen.findById(vervollstaendigeGastDaten.buchungsNummer())
+    public Buchung.BuchungsNummer handleVervollstaendigeBuchungGastDaten(VervollstaendigeBuchungGastDaten vervollstaendigeBuchungGastDaten) {
+        return buchungen.findById(vervollstaendigeBuchungGastDaten.buchungsNummer())
                 .map(r ->
-                        buchungen.update(r.handle(vervollstaendigeGastDaten)))
+                        buchungen.update(r.handleVervollstaendigeBuchungGastDaten(vervollstaendigeBuchungGastDaten)))
                 .map(Buchung::id)
                 .orElseThrow(()->
                         new IllegalStateException(
                             String.format("Buchung mit der BuchungsNummer '%s' nicht gefunden!",
-                                vervollstaendigeGastDaten.buchungsNummer()
+                                vervollstaendigeBuchungGastDaten.buchungsNummer()
                         )
                     )
                 );
@@ -86,8 +86,8 @@ public class BuchungUseCasesImpl implements BuchungUseCases {
      */
     @Override
     @Transactional
-    public Buchung.BuchungsNummer handle(CheckeEin checkeEin) {
-        return checkIn.handle(checkeEin);
+    public Buchung.BuchungsNummer handleCheckeBuchungEin(CheckeBuchungEin checkeBuchungEin) {
+        return checkIn.handleCheckeBuchungEin(checkeBuchungEin);
     }
 
     /**
@@ -95,8 +95,8 @@ public class BuchungUseCasesImpl implements BuchungUseCases {
      */
     @Override
     @Transactional
-    public Buchung.BuchungsNummer handle(CheckeAus checkeAus) {
-        return checkOut.handle(checkeAus);
+    public Buchung.BuchungsNummer handleCheckeBuchungAus(CheckeBuchungAus checkeBuchungAus) {
+        return checkOut.handleCheckeBuchungAus(checkeBuchungAus);
     }
 
     /**
@@ -104,7 +104,7 @@ public class BuchungUseCasesImpl implements BuchungUseCases {
      */
     @Override
     @Transactional
-    public Buchung.BuchungsNummer handle(StorniereBuchung storniereBuchung) {
+    public Buchung.BuchungsNummer handleStorniereBuchung(StorniereBuchung storniereBuchung) {
         return buchungen.findById(storniereBuchung.buchungsNummer())
                 .map(r ->
                         buchungen.update(r.storniere()))

@@ -31,7 +31,7 @@ import com.esentri.rezeption.core.inport.ZimmerUseCases;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
 import com.esentri.rezeption.core.outport.ZimmerAuslastungen;
 import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
-import io.domainlifecycles.domain.types.ListensTo;
+import io.domainlifecycles.domain.types.DomainEventListener;
 import io.domainlifecycles.domain.types.Publishes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -63,11 +63,11 @@ public class ZimmerUseCasesImpl implements ZimmerUseCases {
      */
     @Override
     @EventListener
-    @ListensTo(domainEventType = ZimmerWartungEingeplant.class)
-    public void onEvent(ZimmerWartungEingeplant zimmerWartungEingeplant) {
+    @DomainEventListener
+    public void onZimmerWartungEingeplant(ZimmerWartungEingeplant zimmerWartungEingeplant) {
         zimmerWartungEingeplant.zimmerIds()
             .forEach(zimmerId ->
-                handle(
+                handleBeantrageZimmerWartung(
                     new BeantrageZimmerWartung(
                         zimmerWartungEingeplant.planungReferenz(),
                         zimmerWartungEingeplant.von(),
@@ -107,7 +107,7 @@ public class ZimmerUseCasesImpl implements ZimmerUseCases {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Publishes(domainEventTypes = {ZimmerWartungBestaetigt.class, ZimmerWartungAbgelehnt.class})
-    public void handle(BeantrageZimmerWartung beantrageZimmerWartung){
+    public void handleBeantrageZimmerWartung(BeantrageZimmerWartung beantrageZimmerWartung){
         var zimmer = zimmerVerwaltung.findById(beantrageZimmerWartung.zimmerId()).orElseThrow();
         try {
             zimmer.neueBelegung(beantrageZimmerWartung.von(), beantrageZimmerWartung.bis(), BelegungTyp.WARTUNG);
@@ -123,8 +123,8 @@ public class ZimmerUseCasesImpl implements ZimmerUseCases {
      */
     @Override
     @EventListener
-    @ListensTo(domainEventType = BuchungAusgecheckt.class)
-    public void onEvent(BuchungAusgecheckt buchungAusgecheckt) {
+    @DomainEventListener
+    public void onBuchungAusgecheckt(BuchungAusgecheckt buchungAusgecheckt) {
         var zimmer = zimmerVerwaltung.findById(buchungAusgecheckt.zimmerId()).orElseThrow();
         zimmerVerwaltung.update(zimmer.aktuelleBelegungBeenden());
     }

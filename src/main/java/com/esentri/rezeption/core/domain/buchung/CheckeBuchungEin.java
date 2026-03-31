@@ -28,13 +28,13 @@ import java.util.Objects;
  *
  * @author Mario Herb
  */
-public record CheckeEin(
+public record CheckeBuchungEin(
         Buchung.BuchungsNummer buchungsNummer,
         Zimmer.Id zimmerId,
         int geplanteAnzahlNaechte
         ) implements DomainCommand {
 
-        public CheckeEin(
+        public CheckeBuchungEin(
                 Buchung.BuchungsNummer buchungsNummer,
                 Zimmer.Id zimmerId,
                 int geplanteAnzahlNaechte

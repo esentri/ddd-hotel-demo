@@ -46,9 +46,9 @@
 #acycler: greedy
 #ranker: longest-path
 
-// !!! com.esentri.rezeption.core.domain.buchung.VervollstaendigeGastDaten !!!
+// !!! com.esentri.rezeption.core.domain.buchung.VervollstaendigeBuchungGastDaten !!!
 [<DC> VervollstaendigeGastDaten <<DomainCommand>> ]
-// !!! com.esentri.rezeption.core.domain.buchung.CheckeEin !!!
+// !!! com.esentri.rezeption.core.domain.buchung.CheckeBuchungEin !!!
 [<DC> CheckeEin <<DomainCommand>> ]
 // !!! com.esentri.rezeption.inbound.BuchungUseCasesImpl !!!
 [<AS> BuchungUseCases <<ApplicationService>> |

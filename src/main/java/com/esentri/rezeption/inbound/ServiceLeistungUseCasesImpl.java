@@ -21,7 +21,7 @@ import com.esentri.rezeption.core.domain.serviceleistung.ErstelleServiceLeistung
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import com.esentri.rezeption.core.inport.ServiceLeistungUseCases;
 import com.esentri.rezeption.core.outport.ServiceLeistungen;
-import io.domainlifecycles.domain.types.ListensTo;
+import io.domainlifecycles.domain.types.DomainEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -43,7 +43,7 @@ public class ServiceLeistungUseCasesImpl implements ServiceLeistungUseCases {
      * {@inheritDoc}
      */
     @Override
-    public ServiceLeistung.Id handle(ErstelleServiceLeistung erstelleServiceLeistung) {
+    public ServiceLeistung.Id handleErstelleServiceLeistung(ErstelleServiceLeistung erstelleServiceLeistung) {
         return null;
     }
 
@@ -53,8 +53,8 @@ public class ServiceLeistungUseCasesImpl implements ServiceLeistungUseCases {
     @Override
     @EventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @ListensTo(domainEventType = RechnungErstellt.class)
-    public void onEvent(RechnungErstellt rechnungErstellt) {
+    @DomainEventListener
+    public void onRechnungErstellt(RechnungErstellt rechnungErstellt) {
         rechnungErstellt.abgerechneteServices().forEach(lid ->{
             var sl = serviceLeistungen.findById(lid).orElseThrow();
             serviceLeistungen.update(sl.abgerechnet(rechnungErstellt.rechnungId()));

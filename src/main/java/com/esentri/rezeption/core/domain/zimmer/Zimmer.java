@@ -16,7 +16,7 @@
 
 package com.esentri.rezeption.core.domain.zimmer;
 
-import com.esentri.rezeption.core.domain.buchung.CheckeEin;
+import com.esentri.rezeption.core.domain.buchung.CheckeBuchungEin;
 import com.esentri.rezeption.core.domain.hotel.Hotel;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.Identity;
@@ -164,12 +164,12 @@ public class Zimmer implements AggregateRoot<Zimmer.Id> {
     /**
      * Fügt eine neue Belegung hinzu, wenn keine Überschneidung vorliegt, speziell für den CheckIn.
      *
-     * @param checkeEin Command für CheckIn des Zimmers
+     * @param checkeBuchungEin Command für CheckIn des Zimmers
      * @return neue Belegung, die hinzugefügt wurde
      * @throws IllegalStateException Wenn das Zimmer zum gewünschten Zeitpunkt bereits belegt ist.
      */
-    public Belegung neueBelegungFuerCheckIn(CheckeEin checkeEin){
-        var checkOutAm = LocalDate.now().plusDays(checkeEin.geplanteAnzahlNaechte());
+    public Belegung neueBelegungFuerCheckIn(CheckeBuchungEin checkeBuchungEin){
+        var checkOutAm = LocalDate.now().plusDays(checkeBuchungEin.geplanteAnzahlNaechte());
         return neueBelegung(LocalDate.now(), checkOutAm, BelegungTyp.GAST);
     }
 

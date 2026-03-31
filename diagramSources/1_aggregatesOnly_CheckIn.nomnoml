@@ -89,7 +89,7 @@ o +- storniertAm:LocalDateTime
 o +- zimmerNummer:<IDREF> Zimmer$ZimmerNummer
 |
 + boolean buchungsZeitraumBeinhaltet(LocalDate)
-+ Buchung checkeAus()
++ Buchung checkeBuchungAus()
 + Buchung handle(CheckeEin)
 + Buchung handle(VervollstaendigeGastDaten)
 + Buchung storniere()
