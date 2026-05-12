@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CheckInService implements ApplicationService {
+public class CheckInApplicationService implements ApplicationService {
 
     private final BuchungRepository buchungRepository;
     private final ZimmerRepository zimmerRepository;

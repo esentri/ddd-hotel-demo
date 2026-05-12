@@ -18,7 +18,7 @@ import java.util.Optional;
 public class Buchung implements AggregateRoot<BuchungId> {
 
     public enum Status {
-        RESERVIERT, EINGECHECKT, STORNIERT
+        RESERVIERT, EINGECHECKT, AUSGECHECKT, STORNIERT
     }
 
     @EqualsAndHashCode.Include
@@ -48,6 +48,11 @@ public class Buchung implements AggregateRoot<BuchungId> {
         gast.validiereVolljährigkeit();
         this.zugewiesenesZimmerId = zimmerId;
         this.status = Status.EINGECHECKT;
+    }
+
+    public void checkout() {
+        DomainAssertions.isTrue(status == Status.EINGECHECKT, "Checkout ist nur für eingecheckte Buchungen möglich.");
+        this.status = Status.AUSGECHECKT;
     }
 
     public void storniere() {

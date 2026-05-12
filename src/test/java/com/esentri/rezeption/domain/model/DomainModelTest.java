@@ -20,7 +20,7 @@ public class DomainModelTest {
     void testBuchungCheckInGastZuJung() {
         Gast gast = new Gast(new GastId(1L), "Junger", "Gast", LocalDate.now().minusYears(15));
         Buchung buchung = new Buchung(new BuchungId(1L), gast, new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2)));
-        
+
         assertThrows(RuntimeException.class, () -> buchung.checkIn(new ZimmerId(101L)));
     }
 
@@ -28,7 +28,7 @@ public class DomainModelTest {
     void testBuchungCheckInErfolgreich() {
         Gast gast = new Gast(new GastId(1L), "Alter", "Gast", LocalDate.now().minusYears(20));
         Buchung buchung = new Buchung(new BuchungId(1L), gast, new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2)));
-        
+
         buchung.checkIn(new ZimmerId(101L));
         assertEquals(Buchung.Status.EINGECHECKT, buchung.getStatus());
     }
@@ -37,9 +37,9 @@ public class DomainModelTest {
     void testZimmerDoppelbelegung() {
         Zimmer zimmer = new Zimmer(new ZimmerId(101L), "101", new Zimmerkategorie("Doppelzimmer"));
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
-        
+
         zimmer.fügeBelegungHinzu(zeitraum, new BuchungId(1L));
-        
+
         assertThrows(RuntimeException.class, () -> zimmer.fügeBelegungHinzu(zeitraum, new BuchungId(2L)));
     }
 
@@ -47,9 +47,28 @@ public class DomainModelTest {
     void testStornoNachCheckInNichtMöglich() {
         Gast gast = new Gast(new GastId(1L), "Alter", "Gast", LocalDate.now().minusYears(20));
         Buchung buchung = new Buchung(new BuchungId(1L), gast, new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2)));
-        
+
         buchung.checkIn(new ZimmerId(101L));
-        
+
         assertThrows(RuntimeException.class, buchung::storniere);
+    }
+
+    @Test
+    void testCheckoutErfolgreich() {
+        Gast gast = new Gast(new GastId(1L), "Max", "Mustermann", LocalDate.now().minusYears(25));
+        Buchung buchung = new Buchung(new BuchungId(1L), gast, new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(3)));
+        buchung.checkIn(new ZimmerId(101L));
+
+        buchung.checkout();
+
+        assertEquals(Buchung.Status.AUSGECHECKT, buchung.getStatus());
+    }
+
+    @Test
+    void testCheckoutNurEingechecktMöglich() {
+        Gast gast = new Gast(new GastId(1L), "Max", "Mustermann", LocalDate.now().minusYears(25));
+        Buchung buchung = new Buchung(new BuchungId(1L), gast, new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(3)));
+
+        assertThrows(RuntimeException.class, buchung::checkout);
     }
 }
