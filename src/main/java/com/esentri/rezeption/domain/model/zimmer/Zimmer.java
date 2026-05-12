@@ -28,11 +28,15 @@ public class Zimmer implements AggregateRoot<ZimmerId> {
     private String nummer;
 
     @NotNull
+    private Zimmerkategorie kategorie;
+
+    @NotNull
     private List<Belegung> belegungen = new ArrayList<>();
 
-    public Zimmer(ZimmerId id, String nummer) {
+    public Zimmer(ZimmerId id, String nummer, Zimmerkategorie kategorie) {
         this.id = id;
         this.nummer = nummer;
+        this.kategorie = kategorie;
     }
 
     public void fügeBelegungHinzu(Zeitraum zeitraum, BuchungId buchungId) {

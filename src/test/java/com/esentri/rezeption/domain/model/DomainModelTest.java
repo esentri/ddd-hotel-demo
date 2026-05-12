@@ -6,6 +6,7 @@ import com.esentri.rezeption.domain.model.buchung.Gast;
 import com.esentri.rezeption.domain.model.buchung.GastId;
 import com.esentri.rezeption.domain.model.zimmer.Zimmer;
 import com.esentri.rezeption.domain.model.zimmer.ZimmerId;
+import com.esentri.rezeption.domain.model.zimmer.Zimmerkategorie;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -34,7 +35,7 @@ public class DomainModelTest {
 
     @Test
     void testZimmerDoppelbelegung() {
-        Zimmer zimmer = new Zimmer(new ZimmerId(101L), "101");
+        Zimmer zimmer = new Zimmer(new ZimmerId(101L), "101", new Zimmerkategorie("Doppelzimmer"));
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         
         zimmer.fügeBelegungHinzu(zeitraum, new BuchungId(1L));
