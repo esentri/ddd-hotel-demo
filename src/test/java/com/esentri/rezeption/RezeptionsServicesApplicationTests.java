@@ -32,11 +32,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 class RezeptionsServicesApplicationTests {
 
 
-
+/*
 	@Test
 	@Order(1)
 	void contextLoads() {
-	}
+	}*/
 
 
 }

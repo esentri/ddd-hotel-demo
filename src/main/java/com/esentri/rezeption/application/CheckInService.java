@@ -2,7 +2,7 @@ package com.esentri.rezeption.application;
 
 import com.esentri.rezeption.domain.model.buchung.Buchung;
 import com.esentri.rezeption.domain.model.buchung.BuchungRepository;
-import com.esentri.rezeption.domain.model.buchung.CheckInCommand;
+import com.esentri.rezeption.domain.model.buchung.CheckeGastEin;
 import com.esentri.rezeption.domain.model.buchung.GastEingecheckt;
 import com.esentri.rezeption.domain.model.zimmer.Zimmer;
 import com.esentri.rezeption.domain.model.zimmer.ZimmerRepository;
@@ -22,7 +22,7 @@ public class CheckInService implements ApplicationService {
 
     @Transactional
     @Publishes(domainEventTypes = GastEingecheckt.class)
-    public void checkIn(CheckInCommand command) {
+    public void checkIn(CheckeGastEin command) {
         Buchung buchung = buchungRepository.findById(command.buchungId())
             .orElseThrow(() -> new IllegalArgumentException("Buchung nicht gefunden: " + command.buchungId()));
 
