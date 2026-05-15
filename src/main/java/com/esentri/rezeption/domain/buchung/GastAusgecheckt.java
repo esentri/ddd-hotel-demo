@@ -1,5 +1,6 @@
 package com.esentri.rezeption.domain.buchung;
 
+import com.esentri.rezeption.domain.ZimmerId;
 import io.domainlifecycles.domain.types.DomainEvent;
 
 import java.time.Instant;

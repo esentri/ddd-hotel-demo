@@ -2,7 +2,10 @@ package com.esentri.rezeption.domain.buchung;
 
 import com.esentri.rezeption.domain.ZimmerId;
 import io.domainlifecycles.domain.types.AggregateRoot;
+import io.domainlifecycles.domain.types.Publishes;
+import io.domainlifecycles.events.api.DomainEvents;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Objects;
@@ -56,11 +59,16 @@ public class Buchung implements AggregateRoot<BuchungsId> {
         this.status = BuchungsStatus.STORNIERT;
     }
 
+    @Publishes(domainEventTypes = {GastAusgecheckt.class})
     public void checkeAus() {
         if (this.status != BuchungsStatus.EINGECHECKT) {
             throw new IllegalStateException("Check-out ist nur fuer eingecheckte Buchungen moeglich");
         }
         this.status = BuchungsStatus.AUSGECHECKT;
+        DomainEvents.publish(new GastAusgecheckt(
+            this.id,
+            Instant.now()
+        ));
     }
 
     public void aktualisiereGastdaten(String vorname, String nachname, LocalDate geburtsdatum) {

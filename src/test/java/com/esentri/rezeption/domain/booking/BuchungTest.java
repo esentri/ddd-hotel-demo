@@ -7,6 +7,7 @@ import com.esentri.rezeption.domain.buchung.HauptGast;
 import com.esentri.rezeption.domain.buchung.HauptGastId;
 import com.esentri.rezeption.domain.buchung.Zeitraum;
 import com.esentri.rezeption.domain.ZimmerId;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -76,6 +77,30 @@ class BuchungTest {
         buchung.checkeEin(new ZimmerId(UUID.randomUUID()));
 
         assertThrows(IllegalStateException.class, buchung::storniere);
+    }
+
+    @Disabled
+    @Test
+    void testCheckeAus() {
+        BuchungsId id = new BuchungsId(UUID.randomUUID());
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
+        Buchung buchung = Buchung.neueBuchung(id, gast, zeitraum);
+        buchung.checkeEin(new ZimmerId(UUID.randomUUID()));
+
+        buchung.checkeAus();
+
+        assertEquals(BuchungsStatus.AUSGECHECKT, buchung.getStatus());
+    }
+
+    @Test
+    void testCheckeAusNichtEingecheckt() {
+        BuchungsId id = new BuchungsId(UUID.randomUUID());
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
+        Buchung buchung = Buchung.neueBuchung(id, gast, zeitraum);
+
+        assertThrows(IllegalStateException.class, buchung::checkeAus);
     }
 
 }
