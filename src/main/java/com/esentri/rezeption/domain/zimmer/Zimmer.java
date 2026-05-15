@@ -10,10 +10,12 @@ import java.util.Objects;
 public class Zimmer implements AggregateRoot<ZimmerId> {
 
     private final ZimmerId id;
+    private final Zimmerkategorie kategorie;
     private ZimmerStatus status;
 
-    public Zimmer(ZimmerId id, ZimmerStatus status) {
+    public Zimmer(ZimmerId id, Zimmerkategorie kategorie, ZimmerStatus status) {
         this.id = Objects.requireNonNull(id, "ZimmerId darf nicht null sein");
+        this.kategorie = Objects.requireNonNull(kategorie, "Zimmerkategorie darf nicht null sein");
         this.status = Objects.requireNonNull(status, "Status darf nicht null sein");
     }
 
@@ -25,11 +27,11 @@ public class Zimmer implements AggregateRoot<ZimmerId> {
     public void belegeFuer(BuchungsId buchungsId, Zeitraum zeitraum) {
         Objects.requireNonNull(buchungsId, "BuchungsId darf nicht null sein");
         Objects.requireNonNull(zeitraum, "Zeitraum darf nicht null sein");
-        
+
         if (!istVerfuegbarFuer(zeitraum)) {
             throw new IllegalStateException("Zimmer ist nicht verfuegbar");
         }
-        
+
         this.status = ZimmerStatus.BELEGT;
     }
 
@@ -56,6 +58,10 @@ public class Zimmer implements AggregateRoot<ZimmerId> {
 
     public ZimmerStatus getStatus() {
         return status;
+    }
+
+    public Zimmerkategorie getKategorie() {
+        return kategorie;
     }
 
     @Override

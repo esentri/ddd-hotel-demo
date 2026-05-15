@@ -35,27 +35,27 @@ class CheckInIntegrationTest {
         // Arrange
         BuchungsId buchungsId = new BuchungsId(UUID.randomUUID());
         ZimmerId zimmerId = new ZimmerId(UUID.randomUUID());
-        
+
         HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(buchungsId, gast, zeitraum);
-        
-        Zimmer zimmer = new Zimmer(zimmerId, ZimmerStatus.FREI);
-        
+
+        Zimmer zimmer = new Zimmer(zimmerId, Zimmerkategorie.DOPPELZIMMER_STANDARD, ZimmerStatus.FREI);
+
         when(buchungRepository.findById(buchungsId)).thenReturn(Optional.of(buchung));
         when(zimmerRepository.findById(zimmerId)).thenReturn(Optional.of(zimmer));
-        
+
         CheckeGastEin command = new CheckeGastEin(buchungsId, zimmerId);
-        
+
         // Act
         BuchungsId result = checkInApplicationService.checkeGastEin(command);
-        
+
         // Assert
         assertEquals(buchungsId, result);
         assertEquals(BuchungsStatus.EINGECHECKT, buchung.getStatus());
         assertEquals(zimmerId, buchung.getZimmerId().get());
         assertEquals(ZimmerStatus.BELEGT, zimmer.getStatus());
-        
+
         verify(buchungRepository).update(buchung);
         verify(zimmerRepository).update(zimmer);
     }
@@ -65,21 +65,21 @@ class CheckInIntegrationTest {
         // Arrange
         BuchungsId buchungsId = new BuchungsId(UUID.randomUUID());
         ZimmerId zimmerId = new ZimmerId(UUID.randomUUID());
-        
+
         HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(buchungsId, gast, zeitraum);
-        
-        Zimmer zimmer = new Zimmer(zimmerId, ZimmerStatus.BELEGT);
-        
+
+        Zimmer zimmer = new Zimmer(zimmerId, Zimmerkategorie.DOPPELZIMMER_STANDARD, ZimmerStatus.BELEGT);
+
         when(buchungRepository.findById(buchungsId)).thenReturn(Optional.of(buchung));
         when(zimmerRepository.findById(zimmerId)).thenReturn(Optional.of(zimmer));
-        
+
         CheckeGastEin command = new CheckeGastEin(buchungsId, zimmerId);
-        
+
         // Act & Assert
         assertThrows(ZimmerNichtVerfuegbarException.class, () -> checkInApplicationService.checkeGastEin(command));
-        
+
         verify(buchungRepository, never()).update(any());
         verify(zimmerRepository, never()).update(any());
     }
@@ -89,18 +89,18 @@ class CheckInIntegrationTest {
         // Arrange
         BuchungsId buchungsId = new BuchungsId(UUID.randomUUID());
         ZimmerId zimmerId = new ZimmerId(UUID.randomUUID());
-        
+
         HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(buchungsId, gast, zeitraum);
-        
-        Zimmer zimmer = new Zimmer(zimmerId, ZimmerStatus.WARTUNG);
-        
+
+        Zimmer zimmer = new Zimmer(zimmerId, Zimmerkategorie.DOPPELZIMMER_STANDARD, ZimmerStatus.WARTUNG);
+
         when(buchungRepository.findById(buchungsId)).thenReturn(Optional.of(buchung));
         when(zimmerRepository.findById(zimmerId)).thenReturn(Optional.of(zimmer));
-        
+
         CheckeGastEin command = new CheckeGastEin(buchungsId, zimmerId);
-        
+
         // Act & Assert
         assertThrows(ZimmerNichtVerfuegbarException.class, () -> checkInApplicationService.checkeGastEin(command));
     }
