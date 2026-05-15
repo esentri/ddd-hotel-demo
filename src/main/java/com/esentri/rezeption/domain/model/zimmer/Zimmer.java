@@ -48,6 +48,10 @@ public class Zimmer implements AggregateRoot<ZimmerId> {
         this.belegungen.add(new Belegung(zeitraum, buchungId));
     }
 
+    public void entferneBelegung(BuchungId buchungId) {
+        this.belegungen.removeIf(b -> b.buchungId().equals(buchungId));
+    }
+
     public List<Belegung> getBelegungen() {
         return Collections.unmodifiableList(belegungen);
     }
