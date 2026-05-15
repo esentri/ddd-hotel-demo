@@ -20,14 +20,14 @@ class CheckInIntegrationTest {
     private BuchungRepository buchungRepository;
     private ZimmerRepository zimmerRepository;
     private CheckInService checkInService;
-    private CheckInApplicationService checkInApplicationService;
+    private BuchungApplicationService buchungApplicationService;
 
     @BeforeEach
     void setUp() {
         buchungRepository = mock(BuchungRepository.class);
         zimmerRepository = mock(ZimmerRepository.class);
         checkInService = new CheckInService(buchungRepository, zimmerRepository);
-        checkInApplicationService = new CheckInApplicationService(checkInService);
+        buchungApplicationService = new BuchungApplicationService(buchungRepository, checkInService);
     }
 
     @Test
@@ -48,7 +48,7 @@ class CheckInIntegrationTest {
         CheckeGastEin command = new CheckeGastEin(buchungsId, zimmerId);
 
         // Act
-        BuchungsId result = checkInApplicationService.checkeGastEin(command);
+        BuchungsId result = buchungApplicationService.checkeGastEin(command);
 
         // Assert
         assertEquals(buchungsId, result);
@@ -78,7 +78,7 @@ class CheckInIntegrationTest {
         CheckeGastEin command = new CheckeGastEin(buchungsId, zimmerId);
 
         // Act & Assert
-        assertThrows(ZimmerNichtVerfuegbarException.class, () -> checkInApplicationService.checkeGastEin(command));
+        assertThrows(ZimmerNichtVerfuegbarException.class, () -> buchungApplicationService.checkeGastEin(command));
 
         verify(buchungRepository, never()).update(any());
         verify(zimmerRepository, never()).update(any());
@@ -102,6 +102,6 @@ class CheckInIntegrationTest {
         CheckeGastEin command = new CheckeGastEin(buchungsId, zimmerId);
 
         // Act & Assert
-        assertThrows(ZimmerNichtVerfuegbarException.class, () -> checkInApplicationService.checkeGastEin(command));
+        assertThrows(ZimmerNichtVerfuegbarException.class, () -> buchungApplicationService.checkeGastEin(command));
     }
 }
