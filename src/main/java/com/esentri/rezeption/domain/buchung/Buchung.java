@@ -64,9 +64,13 @@ public class Buchung implements AggregateRoot<BuchungsId> {
         if (this.status != BuchungsStatus.EINGECHECKT) {
             throw new IllegalStateException("Check-out ist nur fuer eingecheckte Buchungen moeglich");
         }
+        if (this.zimmerId == null) {
+            throw new IllegalStateException("Check-out nicht moeglich: Keine ZimmerId an der Buchung hinterlegt");
+        }
         this.status = BuchungsStatus.AUSGECHECKT;
         DomainEvents.publish(new GastAusgecheckt(
             this.id,
+            this.zimmerId,
             Instant.now()
         ));
     }

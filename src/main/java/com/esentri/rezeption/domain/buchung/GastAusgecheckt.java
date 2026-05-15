@@ -13,6 +13,7 @@ import java.util.Objects;
  */
 public record GastAusgecheckt(
     BuchungsId buchungsId,
+    com.esentri.rezeption.domain.ZimmerId zimmerId,
     Instant ausgechecktAm
 ) implements DomainEvent {
 
@@ -22,6 +23,7 @@ public record GastAusgecheckt(
      */
     public GastAusgecheckt {
         Objects.requireNonNull(buchungsId, "Die BuchungsId darf nicht null sein.");
+        Objects.requireNonNull(zimmerId, "Die ZimmerId darf nicht null sein.");
         Objects.requireNonNull(ausgechecktAm, "Der Zeitstempel fuer ausgechecktAm darf nicht null sein.");
     }
 }

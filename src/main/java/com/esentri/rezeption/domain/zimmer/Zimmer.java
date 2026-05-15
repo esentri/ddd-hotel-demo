@@ -33,6 +33,17 @@ public class Zimmer implements AggregateRoot<ZimmerId> {
         this.status = ZimmerStatus.BELEGT;
     }
 
+    public void gibFrei(BuchungsId buchungsId) {
+        Objects.requireNonNull(buchungsId, "BuchungsId darf nicht null sein");
+        // In einem echten System wuerden wir hier pruefen, ob das Zimmer
+        // tatsaechlich fuer diese BuchungsId belegt ist.
+        // Fuer dieses Demo-Projekt setzen wir einfach den Status auf FREI.
+        if (this.status != ZimmerStatus.BELEGT) {
+            throw new IllegalStateException("Zimmer ist nicht belegt und kann daher nicht freigegeben werden");
+        }
+        this.status = ZimmerStatus.FREI;
+    }
+
     @Override
     public ZimmerId id() {
         return id;
