@@ -1,0 +1,81 @@
+package com.esentri.rezeption.domain.booking;
+
+import com.esentri.rezeption.domain.buchung.Buchung;
+import com.esentri.rezeption.domain.buchung.BuchungsId;
+import com.esentri.rezeption.domain.buchung.BuchungsStatus;
+import com.esentri.rezeption.domain.buchung.HauptGast;
+import com.esentri.rezeption.domain.buchung.HauptGastId;
+import com.esentri.rezeption.domain.buchung.Zeitraum;
+import com.esentri.rezeption.domain.ZimmerId;
+import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class BuchungTest {
+
+    @Test
+    void testNeueBuchung() {
+        BuchungsId id = new BuchungsId(UUID.randomUUID());
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
+
+        Buchung buchung = Buchung.neueBuchung(id, gast, zeitraum);
+
+        assertEquals(id, buchung.id());
+        assertEquals(BuchungsStatus.RESERVIERT, buchung.getStatus());
+        assertTrue(buchung.getZimmerId().isEmpty());
+    }
+
+    @Test
+    void testCheckeEin() {
+        BuchungsId id = new BuchungsId(UUID.randomUUID());
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
+        Buchung buchung = Buchung.neueBuchung(id, gast, zeitraum);
+        ZimmerId zimmerId = new ZimmerId(UUID.randomUUID());
+
+        buchung.checkeEin(zimmerId);
+
+        assertEquals(BuchungsStatus.EINGECHECKT, buchung.getStatus());
+        assertEquals(zimmerId, buchung.getZimmerId().get());
+    }
+
+    @Test
+    void testCheckeEinZuJung() {
+        BuchungsId id = new BuchungsId(UUID.randomUUID());
+        // Gast ist 15 Jahre alt zum Check-in
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "Young", "Doe", LocalDate.now().minusYears(15));
+        Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
+        Buchung buchung = Buchung.neueBuchung(id, gast, zeitraum);
+        ZimmerId zimmerId = new ZimmerId(UUID.randomUUID());
+
+        assertThrows(IllegalStateException.class, () -> buchung.checkeEin(zimmerId));
+    }
+
+    @Test
+    void testStorniere() {
+        BuchungsId id = new BuchungsId(UUID.randomUUID());
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
+        Buchung buchung = Buchung.neueBuchung(id, gast, zeitraum);
+
+        buchung.storniere();
+
+        assertEquals(BuchungsStatus.STORNIERT, buchung.getStatus());
+    }
+
+    @Test
+    void testStorniereFehlgeschlagen() {
+        BuchungsId id = new BuchungsId(UUID.randomUUID());
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
+        Buchung buchung = Buchung.neueBuchung(id, gast, zeitraum);
+        buchung.checkeEin(new ZimmerId(UUID.randomUUID()));
+
+        assertThrows(IllegalStateException.class, buchung::storniere);
+    }
+
+}

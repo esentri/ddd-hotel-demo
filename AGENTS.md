@@ -94,8 +94,3 @@ Die folgenden Regeln sind bei der Implementierung von DDD Building Blocks zu bea
 - Verwende für alle Query Handler das Interface io.domainlifecycles.domain.types.QueryHandler<READMODEL>.
 - Prüfe Invarianten immer in den Konstruktoren und wirf entsprechende Standard Java-Exceptions. 
 - Repositories müssen io.domainlifecycles.domain.types.Repository<ID, AGGREGATE_ROOT> implementieren
-
-## Technische Regeln (Lombok & Konstruktoren)
-- Vollständige Konstruktoren für Entities und Roots: Jede Entity und jedes Aggregate Root muss über genau einen public Konstruktor verfügen, der ausnahmslos alle Felder als Parameter entgegennimmt. Dieser Konstruktor muss zwingend mit @Builder (Lombok) annotiert sein, um eine saubere und lesbare Instanziierung zu ermöglichen.
-- Builder für Value Objects: Jedes als record implementierte Value Object muss ebenfalls mit der @Builder-Annotation von Lombok versehen werden.
-- Kombination mit Validierung: Die geforderte Selbst-Validierung und das Schützen von Invarianten (Guard Clauses) müssen innerhalb dieses All-Args-Konstruktors (bzw. beim Record im kompakten/kanonischen Konstruktor) greifen, damit der @Builder niemals ein ungültiges Objekt erzeugen kann.
