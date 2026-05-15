@@ -13,10 +13,7 @@ public class HauptGast implements Entity<HauptGastId> {
     private LocalDate geburtsdatum;
 
     public HauptGast(HauptGastId id, String vorname, String nachname, LocalDate geburtsdatum) {
-        if (id == null) {
-            throw new IllegalArgumentException("HauptGastId darf nicht null sein");
-        }
-        this.id = id;
+        this.id = Objects.requireNonNull(id, "HauptGastId darf nicht null sein");
         this.vorname = vorname;
         this.nachname = nachname;
         this.geburtsdatum = geburtsdatum;

@@ -3,6 +3,7 @@ package com.esentri.rezeption.domain.buchung;
 import com.esentri.rezeption.domain.ZimmerId;
 import io.domainlifecycles.domain.types.AggregateRoot;
 
+import java.time.LocalDate;
 import java.time.Period;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,13 +17,10 @@ public class Buchung implements AggregateRoot<BuchungsId> {
     private BuchungsStatus status;
 
     private Buchung(BuchungsId id, HauptGast hauptGast, Zeitraum belegungszeitraum, BuchungsStatus status) {
-        if (id == null || hauptGast == null || belegungszeitraum == null || status == null) {
-            throw new IllegalArgumentException("Alle Felder ausser ZimmerId muessen gesetzt sein");
-        }
-        this.id = id;
-        this.hauptGast = hauptGast;
-        this.belegungszeitraum = belegungszeitraum;
-        this.status = status;
+        this.id = Objects.requireNonNull(id, "Die BuchungsId darf nicht null sein");
+        this.hauptGast = Objects.requireNonNull(hauptGast, "Der HauptGast darf nicht null sein");
+        this.belegungszeitraum = Objects.requireNonNull(belegungszeitraum, "Der Belegungszeitraum darf nicht null sein");
+        this.status = Objects.requireNonNull(status, "Der Status darf nicht null sein");
     }
 
     public static Buchung neueBuchung(BuchungsId id, HauptGast hauptGast, Zeitraum belegungszeitraum) {
@@ -36,9 +34,7 @@ public class Buchung implements AggregateRoot<BuchungsId> {
         if (this.status != BuchungsStatus.RESERVIERT) {
             throw new IllegalStateException("Check-in ist nur aus dem Status RESERVIERT erlaubt");
         }
-        if (zimmerId == null) {
-            throw new IllegalArgumentException("Beim Check-in muss eine ZimmerId vorhanden sein");
-        }
+        Objects.requireNonNull(zimmerId, "Beim Check-in muss eine ZimmerId vorhanden sein");
 
         // Invariante: HauptGast mindestens 16 Jahre alt zum checkInDatum
         if (hauptGast.getGeburtsdatum() == null) {
@@ -65,6 +61,10 @@ public class Buchung implements AggregateRoot<BuchungsId> {
             throw new IllegalStateException("Check-out ist nur fuer eingecheckte Buchungen moeglich");
         }
         this.status = BuchungsStatus.AUSGECHECKT;
+    }
+
+    public void aktualisiereGastdaten(String vorname, String nachname, LocalDate geburtsdatum) {
+        this.hauptGast.vervollstaendigeDaten(vorname, nachname, geburtsdatum);
     }
 
     @Override
