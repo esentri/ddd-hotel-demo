@@ -1,0 +1,12 @@
+package com.esentri.rezeption.domain.zimmer;
+
+import com.esentri.rezeption.domain.ZimmerId;
+import io.domainlifecycles.domain.types.Repository;
+
+import java.util.Optional;
+
+public interface ZimmerRepository extends Repository<ZimmerId, Zimmer> {
+    Optional<Zimmer> findById(ZimmerId id);
+    Zimmer insert(Zimmer zimmer);
+    Zimmer update(Zimmer zimmer);
+}
