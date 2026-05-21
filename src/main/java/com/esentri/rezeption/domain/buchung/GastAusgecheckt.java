@@ -1,6 +1,6 @@
 package com.esentri.rezeption.domain.buchung;
 
-import com.esentri.rezeption.domain.ZimmerId;
+import com.esentri.rezeption.domain.zimmer.ZimmerId;
 import io.domainlifecycles.domain.types.DomainEvent;
 
 import java.time.Instant;
@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 public record GastAusgecheckt(
     BuchungsId buchungsId,
-    com.esentri.rezeption.domain.ZimmerId zimmerId,
+    ZimmerId zimmerId,
     Instant ausgechecktAm
 ) implements DomainEvent {
 

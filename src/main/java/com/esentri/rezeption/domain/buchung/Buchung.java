@@ -1,6 +1,7 @@
 package com.esentri.rezeption.domain.buchung;
 
-import com.esentri.rezeption.domain.ZimmerId;
+import com.esentri.rezeption.domain.Zeitraum;
+import com.esentri.rezeption.domain.zimmer.ZimmerId;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.events.api.DomainEvents;
@@ -44,7 +45,7 @@ public class Buchung implements AggregateRoot<BuchungsId> {
             throw new IllegalStateException("Geburtsdatum des Hauptgastes muss zum Check-in bekannt sein");
         }
 
-        if (Period.between(hauptGast.getGeburtsdatum(), belegungszeitraum.checkInDatum()).getYears() < 16) {
+        if (Period.between(hauptGast.getGeburtsdatum(), belegungszeitraum.start()).getYears() < 16) {
              throw new IllegalStateException("Der Hauptgast muss zum Check-in mindestens 16 Jahre alt sein");
         }
 

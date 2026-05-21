@@ -1,6 +1,6 @@
 package com.esentri.rezeption.domain.buchung;
 
-import com.esentri.rezeption.domain.ZimmerId;
+import com.esentri.rezeption.domain.zimmer.ZimmerId;
 import io.domainlifecycles.domain.types.DomainCommand;
 
 import java.util.Objects;

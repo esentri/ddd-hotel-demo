@@ -5,8 +5,8 @@ import com.esentri.rezeption.domain.buchung.BuchungsId;
 import com.esentri.rezeption.domain.buchung.BuchungsStatus;
 import com.esentri.rezeption.domain.buchung.HauptGast;
 import com.esentri.rezeption.domain.buchung.HauptGastId;
-import com.esentri.rezeption.domain.buchung.Zeitraum;
-import com.esentri.rezeption.domain.ZimmerId;
+import com.esentri.rezeption.domain.Zeitraum;
+import com.esentri.rezeption.domain.zimmer.ZimmerId;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

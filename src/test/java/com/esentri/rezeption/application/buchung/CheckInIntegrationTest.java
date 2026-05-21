@@ -1,11 +1,11 @@
 package com.esentri.rezeption.application.buchung;
 
-import com.esentri.rezeption.domain.ZimmerId;
+import com.esentri.rezeption.domain.Zeitraum;
+import com.esentri.rezeption.domain.zimmer.ZimmerId;
 import com.esentri.rezeption.domain.buchung.*;
 import com.esentri.rezeption.domain.zimmer.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -40,7 +40,7 @@ class CheckInIntegrationTest {
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(buchungsId, gast, zeitraum);
 
-        Zimmer zimmer = new Zimmer(zimmerId, Zimmerkategorie.DOPPELZIMMER_STANDARD, ZimmerStatus.FREI);
+        Zimmer zimmer = new Zimmer(zimmerId, Zimmerkategorie.DOPPELZIMMER_STANDARD);
 
         when(buchungRepository.findById(buchungsId)).thenReturn(Optional.of(buchung));
         when(zimmerRepository.findById(zimmerId)).thenReturn(Optional.of(zimmer));
@@ -54,7 +54,7 @@ class CheckInIntegrationTest {
         assertEquals(buchungsId, result);
         assertEquals(BuchungsStatus.EINGECHECKT, buchung.getStatus());
         assertEquals(zimmerId, buchung.getZimmerId().get());
-        assertEquals(ZimmerStatus.BELEGT, zimmer.getStatus());
+        assertEquals(zimmer.istVerfuegbarFuer(zeitraum), false);
 
         verify(buchungRepository).update(buchung);
         verify(zimmerRepository).update(zimmer);
@@ -70,7 +70,9 @@ class CheckInIntegrationTest {
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(buchungsId, gast, zeitraum);
 
-        Zimmer zimmer = new Zimmer(zimmerId, Zimmerkategorie.DOPPELZIMMER_STANDARD, ZimmerStatus.BELEGT);
+        Zimmer zimmer = new Zimmer(zimmerId, Zimmerkategorie.DOPPELZIMMER_STANDARD);
+        BuchungsId bestehendeBuchungId = new BuchungsId(UUID.randomUUID());
+        zimmer.belegeFuer(bestehendeBuchungId, zeitraum);
 
         when(buchungRepository.findById(buchungsId)).thenReturn(Optional.of(buchung));
         when(zimmerRepository.findById(zimmerId)).thenReturn(Optional.of(zimmer));
@@ -94,7 +96,8 @@ class CheckInIntegrationTest {
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(buchungsId, gast, zeitraum);
 
-        Zimmer zimmer = new Zimmer(zimmerId, Zimmerkategorie.DOPPELZIMMER_STANDARD, ZimmerStatus.WARTUNG);
+        Zimmer zimmer = new Zimmer(zimmerId, Zimmerkategorie.DOPPELZIMMER_STANDARD);
+        zimmer.planeWartung(zeitraum);
 
         when(buchungRepository.findById(buchungsId)).thenReturn(Optional.of(buchung));
         when(zimmerRepository.findById(zimmerId)).thenReturn(Optional.of(zimmer));

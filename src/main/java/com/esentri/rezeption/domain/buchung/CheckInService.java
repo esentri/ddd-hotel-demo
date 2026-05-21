@@ -1,6 +1,6 @@
 package com.esentri.rezeption.domain.buchung;
 
-import com.esentri.rezeption.domain.ZimmerId;
+import com.esentri.rezeption.domain.zimmer.ZimmerId;
 import com.esentri.rezeption.domain.zimmer.Zimmer;
 import com.esentri.rezeption.domain.zimmer.ZimmerNichtVerfuegbarException;
 import com.esentri.rezeption.domain.zimmer.ZimmerRepository;

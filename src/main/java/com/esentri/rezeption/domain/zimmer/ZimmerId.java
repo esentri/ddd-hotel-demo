@@ -1,4 +1,4 @@
-package com.esentri.rezeption.domain;
+package com.esentri.rezeption.domain.zimmer;
 
 import io.domainlifecycles.domain.types.Identity;
 

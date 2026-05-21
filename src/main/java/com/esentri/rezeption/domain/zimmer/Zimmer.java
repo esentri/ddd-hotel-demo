@@ -1,49 +1,70 @@
 package com.esentri.rezeption.domain.zimmer;
 
-import com.esentri.rezeption.domain.ZimmerId;
 import com.esentri.rezeption.domain.buchung.BuchungsId;
-import com.esentri.rezeption.domain.buchung.Zeitraum;
+import com.esentri.rezeption.domain.Zeitraum;
 import io.domainlifecycles.domain.types.AggregateRoot;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class Zimmer implements AggregateRoot<ZimmerId> {
 
     private final ZimmerId id;
     private final Zimmerkategorie kategorie;
-    private ZimmerStatus status;
+    private final List<Belegung> belegungen;
 
-    public Zimmer(ZimmerId id, Zimmerkategorie kategorie, ZimmerStatus status) {
+    public Zimmer(ZimmerId id, Zimmerkategorie kategorie) {
+        this(id, kategorie, new ArrayList<>());
+    }
+
+    public Zimmer(ZimmerId id, Zimmerkategorie kategorie, List<Belegung> belegungen) {
         this.id = Objects.requireNonNull(id, "ZimmerId darf nicht null sein");
         this.kategorie = Objects.requireNonNull(kategorie, "Zimmerkategorie darf nicht null sein");
-        this.status = Objects.requireNonNull(status, "Status darf nicht null sein");
+        this.belegungen = new ArrayList<>(Objects.requireNonNull(belegungen, "Belegungen darf nicht null sein"));
     }
 
     public boolean istVerfuegbarFuer(Zeitraum zeitraum) {
         Objects.requireNonNull(zeitraum, "Zeitraum darf nicht null sein");
-        return this.status != ZimmerStatus.WARTUNG && this.status == ZimmerStatus.FREI;
+        return belegungen.stream().noneMatch(b -> {
+            return b.zeitraum().ueberlapptMit(zeitraum);
+        });
     }
 
     public void belegeFuer(BuchungsId buchungsId, Zeitraum zeitraum) {
         Objects.requireNonNull(buchungsId, "BuchungsId darf nicht null sein");
         Objects.requireNonNull(zeitraum, "Zeitraum darf nicht null sein");
 
-        if (!istVerfuegbarFuer(zeitraum)) {
-            throw new IllegalStateException("Zimmer ist nicht verfuegbar");
+        if (belegungen.stream().anyMatch(b -> b.zeitraum().ueberlapptMit(zeitraum))) {
+            throw new IllegalStateException("Zimmer ist im gewaehlten Zeitraum bereits belegt.");
         }
+        Belegung neueBelegung = new Belegung(zeitraum, BelegungsTyp.CHECKIN, buchungsId);
+        this.belegungen.add(neueBelegung);
+    }
 
-        this.status = ZimmerStatus.BELEGT;
+
+    public void planeWartung(Zeitraum zeitraum) {
+        Objects.requireNonNull(zeitraum, "Zeitraum darf nicht null sein");
+
+        if (belegungen.stream().anyMatch(b -> b.zeitraum().ueberlapptMit(zeitraum))) {
+            throw new IllegalStateException("Zimmer kann nicht fuer Wartung geplant werden, da es bereits belegt ist.");
+        }
+        Belegung wartung = new Belegung(zeitraum, BelegungsTyp.WARTUNG, null);
+        this.belegungen.add(wartung);
     }
 
     public void gibFrei(BuchungsId buchungsId) {
         Objects.requireNonNull(buchungsId, "BuchungsId darf nicht null sein");
-        // In einem echten System wuerden wir hier pruefen, ob das Zimmer
-        // tatsaechlich fuer diese BuchungsId belegt ist.
-        // Fuer dieses Demo-Projekt setzen wir einfach den Status auf FREI.
-        if (this.status != ZimmerStatus.BELEGT) {
-            throw new IllegalStateException("Zimmer ist nicht belegt und kann daher nicht freigegeben werden");
+        boolean removed = belegungen.removeIf(b -> b.buchungsId() != null && b.buchungsId().equals(buchungsId));
+
+        if (!removed) {
+            throw new IllegalStateException("Keine Belegung fuer diese BuchungsId gefunden.");
         }
-        this.status = ZimmerStatus.FREI;
+    }
+
+    public List<Belegung> getBelegungen() {
+        return Collections.unmodifiableList(belegungen);
     }
 
     @Override
@@ -54,10 +75,6 @@ public class Zimmer implements AggregateRoot<ZimmerId> {
     @Override
     public long concurrencyVersion() {
         return 0;
-    }
-
-    public ZimmerStatus getStatus() {
-        return status;
     }
 
     public Zimmerkategorie getKategorie() {
