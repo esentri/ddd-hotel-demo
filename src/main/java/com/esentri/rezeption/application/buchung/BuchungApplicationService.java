@@ -50,7 +50,7 @@ public class BuchungApplicationService implements ApplicationService {
     public BuchungsId checkeGastEin(CheckeGastEin command) {
         Objects.requireNonNull(command, "Command darf nicht null sein");
 
-        checkInService.weiseZimmerZuUndCheckeEin(command.buchungsId(), command.zimmerId());
+        checkInService.weiseZimmerZuUndCheckeEin(command);
 
         return command.buchungsId();
     }
