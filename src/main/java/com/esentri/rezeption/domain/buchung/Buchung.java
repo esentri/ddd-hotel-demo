@@ -55,7 +55,7 @@ public class Buchung implements AggregateRoot<BuchungsId> {
 
     public void storniere() {
         if (this.status == BuchungsStatus.EINGECHECKT || this.status == BuchungsStatus.AUSGECHECKT) {
-            throw new IllegalStateException("Eine eingecheckte Buchung kann nicht mehr storniert werden");
+            throw new IllegalStateException("Buchung kann nicht mehr storniert werden");
         }
         this.status = BuchungsStatus.STORNIERT;
     }
