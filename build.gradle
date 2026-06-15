@@ -27,7 +27,7 @@ configurations {
 dlcGradlePlugin {
 	domainModelUpload {
 		domainModelPackages = ["com.esentri.rezeption"]
-		projectName = "DDD-Hotel-Demo-AI-2"
+		projectName = "DDD-Hotel-Demo-AI"
 		apiKey = "10a3ef8d-1db0-43dd-92ff-e2e340e0c7ef"
 		diagramViewerBaseUrl = "https://viewer.domainlifecycles.io"
 	}
