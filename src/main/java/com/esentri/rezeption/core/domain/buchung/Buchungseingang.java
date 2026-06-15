@@ -19,9 +19,9 @@ package com.esentri.rezeption.core.domain.buchung;
 import com.esentri.rezeption.core.outport.Buchungen;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
 import com.esentri.rezeption.core.outport.ZimmerAuslastungen;
-import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.Publishes;
 import lombok.RequiredArgsConstructor;
+import org.jmolecules.ddd.annotation.Service;
 
 import java.util.UUID;
 
@@ -31,7 +31,8 @@ import java.util.UUID;
  * @author Mario Herb
  */
 @RequiredArgsConstructor
-public class Buchungseingang implements DomainService {
+@Service
+public class Buchungseingang {
 
     private final Buchungen buchungen;
 
@@ -64,8 +65,8 @@ public class Buchungseingang implements DomainService {
 
         if(zimmerVerfügbar) {
             var buchung = buchungen.insert(neueBuchung(erstelleNeueBuchung));
-            domainEventPublisher.publish(new NeueBuchungErhalten(buchung.id()));
-            return buchung.id();
+            domainEventPublisher.publish(new NeueBuchungErhalten(buchung.getId()));
+            return buchung.getId();
         }
         throw new IllegalStateException("Alle Zimmer bereits belegt!");
     }
@@ -99,7 +100,6 @@ public class Buchungseingang implements DomainService {
                         null
                 ),
                 null
-                ,0
         );
         return buchung;
     }

@@ -18,10 +18,10 @@ package com.esentri.rezeption.core.domain.rechnung;
 
 import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
-import io.domainlifecycles.domain.types.Entity;
-import io.domainlifecycles.domain.types.Identity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jmolecules.ddd.types.Entity;
+import org.jmolecules.ddd.types.Identifier;
 
 import java.util.UUID;
 
@@ -34,12 +34,12 @@ import java.util.UUID;
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
-public class RechnungsPosition implements Entity<RechnungsPosition.RechnungsPositionId> {
+public class RechnungsPosition implements Entity<Rechnung, RechnungsPosition.RechnungsPositionId> {
 
     /**
      * Der Identifier der Rechnungsposition, implementiert als record-Typ.
      */
-    public record RechnungsPositionId(UUID value) implements Identity<UUID> {}
+    public record RechnungsPositionId(UUID value) implements Identifier {}
 
     @EqualsAndHashCode.Include
     private final RechnungsPositionId id;
@@ -59,10 +59,8 @@ public class RechnungsPosition implements Entity<RechnungsPosition.RechnungsPosi
      */
     private final String beschreibung;
 
-    private long concurrencyVersion;
-
     @Override
-    public RechnungsPositionId id() {
+    public RechnungsPositionId getId() {
         return id;
     }
 
@@ -96,8 +94,4 @@ public class RechnungsPosition implements Entity<RechnungsPosition.RechnungsPosi
         this.beschreibung = beschreibung;
     }
 
-    @Override
-    public long concurrencyVersion() {
-        return concurrencyVersion;
-    }
 }

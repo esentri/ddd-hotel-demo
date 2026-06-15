@@ -15,7 +15,9 @@
  */
 
 package com.esentri.rezeption.core.domain.buchung;
-import io.domainlifecycles.domain.types.ValueObject;
+
+
+import org.jmolecules.ddd.types.ValueObject;
 
 import java.util.Objects;
 import java.util.regex.Pattern;

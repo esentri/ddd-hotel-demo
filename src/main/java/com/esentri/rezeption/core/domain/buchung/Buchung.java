@@ -20,10 +20,10 @@ import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
-import io.domainlifecycles.domain.types.AggregateRoot;
-import io.domainlifecycles.domain.types.Identity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jmolecules.ddd.types.AggregateRoot;
+import org.jmolecules.ddd.types.Identifier;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -39,12 +39,12 @@ import java.util.UUID;
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
-public class Buchung implements AggregateRoot<Buchung.BuchungsNummer> {
+public class Buchung implements AggregateRoot<Buchung, Buchung.BuchungsNummer> {
 
     /**
      * Record-Klasse, die für die Darstellung der BuchungsNummer dient. Identität der Buchung.
      */
-    public record BuchungsNummer(UUID value) implements Identity<UUID> {}
+    public record BuchungsNummer(UUID value) implements Identifier{}
 
     @EqualsAndHashCode.Include
     private final BuchungsNummer buchungsNummer;
@@ -71,7 +71,6 @@ public class Buchung implements AggregateRoot<Buchung.BuchungsNummer> {
 
     private Zimmer.Id zimmerId;
 
-    private long concurrencyVersion;
 
     public Buchung(
             BuchungsNummer buchungsNummer,
@@ -85,8 +84,7 @@ public class Buchung implements AggregateRoot<Buchung.BuchungsNummer> {
             ZimmerKategorie gewuenschteZimmerKategorie,
             int gewuenschteKapazitaet,
             Gast gast,
-            Zimmer.Id zimmerId,
-            long concurrencyVersion) {
+            Zimmer.Id zimmerId) {
         this.buchungsNummer = Objects.requireNonNull(buchungsNummer, "Eine BuchungsNummer muss vorhanden sein!");
         this.hotelId = Objects.requireNonNull(hotelId, "Jede Buchung muss sich auf ein konkretes Hotel beziehen!");
         this.geplanteAnkunftAm = Objects.requireNonNull(geplanteAnkunftAm, "Das Datum der geplanten Ankunft muss angegeben sein!");
@@ -102,11 +100,10 @@ public class Buchung implements AggregateRoot<Buchung.BuchungsNummer> {
         }
         this.gast = Objects.requireNonNull(gast, "Ein Hauptgast muss von Beginn an angegeben sein!");
         this.zimmerId = zimmerId;
-        this.concurrencyVersion = concurrencyVersion;
     }
 
     @Override
-    public BuchungsNummer id() {
+    public BuchungsNummer getId() {
         return buchungsNummer;
     }
 
@@ -191,11 +188,6 @@ public class Buchung implements AggregateRoot<Buchung.BuchungsNummer> {
         var zeitraumStart = checkInAm != null ? checkInAm.toLocalDate() : geplanteAnkunftAm;
         var zeitraumEnde = checkOutAm != null ? checkOutAm.toLocalDate() : zeitraumStart.plusDays(geplanteAnzahlNaechte);
         return datum.compareTo(zeitraumStart) >= 0 && datum.compareTo(zeitraumEnde) <= 0;
-    }
-
-    @Override
-    public long concurrencyVersion() {
-        return concurrencyVersion;
     }
 
 }

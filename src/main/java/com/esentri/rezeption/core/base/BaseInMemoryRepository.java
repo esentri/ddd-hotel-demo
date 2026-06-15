@@ -17,9 +17,10 @@
 package com.esentri.rezeption.core.base;
 
 
-import io.domainlifecycles.domain.types.AggregateRoot;
-import io.domainlifecycles.domain.types.Identity;
-import io.domainlifecycles.domain.types.Repository;
+
+import org.jmolecules.ddd.types.AggregateRoot;
+import org.jmolecules.ddd.types.Identifier;
+import org.jmolecules.ddd.types.Repository;
 
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +35,7 @@ import java.util.Optional;
  * @param <ID>, die Identität der AggregateRoot, ist generisch und erweitert die Identity-Schnittstelle.
  * @param <A>, die AggregateRoot ist generisch.
  */
-public class BaseInMemoryRepository<ID extends Identity<?>, A extends AggregateRoot<ID>> implements Repository<ID, A> {
+public class BaseInMemoryRepository<ID extends Identifier, A extends AggregateRoot<A,ID>> implements Repository<A, ID> {
 
     protected final List<A> allAggregates;
 
@@ -55,9 +56,8 @@ public class BaseInMemoryRepository<ID extends Identity<?>, A extends AggregateR
      * @param id, die Identität des zu findenden AggregateRoot.
      * @return  Optional von AggregateRoot.
      */
-    @Override
     public Optional<A> findById(ID id) {
-        return allAggregates.stream().filter(a -> a.id().equals(id)).findFirst();
+        return allAggregates.stream().filter(a -> a.getId().equals(id)).findFirst();
     }
 
     /**
@@ -66,7 +66,6 @@ public class BaseInMemoryRepository<ID extends Identity<?>, A extends AggregateR
      * @param aggregateRoot, die hinzuzufügende AggregateRoot.
      * @return  Die hinzugefügte AggregateRoot.
      */
-    @Override
     public A insert(A aggregateRoot) {
         allAggregates.add(aggregateRoot);
         return aggregateRoot;
@@ -78,7 +77,6 @@ public class BaseInMemoryRepository<ID extends Identity<?>, A extends AggregateR
      * @param aggregateRoot, die zu aktualisierende AggregateRoot.
      * @return  Die aktualisierte AggregateRoot.
      */
-    @Override
     public A update(A aggregateRoot) {
         allAggregates.remove(aggregateRoot);
         allAggregates.add(aggregateRoot);
@@ -91,7 +89,6 @@ public class BaseInMemoryRepository<ID extends Identity<?>, A extends AggregateR
      * @param id, die Identität der zu löschenden AggregateRoot.
      * @return  Optional von der gelöschten AggregateRoot.
      */
-    @Override
     public Optional<A> deleteById(ID id) {
         return findById(id).map(a -> {
             allAggregates.remove(a);

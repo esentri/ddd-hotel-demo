@@ -18,16 +18,17 @@ package com.esentri.rezeption.core.outport;
 
 import com.esentri.rezeption.core.domain.buchung.Buchung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
-import io.domainlifecycles.domain.types.Repository;
+import org.jmolecules.ddd.types.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository für ServiceLeistungen.
  *
  * @author Mario Herb
  */
-public interface ServiceLeistungen extends Repository<ServiceLeistung.Id, ServiceLeistung> {
+public interface ServiceLeistungen extends Repository<ServiceLeistung, ServiceLeistung.Id> {
 
     /**
      * Sucht eine Liste von ServiceLeistungen basierend auf ihrer BuchungsNummer.
@@ -36,4 +37,8 @@ public interface ServiceLeistungen extends Repository<ServiceLeistung.Id, Servic
      * @return Eine Liste von ServiceLeistungen, welche die gegebene BuchungsNummer haben. Eine leere Liste, falls keine passenden ServiceLeistungen gefunden werden könnten.
      */
     List<ServiceLeistung> find(Buchung.BuchungsNummer buchungsNummer);
+
+    Optional<ServiceLeistung> findById(ServiceLeistung.Id serviceLeistungId);
+
+    ServiceLeistung update(ServiceLeistung serviceLeistung);
 }

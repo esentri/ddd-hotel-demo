@@ -21,9 +21,9 @@ import com.esentri.rezeption.core.outport.Buchungen;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
 import com.esentri.rezeption.core.outport.Rechnungen;
 import com.esentri.rezeption.core.outport.ServiceLeistungen;
-import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.Publishes;
 import lombok.RequiredArgsConstructor;
+import org.jmolecules.ddd.annotation.Service;
 
 /**
  * DomainService zur Unterstützung der Abfertigung von Auscheck-Ooperationen.
@@ -33,7 +33,8 @@ import lombok.RequiredArgsConstructor;
  * @author Mario Herb
  */
 @RequiredArgsConstructor
-public class CheckOut implements DomainService {
+@Service
+public class CheckOut {
 
     private final Buchungen buchungen;
 
@@ -78,7 +79,7 @@ public class CheckOut implements DomainService {
 
         domainEventPublisher.publish(new BuchungAusgecheckt(buchung.getBuchungsNummer(), buchung.getCheckOutAm(), buchung.getZimmerId()));
 
-        return  buchung.id();
+        return  buchung.getId();
     }
 
 }

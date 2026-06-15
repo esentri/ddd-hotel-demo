@@ -19,10 +19,10 @@ package com.esentri.rezeption.core.domain.serviceleistung;
 import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.buchung.Buchung;
 import com.esentri.rezeption.core.domain.rechnung.Rechnung;
-import io.domainlifecycles.domain.types.AggregateRoot;
-import io.domainlifecycles.domain.types.Identity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jmolecules.ddd.types.AggregateRoot;
+import org.jmolecules.ddd.types.Identifier;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -36,9 +36,9 @@ import java.util.UUID;
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
-public class ServiceLeistung implements AggregateRoot<ServiceLeistung.Id> {
+public class ServiceLeistung implements AggregateRoot<ServiceLeistung, ServiceLeistung.Id> {
 
-    public record Id(UUID value) implements Identity<UUID> {}
+    public record Id(UUID value) implements Identifier {}
 
     @EqualsAndHashCode.Include
     private final Id id;
@@ -51,8 +51,6 @@ public class ServiceLeistung implements AggregateRoot<ServiceLeistung.Id> {
     private final ServiceTyp serviceTyp;
     private final LocalDateTime erhaltenAm;
     private final Preis nettoPreis;
-
-    private long concurrencyVersion;
 
     public ServiceLeistung(Id id,
                            Buchung.BuchungsNummer buchungsNummer,
@@ -81,7 +79,7 @@ public class ServiceLeistung implements AggregateRoot<ServiceLeistung.Id> {
     }
 
     @Override
-    public Id id() {
+    public Id getId() {
         return id;
     }
 
@@ -91,8 +89,4 @@ public class ServiceLeistung implements AggregateRoot<ServiceLeistung.Id> {
         return this;
     }
 
-    @Override
-    public long concurrencyVersion() {
-        return concurrencyVersion;
-    }
 }

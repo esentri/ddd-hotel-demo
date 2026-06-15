@@ -22,6 +22,7 @@ import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
 import io.domainlifecycles.domain.types.Identity;
+import org.jmolecules.ddd.types.Identifier;
 
 import java.util.UUID;
 
@@ -49,13 +50,13 @@ public enum TestDataIds {
     SERVICE_LEISTUNG_ID(new ServiceLeistung.Id(UUID.randomUUID()))
     ;
 
-    private final Identity<?> id;
+    private final Identifier id;
 
-    TestDataIds(Identity<?> id) {
+    TestDataIds(Identifier id) {
         this.id = id;
     }
 
-    public <I extends Identity<?>> I id(){
+    public <I extends Identifier> I id(){
         return (I) id;
     }
 

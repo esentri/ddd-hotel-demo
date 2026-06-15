@@ -20,12 +20,12 @@ import com.esentri.rezeption.core.domain.Adresse;
 import com.esentri.rezeption.core.domain.Preis;
 import com.esentri.rezeption.core.domain.buchung.Buchung;
 import com.esentri.rezeption.core.domain.serviceleistung.ServiceLeistung;
-import io.domainlifecycles.domain.types.AggregateRoot;
-import io.domainlifecycles.domain.types.Identity;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.jmolecules.ddd.types.AggregateRoot;
+import org.jmolecules.ddd.types.Identifier;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -43,12 +43,12 @@ import java.util.UUID;
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
-public class Rechnung implements AggregateRoot<Rechnung.Id> {
+public class Rechnung implements AggregateRoot<Rechnung, Rechnung.Id> {
 
     /**
      * Struktur zur Darstellung der eindeutigen Identität einer Rechnung.
      */
-    public record Id(UUID value) implements Identity<UUID> {}
+    public record Id(UUID value) implements Identifier {}
 
     @EqualsAndHashCode.Include
     private final Id id;
@@ -96,7 +96,7 @@ public class Rechnung implements AggregateRoot<Rechnung.Id> {
     }
 
     @Override
-    public Id id() {
+    public Id getId() {
         return id;
     }
 
@@ -133,11 +133,6 @@ public class Rechnung implements AggregateRoot<Rechnung.Id> {
 
     public boolean beinhaltetZimmerAbrechnung(){
         return zimmerPreis.isPresent();
-    }
-
-    @Override
-    public long concurrencyVersion() {
-        return concurrencyVersion;
     }
 
 }

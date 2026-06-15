@@ -65,7 +65,6 @@ public class BuchungenImpl extends BaseInMemoryRepository<Buchung.BuchungsNummer
                           null
                    ),
                    null
-                   ,0
            ),
                 new Buchung(
                         TestDataIds.BUCHUNG_ID_EINGECHECKT.id(),
@@ -88,8 +87,7 @@ public class BuchungenImpl extends BaseInMemoryRepository<Buchung.BuchungsNummer
                                 null,
                                 null
                         ),
-                        TestDataIds.ZIMMER_ID_EINZELZIMMER.id(),
-                        0
+                        TestDataIds.ZIMMER_ID_EINZELZIMMER.id()
                 )
         ));
 

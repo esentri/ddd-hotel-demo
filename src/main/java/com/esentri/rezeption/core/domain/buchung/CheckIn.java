@@ -19,9 +19,9 @@ package com.esentri.rezeption.core.domain.buchung;
 import com.esentri.rezeption.core.outport.Buchungen;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
 import com.esentri.rezeption.core.outport.ZimmerVerwaltung;
-import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.Publishes;
 import lombok.RequiredArgsConstructor;
+import org.jmolecules.ddd.annotation.Service;
 
 /**
  * Dieser Service übernimmt die Verarbeitung der CheckIn-Operationen.
@@ -31,7 +31,8 @@ import lombok.RequiredArgsConstructor;
  * @author Mario Herb
  */
 @RequiredArgsConstructor
-public class CheckIn implements DomainService {
+@Service
+public class CheckIn {
 
     private final Buchungen buchungen;
 
@@ -59,13 +60,13 @@ public class CheckIn implements DomainService {
         zimmerVerwaltung.update(zimmer);
         domainEventPublisher.publish(
                 new BuchungEingecheckt(
-                        buchung.id(),
+                        buchung.getId(),
                         checkeBuchungEin.zimmerId(),
                         belegung.von(),
                         belegung.bis()
                 )
         );
-        return  buchung.id();
+        return  buchung.getId();
     }
 
 }

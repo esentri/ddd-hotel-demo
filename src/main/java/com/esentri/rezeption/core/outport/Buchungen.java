@@ -19,17 +19,18 @@ package com.esentri.rezeption.core.outport;
 import com.esentri.rezeption.core.domain.buchung.Buchung;
 import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
-import io.domainlifecycles.domain.types.Repository;
+import org.jmolecules.ddd.types.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository für Buchungen.
  *
  * @author Mario Herb
  */
-public interface Buchungen extends Repository<Buchung.BuchungsNummer, Buchung> {
+public interface Buchungen extends Repository<Buchung, Buchung.BuchungsNummer> {
 
     /**
      * Findet und gibt eine Liste von aktiven Buchungen (nicht ausgecheckt und nicht storniert) für ein bestimmtes Hotel zurück, die bestimmte Kriterien erfüllen.
@@ -42,4 +43,10 @@ public interface Buchungen extends Repository<Buchung.BuchungsNummer, Buchung> {
      * @return eine Liste von Buchungen
      */
     List<Buchung> listAktiveBuchungenInZeitraum(Hotel.Id hotelId, LocalDate von, LocalDate bis, ZimmerKategorie gewuenschteKategorie, Integer gewuenschteKapazitaet);
+
+    Optional<Buchung> findById(Buchung.BuchungsNummer buchungsNummer);
+
+    Buchung insert(Buchung buchung);
+
+    Buchung update(Buchung buchung);
 }

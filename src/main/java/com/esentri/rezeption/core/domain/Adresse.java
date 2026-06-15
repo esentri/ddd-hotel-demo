@@ -16,8 +16,8 @@
 
 package com.esentri.rezeption.core.domain;
 
-import io.domainlifecycles.domain.types.ValueObject;
 import lombok.Builder;
+import org.jmolecules.ddd.types.ValueObject;
 
 import java.util.Objects;
 

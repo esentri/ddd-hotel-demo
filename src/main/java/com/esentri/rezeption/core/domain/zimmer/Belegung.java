@@ -16,7 +16,7 @@
 
 package com.esentri.rezeption.core.domain.zimmer;
 
-import io.domainlifecycles.domain.types.ValueObject;
+import org.jmolecules.ddd.types.ValueObject;
 
 import java.time.LocalDate;
 

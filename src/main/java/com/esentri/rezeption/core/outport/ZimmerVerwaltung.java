@@ -19,9 +19,10 @@ package com.esentri.rezeption.core.outport;
 import com.esentri.rezeption.core.domain.hotel.Hotel;
 import com.esentri.rezeption.core.domain.zimmer.Zimmer;
 import com.esentri.rezeption.core.domain.zimmer.ZimmerKategorie;
-import io.domainlifecycles.domain.types.Repository;
+import org.jmolecules.ddd.types.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Das ZimmerVerwaltung Interface bietet Methoden zum Abrufen von Informationen über Zimmer in einem spezifizierten Hotel.
@@ -29,7 +30,7 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public interface ZimmerVerwaltung extends Repository<Zimmer.Id, Zimmer> {
+public interface ZimmerVerwaltung extends Repository<Zimmer, Zimmer.Id> {
 
     /**
      * Gibt eine Liste der Zimmer einer bestimmten Kategorie und Kapazität für ein spezifiziertes Hotel zurück.
@@ -48,4 +49,8 @@ public interface ZimmerVerwaltung extends Repository<Zimmer.Id, Zimmer> {
      * @return Eine Liste der Zimmer für das angegebene Hotel
      */
     List<Zimmer> listByHotel(Hotel.Id hotelId);
+
+    Optional<Zimmer> findById(Zimmer.Id zimmerId);
+
+    Zimmer update(Zimmer zimmer);
 }

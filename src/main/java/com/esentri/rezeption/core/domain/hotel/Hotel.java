@@ -17,11 +17,11 @@
 package com.esentri.rezeption.core.domain.hotel;
 
 import com.esentri.rezeption.core.domain.Adresse;
-import io.domainlifecycles.domain.types.AggregateRoot;
-import io.domainlifecycles.domain.types.Identity;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jmolecules.ddd.types.AggregateRoot;
+import org.jmolecules.ddd.types.Identifier;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -39,26 +39,24 @@ import java.util.UUID;
  * @author Mario Herb
  *
  * @see AggregateRoot
- * @see Identity
+ * @see Identifier
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
-public class Hotel implements AggregateRoot<Hotel.Id> {
+public class Hotel implements AggregateRoot<Hotel, Hotel.Id> {
 
     /**
      * Eindeutige Identität eines Hotels.
      *
-     * @see Identity
+     * @see Identifier
      */
-    public record Id(UUID value) implements Identity<UUID> {}
+    public record Id(UUID value) implements Identifier {}
 
     @EqualsAndHashCode.Include
     private final Id id;
 
     private String name;
     private Adresse adresse;
-
-    private long concurrencyVersion;
 
     /**
      * Konstruktor eines Hotels.
@@ -134,12 +132,8 @@ public class Hotel implements AggregateRoot<Hotel.Id> {
      * @return Eindeutige Identität des Hotels.
      */
     @Override
-    public Id id() {
+    public Id getId() {
         return id;
     }
 
-    @Override
-    public long concurrencyVersion() {
-        return concurrencyVersion;
-    }
 }

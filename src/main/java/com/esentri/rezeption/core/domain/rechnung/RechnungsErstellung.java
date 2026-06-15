@@ -23,9 +23,9 @@ import com.esentri.rezeption.core.outport.Buchungen;
 import com.esentri.rezeption.core.outport.DomainEventPublisher;
 import com.esentri.rezeption.core.outport.Rechnungen;
 import com.esentri.rezeption.core.outport.ServiceLeistungen;
-import io.domainlifecycles.domain.types.DomainService;
 import io.domainlifecycles.domain.types.Publishes;
 import lombok.RequiredArgsConstructor;
+import org.jmolecules.ddd.annotation.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,7 +39,8 @@ import java.util.UUID;
  * @author Mario Herb
  */
 @RequiredArgsConstructor
-public class RechnungsErstellung implements DomainService {
+@Service
+public class RechnungsErstellung {
 
     private final Rechnungen rechnungen;
 
@@ -61,7 +62,7 @@ public class RechnungsErstellung implements DomainService {
     public Rechnung.Id handleErstelleRechnungFuerBuchung(ErstelleRechnungFuerBuchung erstelleRechnungFuerBuchung){
         var buchung = buchungen.findById(erstelleRechnungFuerBuchung.buchungsNummer()).orElseThrow();
         var serviceLeistungen = this.serviceLeistungen.find(erstelleRechnungFuerBuchung.buchungsNummer())
-                .stream().filter(sl -> erstelleRechnungFuerBuchung.serviceLeistungen().contains(sl.id()))
+                .stream().filter(sl -> erstelleRechnungFuerBuchung.serviceLeistungen().contains(sl.getId()))
                 .toList();
 
         var neueRechnung = neueRechnungFuerBuchung(
@@ -73,13 +74,13 @@ public class RechnungsErstellung implements DomainService {
 
         rechnungen.insert(neueRechnung);
         domainEventPublisher.publish(new RechnungErstellt(
-                    neueRechnung.id(),
+                    neueRechnung.getId(),
                     neueRechnung.getBuchungsNummer(),
                     neueRechnung.getGesamtNetto(),
-                    serviceLeistungen.stream().map(ServiceLeistung::id).toList()
+                    serviceLeistungen.stream().map(ServiceLeistung::getId).toList()
                 )
         );
-        return neueRechnung.id();
+        return neueRechnung.getId();
     }
 
     /**
@@ -93,7 +94,7 @@ public class RechnungsErstellung implements DomainService {
     @Publishes(domainEventTypes = RechnungErstellt.class)
     public Rechnung.Id handleErstelleServiceRechnung(ErstelleServiceRechnung erstelleServiceRechnung){
         var serviceLeistungen = this.serviceLeistungen.find(erstelleServiceRechnung.buchungsNummer())
-                .stream().filter(sl -> erstelleServiceRechnung.serviceLeistungen().contains(sl.id()))
+                .stream().filter(sl -> erstelleServiceRechnung.serviceLeistungen().contains(sl.getId()))
                 .toList();
         var neueRechnung = neueServiceRechnung(
                 erstelleServiceRechnung,
@@ -103,12 +104,12 @@ public class RechnungsErstellung implements DomainService {
 
         rechnungen.insert(neueRechnung);
         domainEventPublisher.publish(new RechnungErstellt(
-                neueRechnung.id(),
+                neueRechnung.getId(),
                 neueRechnung.getBuchungsNummer(),
                 neueRechnung.getGesamtNetto(),
-                serviceLeistungen.stream().map(ServiceLeistung::id).toList()
+                serviceLeistungen.stream().map(ServiceLeistung::getId).toList()
                 ));
-        return neueRechnung.id();
+        return neueRechnung.getId();
     }
 
     private static Rechnung neueRechnungFuerBuchung(ErstelleRechnungFuerBuchung erstelleRechnungFuerBuchung,
@@ -122,7 +123,7 @@ public class RechnungsErstellung implements DomainService {
                 LocalDateTime.now(),
                 rechnungsAdresse
         );
-        serviceLeistungen.forEach(sl -> rechnung.addRechnungsPosition(sl.getNettoPreis(), sl.getBeschreibung(), sl.id()));
+        serviceLeistungen.forEach(sl -> rechnung.addRechnungsPosition(sl.getNettoPreis(), sl.getBeschreibung(), sl.getId()));
         return rechnung;
     }
 
@@ -137,7 +138,7 @@ public class RechnungsErstellung implements DomainService {
                 LocalDateTime.now(),
                 rechnungsAdresse
         );
-        serviceLeistungen.forEach(sl -> rechnung.addRechnungsPosition(sl.getNettoPreis(), sl.getBeschreibung(), sl.id()));
+        serviceLeistungen.forEach(sl -> rechnung.addRechnungsPosition(sl.getNettoPreis(), sl.getBeschreibung(), sl.getId()));
         return rechnung;
     }
 }

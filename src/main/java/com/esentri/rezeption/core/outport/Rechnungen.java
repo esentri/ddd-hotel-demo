@@ -18,9 +18,10 @@ package com.esentri.rezeption.core.outport;
 
 import com.esentri.rezeption.core.domain.buchung.Buchung;
 import com.esentri.rezeption.core.domain.rechnung.Rechnung;
-import io.domainlifecycles.domain.types.Repository;
+import org.jmolecules.ddd.types.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Das Rechnungen beschreibt Methoden für den Zugriff auf Rechnungen in der zugrundeliegenden Datenquelle.
@@ -29,7 +30,7 @@ import java.util.List;
  *
  * @author Mario Herb
  */
-public interface Rechnungen extends Repository<Rechnung.Id, Rechnung> {
+public interface Rechnungen extends Repository<Rechnung, Rechnung.Id> {
 
     /**
      * Sucht alle Rechnungen, die der spezifizierten BuchungsNummer zugeordnet sind.
@@ -39,4 +40,9 @@ public interface Rechnungen extends Repository<Rechnung.Id, Rechnung> {
      */
     List<Rechnung> findByBuchungsNummer(Buchung.BuchungsNummer buchungsNummer);
 
+    Rechnung insert(Rechnung rechnung);
+
+    Rechnung update(Rechnung rechnung);
+
+    Optional<Rechnung> findById(Rechnung.Id id);
 }

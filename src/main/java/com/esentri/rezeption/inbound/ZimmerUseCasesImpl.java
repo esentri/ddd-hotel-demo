@@ -95,7 +95,7 @@ public class ZimmerUseCasesImpl implements ZimmerUseCases {
             )
             .stream()
             .filter(zimmer -> !zimmer.hatUeberschneidendeBelegung(probeBelegung))
-            .map(Zimmer::id)
+            .map(Zimmer::getId)
             .toList();
         return verfuegbareZimer;
 
@@ -112,9 +112,9 @@ public class ZimmerUseCasesImpl implements ZimmerUseCases {
         try {
             zimmer.neueBelegung(beantrageZimmerWartung.von(), beantrageZimmerWartung.bis(), BelegungTyp.WARTUNG);
             zimmerVerwaltung.update(zimmer);
-            domainEventPublisher.publish(new ZimmerWartungBestaetigt(beantrageZimmerWartung.wartungsPlanungId(), zimmer.id()));
+            domainEventPublisher.publish(new ZimmerWartungBestaetigt(beantrageZimmerWartung.wartungsPlanungId(), zimmer.getId()));
         }catch (IllegalStateException e) {
-            domainEventPublisher.publish(new ZimmerWartungAbgelehnt(beantrageZimmerWartung.wartungsPlanungId(), zimmer.id()));
+            domainEventPublisher.publish(new ZimmerWartungAbgelehnt(beantrageZimmerWartung.wartungsPlanungId(), zimmer.getId()));
         };
     }
 

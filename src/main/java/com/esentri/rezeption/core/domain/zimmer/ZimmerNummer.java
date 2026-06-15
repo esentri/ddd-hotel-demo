@@ -1,7 +1,7 @@
 package com.esentri.rezeption.core.domain.zimmer;
 
-import io.domainlifecycles.domain.types.ValueObject;
 import jakarta.validation.constraints.NotEmpty;
+import org.jmolecules.ddd.types.ValueObject;
 
 /**
  * Die Zimmernummer, welche innerhalb eines Hotels das Zimmer eindeutig identifiziert.

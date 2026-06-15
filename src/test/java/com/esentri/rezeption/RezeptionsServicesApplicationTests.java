@@ -228,7 +228,7 @@ class RezeptionsServicesApplicationTests {
 
 		rechnungUseCases.handleErstelleRechnungFuerBuchung(new ErstelleRechnungFuerBuchung(
 				TestDataIds.BUCHUNG_ID_EINGECHECKT.id(),
-				serviceLeistungenZumAbrechnen.stream().map(ServiceLeistung::id).toList(),
+				serviceLeistungenZumAbrechnen.stream().map(ServiceLeistung::getId).toList(),
 				res.get().getGast().getHeimAdresse()
 		));
 

@@ -34,6 +34,7 @@ import io.domainlifecycles.diagram.domain.config.GeneralVisualSettings;
 import io.domainlifecycles.mirror.api.Domain;
 import io.domainlifecycles.mirror.reflect.ReflectiveDomainMirrorFactory;
 import io.domainlifecycles.mirror.resolver.TypeMetaResolver;
+import io.domainlifecycles.mirrorjmolecules.reflect.ExtendedJMoleculesDomainMirrorFactory;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +46,7 @@ public class GenerateDiagramTest {
     @Test
     void generateDiagramForAppComplete() {
 
-        var f = new ReflectiveDomainMirrorFactory( "com.esentri.rezeption");
+        var f = new ExtendedJMoleculesDomainMirrorFactory( "com.esentri.rezeption");
         f.setGenericTypeResolver(new TypeMetaResolver());
         Domain.initialize(f);
 

@@ -18,10 +18,11 @@ package com.esentri.rezeption.core.domain.zimmer;
 
 import com.esentri.rezeption.core.domain.buchung.CheckeBuchungEin;
 import com.esentri.rezeption.core.domain.hotel.Hotel;
-import io.domainlifecycles.domain.types.AggregateRoot;
-import io.domainlifecycles.domain.types.Identity;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jmolecules.ddd.types.AggregateRoot;
+import org.jmolecules.ddd.types.Identifier;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -37,12 +38,12 @@ import java.util.UUID;
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
-public class Zimmer implements AggregateRoot<Zimmer.Id> {
+public class Zimmer implements AggregateRoot<Zimmer, Zimmer.Id> {
 
     /**
      * Innere Klasse zur Repräsentation der Zimmer Id.
      */
-    public record Id(UUID value) implements Identity<UUID> {}
+    public record Id(UUID value) implements Identifier {}
 
     /**
      * Eindeutige Id des Zimmers.
@@ -79,8 +80,6 @@ public class Zimmer implements AggregateRoot<Zimmer.Id> {
      * Liste der Belegungen des Zimmers.
      */
     private final List<Belegung> belegungen;
-
-    private long concurrencyVersion;
 
     /**
      * Konstruktor für die Erstellung eines Zimmer-Objekts.
@@ -129,7 +128,7 @@ public class Zimmer implements AggregateRoot<Zimmer.Id> {
      * @return Eindeutige Zimmer Id.
      */
     @Override
-    public Id id() {
+    public Id getId() {
         return id;
     }
 
@@ -203,8 +202,4 @@ public class Zimmer implements AggregateRoot<Zimmer.Id> {
         return Collections.unmodifiableList(belegungen);
     }
 
-    @Override
-    public long concurrencyVersion() {
-        return concurrencyVersion;
-    }
 }

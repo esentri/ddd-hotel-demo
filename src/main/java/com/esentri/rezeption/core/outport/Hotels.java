@@ -17,12 +17,12 @@
 package com.esentri.rezeption.core.outport;
 
 import com.esentri.rezeption.core.domain.hotel.Hotel;
-import io.domainlifecycles.domain.types.Repository;
+import org.jmolecules.ddd.types.Repository;
 
 /**
  * Repository für Hotels.
  *
  * @author Mario Herb
  */
-public interface Hotels extends Repository<Hotel.Id, Hotel> {
+public interface Hotels extends Repository<Hotel, Hotel.Id> {
 }

@@ -71,7 +71,7 @@ public class BuchungUseCasesImpl implements BuchungUseCases {
         return buchungen.findById(vervollstaendigeBuchungGastDaten.buchungsNummer())
                 .map(r ->
                         buchungen.update(r.handleVervollstaendigeBuchungGastDaten(vervollstaendigeBuchungGastDaten)))
-                .map(Buchung::id)
+                .map(Buchung::getId)
                 .orElseThrow(()->
                         new IllegalStateException(
                             String.format("Buchung mit der BuchungsNummer '%s' nicht gefunden!",
@@ -108,7 +108,7 @@ public class BuchungUseCasesImpl implements BuchungUseCases {
         return buchungen.findById(storniereBuchung.buchungsNummer())
                 .map(r ->
                         buchungen.update(r.storniere()))
-                .map(Buchung::id)
+                .map(Buchung::getId)
                 .orElseThrow(()->
                     new IllegalStateException(
                         String.format("Buchung mit der BuchungsNummer '%s' nicht gefunden!",

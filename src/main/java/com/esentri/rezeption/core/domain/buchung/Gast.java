@@ -17,11 +17,11 @@
 package com.esentri.rezeption.core.domain.buchung;
 
 import com.esentri.rezeption.core.domain.Adresse;
-import io.domainlifecycles.domain.types.Entity;
-import io.domainlifecycles.domain.types.Identity;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.jmolecules.ddd.types.Entity;
+import org.jmolecules.ddd.types.Identifier;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -37,9 +37,9 @@ import java.util.UUID;
  */
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
-public class Gast implements Entity<Gast.GastId> {
+public class Gast implements Entity<Buchung, Gast.GastId> {
 
-    public record GastId(UUID value) implements Identity<UUID> {}
+    public record GastId(UUID value) implements Identifier {}
 
     @EqualsAndHashCode.Include
     private final GastId id;
@@ -127,12 +127,8 @@ public class Gast implements Entity<Gast.GastId> {
     }
 
     @Override
-    public GastId id() {
+    public GastId getId() {
         return id;
     }
 
-    @Override
-    public long concurrencyVersion() {
-        return concurrencyVersion;
-    }
 }
