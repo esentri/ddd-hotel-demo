@@ -5,6 +5,8 @@ import com.esentri.rezeption.domain.zimmer.ZimmerId;
 import io.domainlifecycles.domain.types.AggregateRoot;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.events.api.DomainEvents;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -14,31 +16,42 @@ import java.util.Optional;
 
 public class Buchung implements AggregateRoot<BuchungsId> {
 
+    @NotNull(message = "Die BuchungsId darf nicht null sein")
     private final BuchungsId id;
+    @NotNull(message = "Der HauptGast darf nicht null sein")
     private final HauptGast hauptGast;
+    @NotNull(message = "Der Belegungszeitraum darf nicht null sein")
     private final Zeitraum belegungszeitraum;
     private ZimmerId zimmerId;
+    @NotNull(message = "Der Status darf nicht null sein")
     private BuchungsStatus status;
+    private long concurrencyVersion;
 
-    private Buchung(BuchungsId id, HauptGast hauptGast, Zeitraum belegungszeitraum, BuchungsStatus status) {
-        this.id = Objects.requireNonNull(id, "Die BuchungsId darf nicht null sein");
-        this.hauptGast = Objects.requireNonNull(hauptGast, "Der HauptGast darf nicht null sein");
-        this.belegungszeitraum = Objects.requireNonNull(belegungszeitraum, "Der Belegungszeitraum darf nicht null sein");
-        this.status = Objects.requireNonNull(status, "Der Status darf nicht null sein");
+    @Builder
+    private Buchung(
+            BuchungsId id,
+            HauptGast hauptGast,
+            Zeitraum belegungszeitraum,
+            BuchungsStatus status,
+            long concurrencyVersion) {
+        this.id = id;
+        this.hauptGast = hauptGast;
+        this.belegungszeitraum = belegungszeitraum;
+        this.status = status;
+        this.concurrencyVersion = concurrencyVersion;
     }
 
     public static Buchung neueBuchung(BuchungsId id, HauptGast hauptGast, Zeitraum belegungszeitraum) {
-        return new Buchung(id, hauptGast, belegungszeitraum, BuchungsStatus.RESERVIERT);
+        return new Buchung(id, hauptGast, belegungszeitraum, BuchungsStatus.RESERVIERT, 0);
     }
 
-    public void checkeEin(ZimmerId zimmerId) {
+    public void checkeEin(@NotNull(message = "Beim Check-in muss eine ZimmerId vorhanden sein") ZimmerId zimmerId) {
         if (this.status == BuchungsStatus.STORNIERT) {
             throw new IllegalStateException("Eine stornierte Buchung kann nicht eingecheckt werden");
         }
         if (this.status != BuchungsStatus.RESERVIERT) {
             throw new IllegalStateException("Check-in ist nur aus dem Status RESERVIERT erlaubt");
         }
-        Objects.requireNonNull(zimmerId, "Beim Check-in muss eine ZimmerId vorhanden sein");
 
         // Invariante: HauptGast mindestens 16 Jahre alt zum checkInDatum
         if (hauptGast.getGeburtsdatum() == null) {
@@ -87,7 +100,7 @@ public class Buchung implements AggregateRoot<BuchungsId> {
 
     @Override
     public long concurrencyVersion() {
-        return 0;
+        return this.concurrencyVersion;
     }
 
     public HauptGast getHauptGast() {

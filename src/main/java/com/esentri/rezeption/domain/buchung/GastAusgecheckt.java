@@ -2,9 +2,9 @@ package com.esentri.rezeption.domain.buchung;
 
 import com.esentri.rezeption.domain.zimmer.ZimmerId;
 import io.domainlifecycles.domain.types.DomainEvent;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
-import java.util.Objects;
 
 /**
  * Domain Event, das veroeffentlicht wird, wenn ein Gast erfolgreich ausgecheckt wurde.
@@ -12,18 +12,7 @@ import java.util.Objects;
  * Feedback-E-Mails oder Marketing-Statistiken.
  */
 public record GastAusgecheckt(
-    BuchungsId buchungsId,
-    ZimmerId zimmerId,
-    Instant ausgechecktAm
-) implements DomainEvent {
-
-    /**
-     * Compact Constructor zur Validierung der Invarianten.
-     * Stellt sicher, dass alle Felder gesetzt sind.
-     */
-    public GastAusgecheckt {
-        Objects.requireNonNull(buchungsId, "Die BuchungsId darf nicht null sein.");
-        Objects.requireNonNull(zimmerId, "Die ZimmerId darf nicht null sein.");
-        Objects.requireNonNull(ausgechecktAm, "Der Zeitstempel fuer ausgechecktAm darf nicht null sein.");
-    }
-}
+    @NotNull(message = "Die BuchungsId darf nicht null sein.") BuchungsId buchungsId,
+    @NotNull(message = "Die ZimmerId darf nicht null sein.") ZimmerId zimmerId,
+    @NotNull(message = "Der Zeitstempel fuer ausgechecktAm darf nicht null sein.") Instant ausgechecktAm
+) implements DomainEvent {}

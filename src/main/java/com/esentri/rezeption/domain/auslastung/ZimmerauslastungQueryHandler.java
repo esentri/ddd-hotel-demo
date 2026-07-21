@@ -5,7 +5,6 @@ import io.domainlifecycles.domain.types.QueryHandler;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * QueryHandler zur Abfrage der Zimmerauslastung.

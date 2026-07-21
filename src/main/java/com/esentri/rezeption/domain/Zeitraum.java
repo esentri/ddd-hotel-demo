@@ -1,14 +1,14 @@
 package com.esentri.rezeption.domain;
 
 import io.domainlifecycles.domain.types.ValueObject;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
-public record Zeitraum(LocalDate start, LocalDate ende) implements ValueObject {
+@Builder
+public record Zeitraum(@NotNull(message = "Start Datum darf nicht null sein") LocalDate start, @NotNull(message = "Ende Datum darf nicht null sein") LocalDate ende) implements ValueObject {
     public Zeitraum {
-        Objects.requireNonNull(start, "Start Datum darf nicht null sein");
-        Objects.requireNonNull(ende, "Ende Datum darf nicht null sein");
         if (!ende.isAfter(start)) {
             throw new IllegalArgumentException("Ende Datum muss nach dem Start Datum liegen");
         }

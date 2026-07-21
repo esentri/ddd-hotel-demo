@@ -1,17 +1,11 @@
 package com.esentri.rezeption.domain.buchung;
 
 import io.domainlifecycles.domain.types.DomainCommand;
-
-import java.util.Objects;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Domain Command, um den Checkout-Prozess fuer eine Buchung zu starten.
  */
 public record CheckeGastAus(
-    BuchungsId buchungsId
-) implements DomainCommand {
-
-    public CheckeGastAus {
-        Objects.requireNonNull(buchungsId, "Die BuchungsId darf nicht null sein.");
-    }
-}
+    @NotNull(message = "Die BuchungsId darf nicht null sein.") BuchungsId buchungsId
+) implements DomainCommand {}

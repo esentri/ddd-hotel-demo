@@ -16,15 +16,29 @@
 
 package com.esentri.rezeption;
 
+import io.domainlifecycles.autoconfig.annotation.EnableDlc;
+import io.domainlifecycles.validation.extend.ValidationDomainClassExtender;
+import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
+@EnableDlc(
+dlcMirrorBasePackages = "com.esentri.rezeption",
+jooqRecordPackage = "com.esentri.rezeption.records",
+jooqSqlDialect = "H2")
 public class RezeptionsServicesApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RezeptionsServicesApplication.class, args);
 	}
 
+	/**
+	 * Enable DLC byte code extension for the domain model of the "sampleshop"
+	 */
+	@PostConstruct
+	public void postConstruct() {
+		ValidationDomainClassExtender.extend("com.esentri.rezeption");
+	}
 }

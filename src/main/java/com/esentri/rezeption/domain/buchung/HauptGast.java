@@ -1,22 +1,31 @@
 package com.esentri.rezeption.domain.buchung;
 
 import io.domainlifecycles.domain.types.Entity;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
+
 public class HauptGast implements Entity<HauptGastId> {
 
+    @NotNull(message = "HauptGastId darf nicht null sein")
     private final HauptGastId id;
     private String vorname;
     private String nachname;
     private LocalDate geburtsdatum;
+    private long concurrencyVersion;
 
-    public HauptGast(HauptGastId id, String vorname, String nachname, LocalDate geburtsdatum) {
-        this.id = Objects.requireNonNull(id, "HauptGastId darf nicht null sein");
+    @Builder
+    public HauptGast(
+            HauptGastId id, String vorname, String nachname, LocalDate geburtsdatum, long concurrencyVersion
+    ) {
+        this.id = id;
         this.vorname = vorname;
         this.nachname = nachname;
         this.geburtsdatum = geburtsdatum;
+        this.concurrencyVersion = concurrencyVersion;
     }
 
     @Override
@@ -26,7 +35,7 @@ public class HauptGast implements Entity<HauptGastId> {
 
     @Override
     public long concurrencyVersion() {
-        return 0;
+        return concurrencyVersion;
     }
 
     public String getVorname() {

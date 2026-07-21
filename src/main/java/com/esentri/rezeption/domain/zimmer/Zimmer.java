@@ -1,8 +1,9 @@
 package com.esentri.rezeption.domain.zimmer;
 
-import com.esentri.rezeption.domain.buchung.BuchungsId;
 import com.esentri.rezeption.domain.Zeitraum;
+import com.esentri.rezeption.domain.buchung.BuchungsId;
 import io.domainlifecycles.domain.types.AggregateRoot;
+import lombok.Builder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,15 +15,18 @@ public class Zimmer implements AggregateRoot<ZimmerId> {
     private final ZimmerId id;
     private final Zimmerkategorie kategorie;
     private final List<Belegung> belegungen;
+    private long concurrencyVersion;
 
     public Zimmer(ZimmerId id, Zimmerkategorie kategorie) {
-        this(id, kategorie, new ArrayList<>());
+        this(id, kategorie, new ArrayList<>(), 0);
     }
 
-    public Zimmer(ZimmerId id, Zimmerkategorie kategorie, List<Belegung> belegungen) {
+    @Builder
+    public Zimmer(ZimmerId id, Zimmerkategorie kategorie, List<Belegung> belegungen, long concurrencyVersion) {
         this.id = Objects.requireNonNull(id, "ZimmerId darf nicht null sein");
         this.kategorie = Objects.requireNonNull(kategorie, "Zimmerkategorie darf nicht null sein");
-        this.belegungen = new ArrayList<>(Objects.requireNonNull(belegungen, "Belegungen darf nicht null sein"));
+        this.belegungen = belegungen == null ? new ArrayList<>() : new ArrayList<>(belegungen);
+        this.concurrencyVersion = concurrencyVersion;
     }
 
     public boolean istVerfuegbarFuer(Zeitraum zeitraum) {
@@ -74,7 +78,7 @@ public class Zimmer implements AggregateRoot<ZimmerId> {
 
     @Override
     public long concurrencyVersion() {
-        return 0;
+        return concurrencyVersion;
     }
 
     public Zimmerkategorie getKategorie() {

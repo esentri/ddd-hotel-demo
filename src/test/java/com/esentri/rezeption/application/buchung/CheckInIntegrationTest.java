@@ -36,7 +36,7 @@ class CheckInIntegrationTest {
         BuchungsId buchungsId = new BuchungsId(UUID.randomUUID());
         ZimmerId zimmerId = new ZimmerId(UUID.randomUUID());
 
-        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1),0);
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(buchungsId, gast, zeitraum);
 
@@ -66,7 +66,7 @@ class CheckInIntegrationTest {
         BuchungsId buchungsId = new BuchungsId(UUID.randomUUID());
         ZimmerId zimmerId = new ZimmerId(UUID.randomUUID());
 
-        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1), 0);
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(buchungsId, gast, zeitraum);
 
@@ -92,7 +92,7 @@ class CheckInIntegrationTest {
         BuchungsId buchungsId = new BuchungsId(UUID.randomUUID());
         ZimmerId zimmerId = new ZimmerId(UUID.randomUUID());
 
-        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1), 0);
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(buchungsId, gast, zeitraum);
 

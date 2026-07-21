@@ -1,13 +1,9 @@
 package com.esentri.rezeption.domain.buchung;
 
 import io.domainlifecycles.domain.types.Identity;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record BuchungsId(UUID value) implements Identity<UUID> {
-    public BuchungsId {
-        if (value == null) {
-            throw new IllegalArgumentException("BuchungsId value must not be null");
-        }
-    }
-}
+public record BuchungsId(@NotNull(message = "BuchungsId darf nicht null sein") UUID value)
+        implements Identity<UUID> {}

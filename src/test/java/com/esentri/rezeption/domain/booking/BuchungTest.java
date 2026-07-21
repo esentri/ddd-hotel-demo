@@ -20,7 +20,7 @@ class BuchungTest {
     @Test
     void testNeueBuchung() {
         BuchungsId id = new BuchungsId(UUID.randomUUID());
-        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1), 0);
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
 
         Buchung buchung = Buchung.neueBuchung(id, gast, zeitraum);
@@ -33,7 +33,7 @@ class BuchungTest {
     @Test
     void testCheckeEin() {
         BuchungsId id = new BuchungsId(UUID.randomUUID());
-        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1), 0);
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(id, gast, zeitraum);
         ZimmerId zimmerId = new ZimmerId(UUID.randomUUID());
@@ -48,7 +48,7 @@ class BuchungTest {
     void testCheckeEinZuJung() {
         BuchungsId id = new BuchungsId(UUID.randomUUID());
         // Gast ist 15 Jahre alt zum Check-in
-        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "Young", "Doe", LocalDate.now().minusYears(15));
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "Young", "Doe", LocalDate.now().minusYears(15), 0);
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(id, gast, zeitraum);
         ZimmerId zimmerId = new ZimmerId(UUID.randomUUID());
@@ -59,7 +59,7 @@ class BuchungTest {
     @Test
     void testStorniere() {
         BuchungsId id = new BuchungsId(UUID.randomUUID());
-        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1), 0);
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(id, gast, zeitraum);
 
@@ -71,7 +71,7 @@ class BuchungTest {
     @Test
     void testStorniereFehlgeschlagen() {
         BuchungsId id = new BuchungsId(UUID.randomUUID());
-        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1), 0);
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(id, gast, zeitraum);
         buchung.checkeEin(new ZimmerId(UUID.randomUUID()));
@@ -83,7 +83,7 @@ class BuchungTest {
     @Test
     void testCheckeAus() {
         BuchungsId id = new BuchungsId(UUID.randomUUID());
-        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1), 0);
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(id, gast, zeitraum);
         buchung.checkeEin(new ZimmerId(UUID.randomUUID()));
@@ -96,7 +96,7 @@ class BuchungTest {
     @Test
     void testCheckeAusNichtEingecheckt() {
         BuchungsId id = new BuchungsId(UUID.randomUUID());
-        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1));
+        HauptGast gast = new HauptGast(new HauptGastId(UUID.randomUUID()), "John", "Doe", LocalDate.of(1990, 1, 1), 0);
         Zeitraum zeitraum = new Zeitraum(LocalDate.now(), LocalDate.now().plusDays(2));
         Buchung buchung = Buchung.neueBuchung(id, gast, zeitraum);
 
