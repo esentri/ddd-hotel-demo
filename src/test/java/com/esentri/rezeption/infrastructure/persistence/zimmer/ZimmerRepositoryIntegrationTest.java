@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -87,5 +88,24 @@ class ZimmerRepositoryIntegrationTest {
 
         // Assert
         assertThat(zimmerRepository.findById(zimmerId)).isEmpty();
+    }
+
+    @Test
+    void testFindByKategorie() {
+        // Arrange
+        Zimmer z1 = new Zimmer(new ZimmerId(UUID.randomUUID()), Zimmerkategorie.EINZELZIMMER);
+        Zimmer z2 = new Zimmer(new ZimmerId(UUID.randomUUID()), Zimmerkategorie.EINZELZIMMER);
+        Zimmer z3 = new Zimmer(new ZimmerId(UUID.randomUUID()), Zimmerkategorie.DOPPELZIMMER_STANDARD);
+
+        zimmerRepository.insert(z1);
+        zimmerRepository.insert(z2);
+        zimmerRepository.insert(z3);
+
+        // Act
+        List<Zimmer> einzelzimmer = zimmerRepository.findByKategorie(Zimmerkategorie.EINZELZIMMER);
+
+        // Assert
+        assertThat(einzelzimmer).hasSize(2);
+        assertThat(einzelzimmer).containsExactlyInAnyOrder(z1, z2);
     }
 }
