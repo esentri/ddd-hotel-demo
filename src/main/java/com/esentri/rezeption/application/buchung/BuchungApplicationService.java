@@ -8,6 +8,7 @@ import com.esentri.rezeption.domain.buchung.CheckInService;
 import com.esentri.rezeption.domain.buchung.CheckeGastAus;
 import com.esentri.rezeption.domain.buchung.CheckeGastEin;
 import io.domainlifecycles.domain.types.ApplicationService;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;

@@ -5,8 +5,6 @@ import com.esentri.rezeption.domain.zimmer.Zimmer;
 import com.esentri.rezeption.domain.zimmer.ZimmerRepository;
 import io.domainlifecycles.domain.types.ApplicationService;
 import io.domainlifecycles.domain.types.DomainEventListener;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -29,7 +27,6 @@ public class ZimmerFreigabeListener implements ApplicationService {
      * @param event Das Domain Event
      */
     @DomainEventListener
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void aufGastAusgecheckt(GastAusgecheckt event) {
         Objects.requireNonNull(event, "Event darf nicht null sein");
 

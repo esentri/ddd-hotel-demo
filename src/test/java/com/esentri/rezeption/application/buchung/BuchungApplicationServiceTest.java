@@ -13,6 +13,7 @@ import com.esentri.rezeption.domain.Zeitraum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 class BuchungApplicationServiceTest {
 
     private BuchungRepository buchungRepository;
@@ -82,7 +84,6 @@ class BuchungApplicationServiceTest {
         verify(buchungRepository, never()).update(any());
     }
 
-    @Disabled("Benoetigt DomainEvents Initialisierung")
     @Test
     void testCheckeGastAusErfolgreich() {
         // Given

@@ -32,17 +32,19 @@ public class Buchung implements AggregateRoot<BuchungsId> {
             BuchungsId id,
             HauptGast hauptGast,
             Zeitraum belegungszeitraum,
+            ZimmerId zimmerId,
             BuchungsStatus status,
             long concurrencyVersion) {
         this.id = id;
         this.hauptGast = hauptGast;
         this.belegungszeitraum = belegungszeitraum;
+        this.zimmerId = zimmerId;
         this.status = status;
         this.concurrencyVersion = concurrencyVersion;
     }
 
     public static Buchung neueBuchung(BuchungsId id, HauptGast hauptGast, Zeitraum belegungszeitraum) {
-        return new Buchung(id, hauptGast, belegungszeitraum, BuchungsStatus.RESERVIERT, 0);
+        return new Buchung(id, hauptGast, belegungszeitraum, null, BuchungsStatus.RESERVIERT, 0);
     }
 
     public void checkeEin(@NotNull(message = "Beim Check-in muss eine ZimmerId vorhanden sein") ZimmerId zimmerId) {

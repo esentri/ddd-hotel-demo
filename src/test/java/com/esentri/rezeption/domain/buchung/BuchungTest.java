@@ -1,20 +1,17 @@
-package com.esentri.rezeption.domain.booking;
+package com.esentri.rezeption.domain.buchung;
 
-import com.esentri.rezeption.domain.buchung.Buchung;
-import com.esentri.rezeption.domain.buchung.BuchungsId;
-import com.esentri.rezeption.domain.buchung.BuchungsStatus;
-import com.esentri.rezeption.domain.buchung.HauptGast;
-import com.esentri.rezeption.domain.buchung.HauptGastId;
 import com.esentri.rezeption.domain.Zeitraum;
 import com.esentri.rezeption.domain.zimmer.ZimmerId;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class BuchungTest {
 
     @Test
@@ -79,7 +76,6 @@ class BuchungTest {
         assertThrows(IllegalStateException.class, buchung::storniere);
     }
 
-    @Disabled
     @Test
     void testCheckeAus() {
         BuchungsId id = new BuchungsId(UUID.randomUUID());
