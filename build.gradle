@@ -2,7 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.1.0'
 	id 'io.spring.dependency-management' version '1.1.7'
-	id 'io.domainlifecycles.dlc-gradle-plugin' version '3.4.1-backwardflowtest'
+	id 'io.domainlifecycles.dlc-gradle-plugin' version '3.5.0'
 	id 'org.jooq.jooq-codegen-gradle' version '3.20.8'
 	id 'org.flywaydb.flyway' version '11.20.0'
 }
@@ -41,6 +41,7 @@ jooq {
 			database {
 				name = 'org.jooq.meta.h2.H2Database'
 				inputSchema = 'REZEPTION'
+				recordVersionFields = '(?i:concurrency_version)'
 			}
 			generate {
 				daos = false
@@ -99,9 +100,9 @@ dlcGradlePlugin {
 dependencies {
 	implementation 'org.jooq:jooq'
 
-	compileOnly 'io.domainlifecycles:dlc-gradle-plugin:3.4.1-backwardflowtest'
+	compileOnly 'io.domainlifecycles:dlc-gradle-plugin:3.5.0'
 	implementation 'com.h2database:h2:2.4.240'
-	implementation 'io.domainlifecycles:spring-boot-starter:3.3.0'
+	implementation 'io.domainlifecycles:spring-boot-starter:3.5.0'
 	implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-jooq'
