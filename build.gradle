@@ -2,7 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.1.0'
 	id 'io.spring.dependency-management' version '1.1.7'
-	id 'io.domainlifecycles.dlc-gradle-plugin' version '3.3.0'
+	id 'io.domainlifecycles.dlc-gradle-plugin' version '3.4.1-backwardflowtest'
 	id 'org.jooq.jooq-codegen-gradle' version '3.20.8'
 	id 'org.flywaydb.flyway' version '11.20.0'
 }
@@ -63,9 +63,12 @@ configurations {
 dlcGradlePlugin {
 	domainModelUpload {
 		domainModelPackages = ["com.esentri.rezeption"]
-		projectName = "DDD-Hotel-Demo-AI-Impl"
-		apiKey = "10a3ef8d-1db0-43dd-92ff-e2e340e0c7ef"
-		diagramViewerBaseUrl = "https://viewer.domainlifecycles.io"
+		projectName = "DDD-Hotel-Demo-AI-Impl-2"
+		apiKey = "c1c780bb-8118-41e7-9643-7d45d2f1ad24"
+		diagramViewerBaseUrl = "http://localhost:8090"
+		runStaticAnalysis = true
+		staticAnalysisPackages = ["com.esentri.rezeption"]
+		streamUpload = true
 	}
 	serializeMirror {
 		fileOutputDir = layout.buildDirectory
@@ -86,6 +89,7 @@ dlcGradlePlugin {
 				format = "svg"
 				fileName = "diagram"
 				aggregateRootStyle = "fill=#333333 bold"
+				includeFlowsFrom = ["com.esentri.rezeption.domain.buchung.CheckeGastAus"]
 			}
 		}
 	}
@@ -95,7 +99,7 @@ dlcGradlePlugin {
 dependencies {
 	implementation 'org.jooq:jooq'
 
-	compileOnly 'io.domainlifecycles:dlc-gradle-plugin:3.3.0'
+	compileOnly 'io.domainlifecycles:dlc-gradle-plugin:3.4.1-backwardflowtest'
 	implementation 'com.h2database:h2:2.4.240'
 	implementation 'io.domainlifecycles:spring-boot-starter:3.3.0'
 	implementation 'org.springframework.boot:spring-boot-starter'
