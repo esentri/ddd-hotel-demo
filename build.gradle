@@ -1,0 +1,53 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.1.1'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.esentri'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	dlcVersion = '3.5.0'
+}
+
+dependencies {
+	// DLC runtime: mirror, persistence (JDBC backend), events, validation, Jackson, web/OpenAPI integration
+	implementation "io.domainlifecycles:spring-boot-starter:${dlcVersion}"
+
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-flyway'
+	// Bean Validation provider (Hibernate Validator) for the DLC validation extender
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	runtimeOnly 'com.h2database:h2'
+
+	// DLC builds domain objects (persistence, JSON) via Lombok-style inner builders (@Builder on the constructor)
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// the DLC validation extender attaches a Byte Buddy agent at runtime
+tasks.named('test') {
+	useJUnitPlatform()
+	jvmArgs '-XX:+EnableDynamicAgentLoading'
+}
+
+tasks.named('bootRun') {
+	jvmArgs '-XX:+EnableDynamicAgentLoading'
+}
