@@ -21,6 +21,15 @@ Deviations from the skills: none
   `InnerClassDomainObjectBuilderProvider` uses it to rebuild domain objects (persistence, JSON).
 - The JDBC schema snapshot is read once at startup; `DlcJdbcSchemaMetadataDependsOnDatabaseInitializationDetector`
   (registered in `META-INF/spring.factories`) makes sure this happens after Flyway has migrated.
+- `DlcValidationConfiguration` injects the `DomainMirror` on purpose: the validation extender only instruments
+  domain classes already loaded when it runs, so it must run after the mirror initialization.
+  `BuchungControllerIntegrationTest#ungueltigeEmailWirdAbgelehnt` guards this.
+- Own finder methods in JDBC repositories load the root row via `JdbcRecordMapper` (`selectOneByColumn` /
+  `selectOne`, table name from `provider.entityRecordType(...)`) and build the aggregate with
+  `getFetcher().fetchDeep(record)` - no ID lookup followed by `findById`.
+- REST responses never return a bare `Identity` as JSON root: DLC Jackson writes it as `{"value": ...}` there.
+  Wrap it in a small response record (e.g. `BuchungAngelegt`), where it is written as a plain value.
+- Spring tests use a fixed `Clock` (`TestClockConfiguration`, 2026-11-02 = arrival day of the test data).
 - Tables live in schema `PUBLIC` (`dlc.features.persistence.jdbc.schema-pattern`).
 - `springdoc.use-fqn=true` is required by the DLC OpenAPI integration.
 - `src/test/.../setupcheck` is a test-only bounded context (table from `src/test/resources/db/testmigration`)

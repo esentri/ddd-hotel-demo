@@ -1,5 +1,6 @@
 package com.esentri.hotel.configuration;
 
+import io.domainlifecycles.mirror.api.DomainMirror;
 import io.domainlifecycles.validation.extend.ValidationDomainClassExtender;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,13 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class DlcValidationConfiguration {
+
+    /**
+     * The domain mirror is injected only to run the extension after the mirror initialization: the extender
+     * reliably instruments domain classes that are already loaded at that point.
+     */
+    public DlcValidationConfiguration(DomainMirror domainMirror) {
+    }
 
     @PostConstruct
     public void extendDomainClasses() {
