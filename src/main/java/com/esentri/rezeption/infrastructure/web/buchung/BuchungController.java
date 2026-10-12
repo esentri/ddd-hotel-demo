@@ -17,10 +17,12 @@
 package com.esentri.rezeption.infrastructure.web.buchung;
 
 import com.esentri.rezeption.application.buchung.BuchungApplicationService;
+import com.esentri.rezeption.domain.Zeitraum;
 import com.esentri.rezeption.domain.buchung.AktualisiereGastdaten;
 import com.esentri.rezeption.domain.buchung.BuchungsId;
 import com.esentri.rezeption.domain.buchung.CheckeGastAus;
 import com.esentri.rezeption.domain.buchung.CheckeGastEin;
+import com.esentri.rezeption.domain.buchung.LegeBuchungAn;
 import com.esentri.rezeption.domain.zimmer.ZimmerId;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +48,17 @@ public class BuchungController {
         this.buchungApplicationService = buchungApplicationService;
     }
 
+    @PostMapping
+    public UUID legeBuchungAn(@RequestBody BuchungRequest request) {
+        var command = new LegeBuchungAn(
+            request.vorname(),
+            request.nachname(),
+            request.geburtsdatum(),
+            new Zeitraum(request.anreise(), request.abreise())
+        );
+        return buchungApplicationService.legeBuchungAn(command).value();
+    }
+
     @PostMapping("/{buchungsId}/checkin")
     public UUID checkIn(@PathVariable UUID buchungsId, @RequestBody CheckInRequest request) {
         var command = new CheckeGastEin(new BuchungsId(buchungsId), new ZimmerId(request.zimmerId()));
@@ -68,6 +81,9 @@ public class BuchungController {
         );
         return buchungApplicationService.aktualisiereGastdaten(command).value();
     }
+
+    public record BuchungRequest(String vorname, String nachname, LocalDate geburtsdatum, LocalDate anreise,
+                                 LocalDate abreise) {}
 
     public record CheckInRequest(UUID zimmerId) {}
 

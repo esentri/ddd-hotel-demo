@@ -3,6 +3,7 @@ package com.esentri.rezeption.domain.buchung;
 import com.esentri.rezeption.domain.Zeitraum;
 import com.esentri.rezeption.domain.zimmer.ZimmerId;
 import io.domainlifecycles.domain.types.AggregateRoot;
+import io.domainlifecycles.domain.types.FactoryMethod;
 import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.events.api.DomainEvents;
 import jakarta.validation.constraints.NotNull;
@@ -43,6 +44,7 @@ public class Buchung implements AggregateRoot<BuchungsId> {
         this.concurrencyVersion = concurrencyVersion;
     }
 
+    @FactoryMethod
     public static Buchung neueBuchung(BuchungsId id, HauptGast hauptGast, Zeitraum belegungszeitraum) {
         return new Buchung(id, hauptGast, belegungszeitraum, null, BuchungsStatus.RESERVIERT, 0);
     }

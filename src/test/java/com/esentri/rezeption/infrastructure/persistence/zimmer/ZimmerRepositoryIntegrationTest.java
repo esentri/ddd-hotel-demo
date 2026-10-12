@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ZimmerRepositoryIntegrationTest {
 
     @Autowired
-    private ZimmerRepositoryJooq zimmerRepository;
+    private ZimmerRepositoryJdbc zimmerRepository;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

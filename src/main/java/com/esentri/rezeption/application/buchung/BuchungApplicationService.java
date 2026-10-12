@@ -3,10 +3,12 @@ package com.esentri.rezeption.application.buchung;
 import com.esentri.rezeption.domain.buchung.AktualisiereGastdaten;
 import com.esentri.rezeption.domain.buchung.Buchung;
 import com.esentri.rezeption.domain.buchung.BuchungRepository;
+import com.esentri.rezeption.domain.buchung.BuchungsFactory;
 import com.esentri.rezeption.domain.buchung.BuchungsId;
 import com.esentri.rezeption.domain.buchung.CheckInService;
 import com.esentri.rezeption.domain.buchung.CheckeGastAus;
 import com.esentri.rezeption.domain.buchung.CheckeGastEin;
+import com.esentri.rezeption.domain.buchung.LegeBuchungAn;
 import io.domainlifecycles.domain.types.ApplicationService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +18,32 @@ public class BuchungApplicationService implements ApplicationService {
 
     private final BuchungRepository buchungRepository;
     private final CheckInService checkInService;
+    private final BuchungsFactory buchungsFactory;
 
-    public BuchungApplicationService(BuchungRepository buchungRepository, CheckInService checkInService) {
+    public BuchungApplicationService(BuchungRepository buchungRepository, CheckInService checkInService,
+                                     BuchungsFactory buchungsFactory) {
         this.buchungRepository = Objects.requireNonNull(buchungRepository, "BuchungRepository darf nicht null sein");
         this.checkInService = Objects.requireNonNull(checkInService, "CheckInService darf nicht null sein");
+        this.buchungsFactory = Objects.requireNonNull(buchungsFactory, "BuchungsFactory darf nicht null sein");
+    }
+
+    /**
+     * Legt eine neue Buchung an.
+     *
+     * @param command Der Domain Command mit den Gastdaten und dem Belegungszeitraum
+     * @return Die BuchungsId der neuen Buchung
+     */
+    @Transactional
+    public BuchungsId legeBuchungAn(LegeBuchungAn command) {
+        Objects.requireNonNull(command, "Command darf nicht null sein");
+        Buchung buchung = buchungsFactory.reserviere(
+            command.vorname(),
+            command.nachname(),
+            command.geburtsdatum(),
+            command.belegungszeitraum()
+        );
+        buchungRepository.insert(buchung);
+        return buchung.id();
     }
 
     @Transactional

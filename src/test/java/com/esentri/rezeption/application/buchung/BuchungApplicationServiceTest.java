@@ -4,11 +4,14 @@ import com.esentri.rezeption.domain.zimmer.ZimmerId;
 import com.esentri.rezeption.domain.buchung.AktualisiereGastdaten;
 import com.esentri.rezeption.domain.buchung.Buchung;
 import com.esentri.rezeption.domain.buchung.BuchungRepository;
+import com.esentri.rezeption.domain.buchung.BuchungsFactory;
 import com.esentri.rezeption.domain.buchung.BuchungsId;
+import com.esentri.rezeption.domain.buchung.BuchungsStatus;
 import com.esentri.rezeption.domain.buchung.CheckInService;
 import com.esentri.rezeption.domain.buchung.CheckeGastAus;
 import com.esentri.rezeption.domain.buchung.HauptGast;
 import com.esentri.rezeption.domain.buchung.HauptGastId;
+import com.esentri.rezeption.domain.buchung.LegeBuchungAn;
 import com.esentri.rezeption.domain.Zeitraum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -28,13 +31,32 @@ class BuchungApplicationServiceTest {
 
     private BuchungRepository buchungRepository;
     private CheckInService checkInService;
+    private BuchungsFactory buchungsFactory;
     private BuchungApplicationService underTest;
 
     @BeforeEach
     void setUp() {
         buchungRepository = mock(BuchungRepository.class);
         checkInService = mock(CheckInService.class);
-        underTest = new BuchungApplicationService(buchungRepository, checkInService);
+        buchungsFactory = new BuchungsFactory();
+        underTest = new BuchungApplicationService(buchungRepository, checkInService, buchungsFactory);
+    }
+
+    @Test
+    void testLegeBuchungAnErfolgreich() {
+        // Given
+        Zeitraum zeitraum = new Zeitraum(LocalDate.now().plusDays(1), LocalDate.now().plusDays(3));
+        LegeBuchungAn command = new LegeBuchungAn("John", "Doe", LocalDate.of(1990, 1, 1), zeitraum);
+
+        // When
+        BuchungsId resultId = underTest.legeBuchungAn(command);
+
+        // Then: die von der Factory reservierte Buchung wird gespeichert
+        verify(buchungRepository).insert(argThat(buchung ->
+            buchung.id().equals(resultId)
+                && buchung.getStatus() == BuchungsStatus.RESERVIERT
+                && buchung.getBelegungszeitraum().equals(zeitraum)
+                && buchung.getHauptGast().getNachname().equals("Doe")));
     }
 
     @Test

@@ -24,10 +24,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-@EnableDlc(
-dlcMirrorBasePackages = "com.esentri.rezeption",
-jooqRecordPackage = "com.esentri.rezeption.records",
-jooqSqlDialect = "H2")
+@EnableDlc(dlcMirrorBasePackages = "com.esentri.rezeption", transactionCacheEnabled = true)
 public class RezeptionsServicesApplication {
 
 	public static void main(String[] args) {

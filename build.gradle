@@ -3,8 +3,6 @@ plugins {
 	id 'org.springframework.boot' version '4.1.0'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'io.domainlifecycles.dlc-gradle-plugin' version '3.5.0'
-	id 'org.jooq.jooq-codegen-gradle' version '3.20.8'
-	id 'org.flywaydb.flyway' version '11.20.0'
 }
 
 repositories {
@@ -18,46 +16,14 @@ java {
 	sourceCompatibility = '21'
 }
 
-flyway {
-	url = "jdbc:h2:${projectDir}/build/rezeption-db"
-	user = 'sa'
-	password = ''
-	driver = 'org.h2.Driver'
-	defaultSchema = 'REZEPTION_FLYWAY'
-	createSchemas = true
-	encoding = 'UTF-8'
-	locations = ["filesystem:${projectDir}/src/main/resources/db/migration"]
-}
-
-jooq {
-	configuration {
-		jdbc {
-			driver = 'org.h2.Driver'
-			url = "jdbc:h2:${projectDir}/build/rezeption-db"
-			user = 'sa'
-			password = ''
-		}
-		generator {
-			database {
-				name = 'org.jooq.meta.h2.H2Database'
-				inputSchema = 'REZEPTION'
-				recordVersionFields = '(?i:concurrency_version)'
-			}
-			generate {
-				daos = false
-				pojos = false
-			}
-			target {
-				packageName = 'com.esentri.rezeption.records'
-				directory = 'build/generated-sources/jooq'
-			}
-		}
-	}
-}
-
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
+	}
+	// persistence via DLC's plain JDBC integration: the DLC starter brings the jOOQ integration as well
+	all {
+		exclude group: 'io.domainlifecycles', module: 'jooq-integration'
+		exclude group: 'org.jooq'
 	}
 }
 
@@ -98,34 +64,24 @@ dlcGradlePlugin {
 }
 
 dependencies {
-	implementation 'org.jooq:jooq'
-
 	compileOnly 'io.domainlifecycles:dlc-gradle-plugin:3.5.0'
 	implementation 'com.h2database:h2:2.4.240'
 	implementation 'io.domainlifecycles:spring-boot-starter:3.5.0'
 	implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-jooq'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-flyway'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	jooqCodegen 'com.h2database:h2:2.4.240'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
 
-tasks.named("compileJava") {
-	dependsOn(tasks.named("jooqCodegen"))
-}
-
-tasks.named("jooqCodegen") {
-	dependsOn(tasks.named("flywayMigrate"))
-	inputs.files(fileTree("src/main/resources/db/migration"))
-}
 
 repositories {
     mavenLocal()

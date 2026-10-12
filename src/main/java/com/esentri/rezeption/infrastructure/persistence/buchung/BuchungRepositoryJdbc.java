@@ -3,21 +3,19 @@ package com.esentri.rezeption.infrastructure.persistence.buchung;
 import com.esentri.rezeption.domain.buchung.Buchung;
 import com.esentri.rezeption.domain.buchung.BuchungRepository;
 import com.esentri.rezeption.domain.buchung.BuchungsId;
-import io.domainlifecycles.jooq.imp.JooqAggregateRepository;
-import io.domainlifecycles.jooq.imp.provider.JooqDomainPersistenceProvider;
+import io.domainlifecycles.jdbc.imp.JdbcAggregateRepository;
+import io.domainlifecycles.jdbc.imp.provider.JdbcDomainPersistenceProvider;
 import io.domainlifecycles.persistence.repository.PersistenceEventPublisher;
-import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public class BuchungRepositoryJooq extends JooqAggregateRepository<Buchung, BuchungsId> implements BuchungRepository {
+public class BuchungRepositoryJdbc extends JdbcAggregateRepository<Buchung, BuchungsId> implements BuchungRepository {
 
-    public BuchungRepositoryJooq(DSLContext dslContext,
-                                 JooqDomainPersistenceProvider domainPersistenceProvider,
+    public BuchungRepositoryJdbc(JdbcDomainPersistenceProvider domainPersistenceProvider,
                                  PersistenceEventPublisher persistenceEventPublisher) {
-        super(Buchung.class, dslContext, domainPersistenceProvider, persistenceEventPublisher);
+        super(Buchung.class, domainPersistenceProvider, persistenceEventPublisher);
     }
 
     @Override

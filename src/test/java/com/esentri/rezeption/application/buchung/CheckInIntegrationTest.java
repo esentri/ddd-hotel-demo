@@ -27,7 +27,7 @@ class CheckInIntegrationTest {
         buchungRepository = mock(BuchungRepository.class);
         zimmerRepository = mock(ZimmerRepository.class);
         checkInService = new CheckInService(buchungRepository, zimmerRepository);
-        buchungApplicationService = new BuchungApplicationService(buchungRepository, checkInService);
+        buchungApplicationService = new BuchungApplicationService(buchungRepository, checkInService, new BuchungsFactory());
     }
 
     @Test
