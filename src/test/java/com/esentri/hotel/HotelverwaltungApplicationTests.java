@@ -13,4 +13,10 @@ class HotelverwaltungApplicationTests {
     void contextLoadsAndDomainMirrorIsInitialized() {
         assertThat(Domain.isInitialized()).isTrue();
     }
+
+    @Test
+    void boundedContextRezeptionIsRegistered() {
+        assertThat(Domain.getDomainMirror().getAllBoundedContextMirrors())
+            .anySatisfy(bc -> assertThat(bc.getName()).contains("Rezeption"));
+    }
 }

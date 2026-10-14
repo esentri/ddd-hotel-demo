@@ -20,6 +20,6 @@ Validation style: BeanValidation+DomainAssertions (validation extender, activate
 Event publishing: DomainEvents
 Package layout: default (ddd-tactical-java) - one root package per bounded context `com.esentri.hotel.<bc>` with `package-info.java` + `@BoundedContext`; application-wide Spring configuration in `com.esentri.hotel.configuration`
 Legacy contexts: none
-Code language: German domain terms, no umlauts/ss in identifiers (ae, oe, ue, ss)
+Code language: domain terms in German (no umlauts/ss in identifiers: ae, oe, ue, ss), technical terms in English (e.g. Repository, Service, Configuration, Id, Command, Event, Handler suffixes and infrastructure classes)
 Glossary: docs/ubiquitous-language.md
 Deviations from the skills: none
