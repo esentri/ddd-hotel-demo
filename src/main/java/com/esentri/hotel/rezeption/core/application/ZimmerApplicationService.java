@@ -1,6 +1,7 @@
 package com.esentri.hotel.rezeption.core.application;
 
 import com.esentri.hotel.rezeption.core.domain.NichtGefundenException;
+import com.esentri.hotel.rezeption.core.domain.buchung.GastAusgecheckt;
 import com.esentri.hotel.rezeption.core.domain.hotel.HotelId;
 import com.esentri.hotel.rezeption.core.domain.verfuegbarkeit.FreieZimmerQueryHandler;
 import com.esentri.hotel.rezeption.core.domain.verfuegbarkeit.FreieZimmerUebersicht;
@@ -12,6 +13,7 @@ import com.esentri.hotel.rezeption.core.domain.zimmer.Zimmer;
 import com.esentri.hotel.rezeption.core.domain.zimmer.ZimmerRepository;
 import com.esentri.hotel.rezeption.core.domain.zimmer.Zimmernummer;
 import io.domainlifecycles.domain.types.ApplicationService;
+import io.domainlifecycles.domain.types.DomainEventListener;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
@@ -59,6 +61,19 @@ public class ZimmerApplicationService implements ApplicationService {
     public void beendeWartung(BeendeWartung beendeWartung) {
         var zimmer = zimmerImHotel(beendeWartung.hotelId(), beendeWartung.zimmernummer());
         zimmerRepository.update(zimmer.beendeWartung(beendeWartung.belegungId(), LocalDate.now(clock)));
+    }
+
+    /**
+     * Gibt das Zimmer nach dem Checkout frei. Wird nach dem Commit des Checkouts in einer eigenen Transaktion
+     * aufgerufen; schlaegt es fehl, bleibt der Checkout bestehen und das Zimmer belegt.
+     */
+    @DomainEventListener
+    public void onGastAusgecheckt(GastAusgecheckt gastAusgecheckt) {
+        var zimmer = zimmerRepository.findById(gastAusgecheckt.zimmerId())
+            .orElseThrow(() -> new NichtGefundenException(
+                "Das Zimmer %s existiert nicht.".formatted(gastAusgecheckt.zimmerId().value())));
+        zimmerRepository.update(
+            zimmer.beendeGastBelegung(gastAusgecheckt.buchungsId(), gastAusgecheckt.ausgechecktAm()));
     }
 
     /**

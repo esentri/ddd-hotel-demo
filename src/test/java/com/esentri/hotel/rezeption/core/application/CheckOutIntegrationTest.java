@@ -4,9 +4,9 @@ import com.esentri.hotel.rezeption.core.domain.NichtGefundenException;
 import com.esentri.hotel.rezeption.core.domain.buchung.Buchung;
 import com.esentri.hotel.rezeption.core.domain.buchung.BuchungRepository;
 import com.esentri.hotel.rezeption.core.domain.buchung.BuchungsStatus;
-import com.esentri.hotel.rezeption.core.domain.buchung.CheckOutService;
 import com.esentri.hotel.rezeption.core.domain.buchung.CheckeAus;
 import com.esentri.hotel.rezeption.core.domain.buchung.CheckeEin;
+import com.esentri.hotel.rezeption.core.domain.buchung.GastAusgecheckt;
 import com.esentri.hotel.rezeption.core.domain.hotel.HotelId;
 import com.esentri.hotel.rezeption.core.domain.zimmer.Belegung;
 import com.esentri.hotel.rezeption.core.domain.zimmer.Belegungszeitraum;
@@ -20,6 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.UUID;
+
 import static com.esentri.hotel.rezeption.core.domain.buchung.BuchungTestdaten.ANREISE;
 import static com.esentri.hotel.rezeption.core.domain.buchung.BuchungTestdaten.HOTEL;
 import static com.esentri.hotel.rezeption.core.domain.buchung.BuchungTestdaten.ZEITRAUM;
@@ -27,14 +31,17 @@ import static com.esentri.hotel.rezeption.core.domain.buchung.BuchungTestdaten.g
 import static com.esentri.hotel.rezeption.core.domain.buchung.BuchungTestdaten.reservierungOhneKontaktdaten;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.awaitility.Awaitility.await;
 
 /**
- * Aufenthalt jeweils 02.-05.11., CheckIn am 02.11. Der Checkout-Tag wird direkt an den {@link CheckOutService}
- * uebergeben, um vorzeitige, regulaere und verspaetete Abreise zu pruefen.
+ * Aufenthalt jeweils 02.-05.11., CheckIn am 02.11. (Uhr der Tests). Der Checkout aendert sofort nur die Buchung;
+ * das Zimmer wird asynchron nach dem Commit ueber {@link GastAusgecheckt} freigegeben.
  */
 @SpringBootTest
 @ActiveProfiles("test")
 class CheckOutIntegrationTest {
+
+    private static final Duration EVENT_TIMEOUT = Duration.ofSeconds(5);
 
     @Autowired
     BuchungApplicationService buchungApplicationService;
@@ -43,30 +50,15 @@ class CheckOutIntegrationTest {
     ZimmerApplicationService zimmerApplicationService;
 
     @Autowired
-    CheckOutService checkOutService;
-
-    @Autowired
     BuchungRepository buchungRepository;
 
     @Autowired
     ZimmerRepository zimmerRepository;
 
+    // --- Checkout bis zur Freigabe des Zimmers per Event
+
     @Test
-    void regulaererCheckoutAmAbreisetag() {
-        var zimmerId = legeZimmerAn("CO-105");
-        var buchungsId = checkeEin("CO-5", "CO-105");
-
-        checkOutService.checkeAus(new CheckeAus(HOTEL, new Zimmernummer("CO-105")), ZEITRAUM.abreise());
-
-        assertThat(buchungRepository.findById(buchungsId).orElseThrow().getStatus())
-            .isEqualTo(BuchungsStatus.AUSGECHECKT);
-        assertThat(belegungszeitraum(zimmerId))
-            .isEqualTo(new Belegungszeitraum(ZEITRAUM.anreise(), ZEITRAUM.abreise()));
-    }
-
-    /** Die Uhr der Tests steht auf dem Anreisetag. */
-    @Test
-    void abreiseAmAnreisetagGibtZimmerKomplettFrei() {
+    void checkoutGibtZimmerPerEventFrei() {
         var zimmerId = legeZimmerAn("CO-101");
         var buchungsId = checkeEin("CO-1", "CO-101");
 
@@ -75,30 +67,9 @@ class CheckOutIntegrationTest {
         var buchung = buchungRepository.findById(buchungsId).orElseThrow();
         assertThat(buchung.getStatus()).isEqualTo(BuchungsStatus.AUSGECHECKT);
         assertThat(buchung.getAusgechecktAm()).contains(ANREISE);
-        assertThat(zimmerRepository.findById(zimmerId).orElseThrow().getBelegungen()).isEmpty();
-    }
-
-    @Test
-    void vorzeitigeAbreiseGibtZimmerAbHeuteFrei() {
-        var zimmerId = legeZimmerAn("CO-102");
-        checkeEin("CO-2", "CO-102");
-
-        checkOutService.checkeAus(new CheckeAus(HOTEL, new Zimmernummer("CO-102")), ANREISE.plusDays(1));
-
-        assertThat(belegungszeitraum(zimmerId)).isEqualTo(new Belegungszeitraum(ANREISE, ANREISE.plusDays(1)));
-    }
-
-    @Test
-    void verspaeteteAbreiseLaesstBelegungUnveraendert() {
-        var zimmerId = legeZimmerAn("CO-103");
-        var buchungsId = checkeEin("CO-3", "CO-103");
-
-        checkOutService.checkeAus(new CheckeAus(HOTEL, new Zimmernummer("CO-103")), ZEITRAUM.abreise().plusDays(1));
-
-        assertThat(belegungszeitraum(zimmerId))
-            .isEqualTo(new Belegungszeitraum(ZEITRAUM.anreise(), ZEITRAUM.abreise()));
-        assertThat(buchungRepository.findById(buchungsId).orElseThrow().getAusgechecktAm())
-            .contains(ZEITRAUM.abreise().plusDays(1));
+        // Abreise am Anreisetag: die Gast-Belegung entfaellt, sobald das Event verarbeitet ist
+        await().atMost(EVENT_TIMEOUT).untilAsserted(() ->
+            assertThat(zimmerRepository.findById(zimmerId).orElseThrow().getBelegungen()).isEmpty());
     }
 
     @Test
@@ -109,8 +80,43 @@ class CheckOutIntegrationTest {
             .isInstanceOf(NichtGefundenException.class)
             .hasMessageContaining("kein Gast eingecheckt");
         assertThatThrownBy(() -> buchungApplicationService.checkeAus(
-            new CheckeAus(new HotelId(java.util.UUID.randomUUID()), new Zimmernummer("CO-104"))))
+            new CheckeAus(new HotelId(UUID.randomUUID()), new Zimmernummer("CO-104"))))
             .isInstanceOf(NichtGefundenException.class);
+    }
+
+    // --- Reaktion des Zimmers auf GastAusgecheckt (Listener direkt mit beliebigem Checkout-Tag aufgerufen)
+
+    @Test
+    void vorzeitigeAbreiseGibtZimmerAbCheckoutTagFrei() {
+        var zimmerId = legeZimmerAn("CO-102");
+        var buchungsId = checkeEin("CO-2", "CO-102");
+
+        zimmerApplicationService.onGastAusgecheckt(gastAusgecheckt(buchungsId, zimmerId, ANREISE.plusDays(1)));
+
+        assertThat(belegungszeitraum(zimmerId)).isEqualTo(new Belegungszeitraum(ANREISE, ANREISE.plusDays(1)));
+    }
+
+    @Test
+    void regulaereAbreiseLaesstBelegungUnveraendert() {
+        var zimmerId = legeZimmerAn("CO-105");
+        var buchungsId = checkeEin("CO-5", "CO-105");
+
+        zimmerApplicationService.onGastAusgecheckt(gastAusgecheckt(buchungsId, zimmerId, ZEITRAUM.abreise()));
+
+        assertThat(belegungszeitraum(zimmerId))
+            .isEqualTo(new Belegungszeitraum(ZEITRAUM.anreise(), ZEITRAUM.abreise()));
+    }
+
+    @Test
+    void verspaeteteAbreiseLaesstBelegungUnveraendert() {
+        var zimmerId = legeZimmerAn("CO-103");
+        var buchungsId = checkeEin("CO-3", "CO-103");
+
+        zimmerApplicationService.onGastAusgecheckt(
+            gastAusgecheckt(buchungsId, zimmerId, ZEITRAUM.abreise().plusDays(1)));
+
+        assertThat(belegungszeitraum(zimmerId))
+            .isEqualTo(new Belegungszeitraum(ZEITRAUM.anreise(), ZEITRAUM.abreise()));
     }
 
     private Zimmer.ZimmerId legeZimmerAn(String zimmernummer) {
@@ -123,6 +129,11 @@ class CheckOutIntegrationTest {
             reservierungOhneKontaktdaten(reservierungsnummer));
         buchungApplicationService.checkeEin(new CheckeEin(buchungsId, new Zimmernummer(zimmernummer), gastdaten()));
         return buchungsId;
+    }
+
+    private static GastAusgecheckt gastAusgecheckt(Buchung.BuchungsId buchungsId, Zimmer.ZimmerId zimmerId,
+                                                   LocalDate ausgechecktAm) {
+        return new GastAusgecheckt(buchungsId, HOTEL, zimmerId, ausgechecktAm);
     }
 
     private Belegungszeitraum belegungszeitraum(Zimmer.ZimmerId zimmerId) {

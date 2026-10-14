@@ -2,6 +2,8 @@ package com.esentri.hotel.rezeption.inbound;
 
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -9,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.awaitility.Awaitility.await;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -85,6 +88,18 @@ class CheckInControllerIntegrationTest {
             .andExpect(status().isNoContent());
         mockMvc.perform(post("/api/hotels/{hotelId}/zimmer/{zimmernummer}/checkout", HOTEL, "WEB-205"))
             .andExpect(status().isNotFound());
+
+        // das Zimmer wird per Event freigegeben: danach kann ein neuer Gast spontan einchecken
+        await().atMost(Duration.ofSeconds(5)).untilAsserted(() ->
+            mockMvc.perform(post("/api/buchungen/spontan-checkin").contentType(MediaType.APPLICATION_JSON).content("""
+                    {
+                      "hotelId": "%s",
+                      "zimmernummer": "WEB-205",
+                      "gastdaten": %s,
+                      "aufenthaltszeitraum": { "anreise": "2026-11-02", "abreise": "2026-11-03" }
+                    }
+                    """.formatted(HOTEL, GASTDATEN)))
+                .andExpect(status().isCreated()));
     }
 
     @Test

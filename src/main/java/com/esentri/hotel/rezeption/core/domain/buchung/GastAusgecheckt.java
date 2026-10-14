@@ -7,6 +7,9 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
+/**
+ * Der Gast ist abgereist. Das Zimmer reagiert darauf und beendet seine Gast-Belegung zum Checkout-Tag.
+ */
 public record GastAusgecheckt(@NotNull Buchung.BuchungsId buchungsId,
                               @NotNull HotelId hotelId,
                               @NotNull Zimmer.ZimmerId zimmerId,

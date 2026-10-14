@@ -1,1 +1,16 @@
+pluginManagement {
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+	}
+	// the DLC Gradle plugin has no plugin marker on the Gradle Plugin Portal
+	resolutionStrategy {
+		eachPlugin {
+			if (requested.id.id == 'io.domainlifecycles.dlc-gradle-plugin') {
+				useModule("io.domainlifecycles:dlc-gradle-plugin:${requested.version}")
+			}
+		}
+	}
+}
+
 rootProject.name = 'ddd-hotel-demo'
