@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.1.0'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'io.domainlifecycles.dlc-gradle-plugin' version "${dlcVersion}"
+}
+
+group = 'com.esentri'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations.configureEach {
+    // Persistenz ueber die DLC JDBC-Integration: der DLC-Starter bringt auch die jOOQ-Integration mit,
+    // die sonst Vorrang haette.
+    exclude group: 'io.domainlifecycles', module: 'jooq-integration'
+    exclude group: 'org.jooq'
+}
+
+dependencies {
+    // DomainLifeCycles (Mode C: Runtime, inkl. Validation Extender)
+    implementation "io.domainlifecycles:spring-boot-starter:${dlcVersion}"
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-flyway'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    runtimeOnly 'com.h2database:h2'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// Byte Buddy (Validation Extender) laedt einen Java-Agenten zur Laufzeit
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    jvmArgs '-XX:+EnableDynamicAgentLoading'
+}
+tasks.named('bootRun') {
+    jvmArgs '-XX:+EnableDynamicAgentLoading'
+}
+
+dlcGradlePlugin {
+    diagram {
+        fileOutputDir = layout.buildDirectory
+        diagrams {
+            domainDiagram {
+                domainModelPackages = ["com.esentri.hotel"]
+                format = "svg"
+                fileName = "domain-diagram"
+            }
+        }
+    }
+}

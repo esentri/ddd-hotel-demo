@@ -1,0 +1,6 @@
+{
+  "enabledPlugins": {
+    "ddd-tactical-java@dlc-plugins": true,
+    "domainlifecycles@dlc-plugins": true
+  }
+}

@@ -1,0 +1,16 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            // Das DLC-Gradle-Plugin ist nur in Maven Central veroeffentlicht (ohne Plugin-Marker)
+            if (requested.id.id == 'io.domainlifecycles.dlc-gradle-plugin') {
+                useModule("io.domainlifecycles:dlc-gradle-plugin:${requested.version}")
+            }
+        }
+    }
+}
+
+rootProject.name = 'hotelverwaltung'
