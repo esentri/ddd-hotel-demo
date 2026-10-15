@@ -1,0 +1,2 @@
+org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitializationDetector=\
+com.esentri.hotel.configuration.DlcSchemaDependsOnDatabaseInitializationDetector

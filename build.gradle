@@ -18,6 +18,12 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
 configurations.configureEach {
     // Persistenz ueber die DLC JDBC-Integration: der DLC-Starter bringt auch die jOOQ-Integration mit,
     // die sonst Vorrang haette.
@@ -36,8 +42,14 @@ dependencies {
 
     runtimeOnly 'com.h2database:h2'
 
+    // @Builder an Aggregaten und Value Objects (DLC-Konvention, wird vom DLC Builder genutzt)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.junit.platform:junit-platform-launcher'
 }
 
 // Byte Buddy (Validation Extender) laedt einen Java-Agenten zur Laufzeit

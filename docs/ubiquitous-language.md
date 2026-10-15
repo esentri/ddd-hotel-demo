@@ -11,4 +11,3 @@ Ablaeufe vor Ort am Tresen des Hotels. Die Reservierung im Vorfeld ist ein eigen
 
 | Term | Definition | Code | Status | Avoid | Open question |
 |---|---|---|---|---|---|
-| Rezeption | Bereich des Hotels, an dem Gäste vor Ort am Tresen betreut werden. | `com.esentri.hotel.rezeption` | candidate | Empfang, Front Office | |
