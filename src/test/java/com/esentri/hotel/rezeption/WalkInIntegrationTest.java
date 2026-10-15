@@ -5,21 +5,25 @@ import com.esentri.hotel.rezeption.core.domain.buchung.Buchung;
 import com.esentri.hotel.rezeption.core.domain.buchung.BuchungRepository;
 import com.esentri.hotel.rezeption.core.domain.buchung.Buchungsstatus;
 import com.esentri.hotel.rezeption.core.domain.buchung.Buchungszeitraum;
-import com.esentri.hotel.rezeption.core.domain.buchung.Gast;
-import com.esentri.hotel.rezeption.core.domain.buchung.Zimmerkategorie;
+import com.esentri.hotel.rezeption.core.domain.zimmer.Zimmer;
+import com.esentri.hotel.rezeption.core.domain.zimmer.ZimmerRepository;
+import com.esentri.hotel.rezeption.core.domain.zimmer.Zimmerkategorie;
+import com.esentri.hotel.rezeption.core.domain.zimmer.Zimmerstatus;
 import com.jayway.jsonpath.JsonPath;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
+import static com.esentri.hotel.rezeption.RezeptionApi.ADRESSE_JSON;
+import static com.esentri.hotel.rezeption.RezeptionApi.gastJson;
+import static com.esentri.hotel.rezeption.RezeptionApi.neueZimmernummer;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,127 +31,117 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class WalkInIntegrationTest {
 
-    private static final Adresse ADRESSE = new Adresse("Hauptstrasse 1", "76131", "Karlsruhe", "Deutschland");
-    private static final String ADRESSE_JSON =
-        "{\"strasse\": \"Hauptstrasse 1\", \"postleitzahl\": \"76131\", \"ort\": \"Karlsruhe\", \"land\": \"Deutschland\"}";
-
     @Autowired
     private BuchungRepository buchungRepository;
 
     @Autowired
+    private ZimmerRepository zimmerRepository;
+
+    @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    void buchungRoundTrip() {
-        var heute = LocalDate.now();
-        var buchung = Buchung.walkIn(
-            Gast.neu("Erika", "Mustermann", ADRESSE, LocalDate.of(1980, 5, 1)),
-            new Buchungszeitraum(heute, heute.plusDays(2)),
-            Zimmerkategorie.DOPPELZIMMER);
+    private RezeptionApi api;
 
-        buchungRepository.insert(buchung);
-        var geladen = buchungRepository.findById(buchung.getId()).orElseThrow();
-
-        assertThat(geladen).usingRecursiveComparison().ignoringFields("concurrencyVersion").isEqualTo(buchung);
-        assertThat(geladen.getGast().getAdresse()).isEqualTo(ADRESSE);
-        assertThat(geladen.getGast().getGeburtsdatum()).isEqualTo(LocalDate.of(1980, 5, 1));
-
-        assertThat(buchungRepository.deleteById(buchung.getId())).isPresent();
-        assertThat(buchungRepository.findById(buchung.getId())).isEmpty();
+    @BeforeEach
+    void setUp() {
+        api = new RezeptionApi(mockMvc);
     }
 
     @Test
-    void reservierteBuchungMitUnvollstaendigenGastdatenRoundTrip() {
-        var heute = LocalDate.now();
-        var buchung = Buchung.builder()
-            .id(new Buchung.BuchungId(UUID.randomUUID()))
-            .gast(Gast.neu(null, "Mustermann", null, null))
-            .buchungszeitraum(new Buchungszeitraum(heute.plusDays(5), heute.plusDays(7)))
-            .gewuenschteZimmerkategorie(Zimmerkategorie.EINZELZIMMER)
-            .status(Buchungsstatus.RESERVIERT)
-            .build();
+    void walkInWeistDemGastDasAusgewaehlteZimmerZu() throws Exception {
+        var zimmerId = api.legeZimmerAn(neueZimmernummer(), "SUITE");
 
-        buchungRepository.insert(buchung);
-        var geladen = buchungRepository.findById(buchung.getId()).orElseThrow();
-
-        assertThat(geladen.getStatus()).isEqualTo(Buchungsstatus.RESERVIERT);
-        assertThat(geladen.getGast().getAdresse()).isNull();
-        assertThat(geladen.getGast().getGeburtsdatum()).isNull();
-    }
-
-    @Test
-    void walkInUeberRest() throws Exception {
-        var abreise = LocalDate.now().plusDays(3);
-        var antwort = mockMvc.perform(post("/api/rezeption/walk-ins")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                    {"vorname": "Max", "nachname": "Mustermann",
-                     "adresse": {"strasse": "Hauptstrasse 1", "postleitzahl": "76131", "ort": "Karlsruhe", "land": "Deutschland"},
-                     "geburtsdatum": "1990-03-12",
-                     "abreise": "%s", "gewuenschteZimmerkategorie": "SUITE"}
-                    """.formatted(abreise)))
+        var antwort = api.checkeWalkInEin(gastJson(), "SUITE", zimmerId)
             .andExpect(status().isCreated())
             .andReturn().getResponse().getContentAsString();
 
         var buchungId = new Buchung.BuchungId(UUID.fromString(JsonPath.read(antwort, "$.buchungId")));
         var buchung = buchungRepository.findById(buchungId).orElseThrow();
         assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.EINGECHECKT);
-        assertThat(buchung.getBuchungszeitraum()).isEqualTo(new Buchungszeitraum(LocalDate.now(), abreise));
+        assertThat(buchung.getZugewiesenesZimmer()).isEqualTo(new Zimmer.ZimmerId(zimmerId));
+        assertThat(buchung.getBuchungszeitraum()).isEqualTo(new Buchungszeitraum(LocalDate.now(), LocalDate.now().plusDays(2)));
         assertThat(buchung.getGewuenschteZimmerkategorie()).isEqualTo(Zimmerkategorie.SUITE);
-        assertThat(buchung.getGast().getVorname()).isEqualTo("Max");
-        assertThat(buchung.getGast().getAdresse()).isEqualTo(ADRESSE);
+        assertThat(buchung.getGast().getAdresse())
+            .isEqualTo(new Adresse("Hauptstrasse 1", "76131", "Karlsruhe", "Deutschland"));
         assertThat(buchung.getGast().getGeburtsdatum()).isEqualTo(LocalDate.of(1990, 3, 12));
+
+        var zimmer = zimmerRepository.findById(new Zimmer.ZimmerId(zimmerId)).orElseThrow();
+        assertThat(zimmer.getStatus()).isEqualTo(Zimmerstatus.BELEGT);
+        assertThat(zimmer.getBelegtDurch()).isEqualTo(buchungId);
     }
 
     @Test
-    void walkInUnter16WirdAbgelehnt() throws Exception {
-        mockMvc.perform(post("/api/rezeption/walk-ins")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                    {"nachname": "Mustermann", "adresse": %s, "geburtsdatum": "%s", "abreise": "%s", "gewuenschteZimmerkategorie": "SUITE"}
-                    """.formatted(ADRESSE_JSON, LocalDate.now().minusYears(15), LocalDate.now().plusDays(1))))
+    void walkInMitUpgrade() throws Exception {
+        var suite = api.legeZimmerAn(neueZimmernummer(), "SUITE");
+
+        api.checkeWalkInEin(gastJson(), "EINZELZIMMER", suite).andExpect(status().isCreated());
+    }
+
+    @Test
+    void zimmerNiedrigererKategorieWirdAbgelehnt() throws Exception {
+        var einzelzimmer = api.legeZimmerAn(neueZimmernummer(), "EINZELZIMMER");
+
+        api.checkeWalkInEin(gastJson(), "SUITE", einzelzimmer)
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.detail").value(org.hamcrest.Matchers.containsString("Zimmerkategorie")));
+        assertThat(zimmerRepository.findById(new Zimmer.ZimmerId(einzelzimmer)).orElseThrow().getStatus())
+            .isEqualTo(Zimmerstatus.BEZUGSFERTIG);
+    }
+
+    @Test
+    void belegtesZimmerKannNichtNochmalZugewiesenWerden() throws Exception {
+        var zimmerId = api.legeZimmerAn(neueZimmernummer(), "DOPPELZIMMER");
+        api.checkeWalkInEin(gastJson(), "DOPPELZIMMER", zimmerId).andExpect(status().isCreated());
+
+        api.checkeWalkInEin(gastJson(), "DOPPELZIMMER", zimmerId)
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.detail").value(org.hamcrest.Matchers.containsString("nicht bezugsfertig")));
+    }
+
+    @Test
+    void unbekanntesZimmerWirdAbgelehnt() throws Exception {
+        api.checkeWalkInEin(gastJson(), "SUITE", UUID.randomUUID())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.detail").value("Das Zimmer ist nicht bekannt."));
+    }
+
+    @Test
+    void walkInUnter16WirdAbgelehntUndZimmerBleibtFrei() throws Exception {
+        var zimmerId = api.legeZimmerAn(neueZimmernummer(), "SUITE");
+        var gast = """
+            "nachname": "Mustermann", "adresse": %s, "geburtsdatum": "%s"\
+            """.formatted(ADRESSE_JSON, LocalDate.now().minusYears(15));
+
+        api.checkeWalkInEin(gast, "SUITE", zimmerId)
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.detail").value("Der Gast muss zum Check-in mindestens 16 Jahre alt sein."));
+        assertThat(zimmerRepository.findById(new Zimmer.ZimmerId(zimmerId)).orElseThrow().getStatus())
+            .isEqualTo(Zimmerstatus.BEZUGSFERTIG);
     }
 
     @Test
     void walkInOhneGeburtsdatumWirdAbgelehnt() throws Exception {
-        mockMvc.perform(post("/api/rezeption/walk-ins")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                    {"nachname": "Mustermann", "adresse": %s, "abreise": "%s", "gewuenschteZimmerkategorie": "SUITE"}
-                    """.formatted(ADRESSE_JSON, LocalDate.now().plusDays(1))))
-            .andExpect(status().isBadRequest());
-    }
+        var zimmerId = api.legeZimmerAn(neueZimmernummer(), "SUITE");
 
-    @Test
-    void walkInOhneNachnameWirdAbgelehnt() throws Exception {
-        mockMvc.perform(post("/api/rezeption/walk-ins")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                    {"vorname": "Max", "adresse": %s, "geburtsdatum": "1990-03-12", "abreise": "%s", "gewuenschteZimmerkategorie": "SUITE"}
-                    """.formatted(ADRESSE_JSON, LocalDate.now().plusDays(1))))
-            .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void walkInMitAbreiseHeuteWirdAbgelehnt() throws Exception {
-        mockMvc.perform(post("/api/rezeption/walk-ins")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                    {"nachname": "Mustermann", "adresse": %s, "geburtsdatum": "1990-03-12", "abreise": "%s", "gewuenschteZimmerkategorie": "SUITE"}
-                    """.formatted(ADRESSE_JSON, LocalDate.now())))
+        api.checkeWalkInEin("\"nachname\": \"Mustermann\", \"adresse\": " + ADRESSE_JSON, "SUITE", zimmerId)
             .andExpect(status().isBadRequest());
     }
 
     @Test
     void walkInOhneAdresseWirdAbgelehnt() throws Exception {
-        mockMvc.perform(post("/api/rezeption/walk-ins")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                    {"nachname": "Mustermann", "geburtsdatum": "1990-03-12", "abreise": "%s", "gewuenschteZimmerkategorie": "SUITE"}
-                    """.formatted(LocalDate.now().plusDays(1))))
+        var zimmerId = api.legeZimmerAn(neueZimmernummer(), "SUITE");
+
+        api.checkeWalkInEin("\"nachname\": \"Mustermann\", \"geburtsdatum\": \"1990-03-12\"", "SUITE", zimmerId)
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.detail").value("Fuer den Check-in wird die Adresse des Gastes benoetigt."));
+    }
+
+    @Test
+    void walkInOhneNachnameWirdAbgelehnt() throws Exception {
+        var zimmerId = api.legeZimmerAn(neueZimmernummer(), "SUITE");
+
+        api.checkeWalkInEin("\"vorname\": \"Max\", \"adresse\": " + ADRESSE_JSON + ", \"geburtsdatum\": \"1990-03-12\"",
+                "SUITE", zimmerId)
+            .andExpect(status().isBadRequest());
     }
 }

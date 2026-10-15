@@ -1,5 +1,7 @@
 package com.esentri.hotel.rezeption.core.domain.buchung;
 
+import com.esentri.hotel.rezeption.core.domain.zimmer.Zimmer;
+import com.esentri.hotel.rezeption.core.domain.zimmer.Zimmerkategorie;
 import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.FactoryMethod;
 import io.domainlifecycles.domain.types.Identity;
@@ -14,8 +16,8 @@ import java.util.UUID;
 /**
  * Zentrales Konzept der Rezeption: die Buchung eines Gastes fuer einen Buchungszeitraum
  * mit gewuenschter Zimmerkategorie. Eine Buchung wird hoechstens einmal eingecheckt, und nur wenn
- * die Adresse des Gastes bekannt ist und er das Mindestalter erreicht hat; eine eingecheckte Buchung
- * kann nicht mehr storniert werden.
+ * die Adresse des Gastes bekannt ist und er das Mindestalter erreicht hat; beim Check-in wird ihr ein Zimmer
+ * zugewiesen. Eine eingecheckte Buchung kann nicht mehr storniert werden.
  */
 @Getter
 public final class Buchung extends AggregateRootBase<Buchung.BuchungId> {
@@ -39,48 +41,57 @@ public final class Buchung extends AggregateRootBase<Buchung.BuchungId> {
     @NotNull
     private Buchungsstatus status;
 
+    private Zimmer.ZimmerId zugewiesenesZimmer;
+
     @Builder
     public Buchung(long concurrencyVersion,
                    BuchungId id,
                    Gast gast,
                    Buchungszeitraum buchungszeitraum,
                    Zimmerkategorie gewuenschteZimmerkategorie,
-                   Buchungsstatus status) {
+                   Buchungsstatus status,
+                   Zimmer.ZimmerId zugewiesenesZimmer) {
         super(concurrencyVersion);
         this.id = id;
         this.gast = gast;
         this.buchungszeitraum = buchungszeitraum;
         this.gewuenschteZimmerkategorie = gewuenschteZimmerkategorie;
         this.status = status;
+        this.zugewiesenesZimmer = zugewiesenesZimmer;
     }
 
     /**
-     * Walk-In: ein Gast kommt ohne vorherige Buchung an den Tresen. Die Buchung entsteht
-     * vor Ort und wird am Tag der Anreise sofort eingecheckt.
+     * Walk-In: ein Gast kommt ohne vorherige Buchung an den Tresen. Die Buchung entsteht vor Ort und wird
+     * direkt im Anschluss eingecheckt (siehe {@link CheckinService}).
      */
     @FactoryMethod
     public static Buchung walkIn(Gast gast, Buchungszeitraum buchungszeitraum, Zimmerkategorie gewuenschteZimmerkategorie) {
-        var buchung = new Buchung(
+        return new Buchung(
             0L,
             new BuchungId(UUID.randomUUID()),
             gast,
             buchungszeitraum,
             gewuenschteZimmerkategorie,
-            Buchungsstatus.RESERVIERT);
-        buchung.checkeEin(buchungszeitraum.anreise());
-        return buchung;
+            Buchungsstatus.RESERVIERT,
+            null);
     }
 
-    public void checkeEin(LocalDate checkinDatum) {
+    /**
+     * Checkt die Buchung ein und haelt das zugewiesene Zimmer fest. Dass das Zimmer bezugsfertig ist und zur
+     * gewuenschten Zimmerkategorie passt, prueft das Zimmer selbst ({@link Zimmer#belege}).
+     */
+    public void checkeEin(LocalDate checkinDatum, Zimmer.ZimmerId zimmer) {
         DomainAssertions.isFalse(status == Buchungsstatus.EINGECHECKT,
             "Die Buchung ist bereits eingecheckt.");
         DomainAssertions.isFalse(status == Buchungsstatus.STORNIERT,
             "Eine stornierte Buchung kann nicht eingecheckt werden.");
         DomainAssertions.isNotNull(checkinDatum, "Das Check-in-Datum ist erforderlich.");
+        DomainAssertions.isNotNull(zimmer, "Beim Check-in muss ein Zimmer zugewiesen werden.");
         DomainAssertions.isNotNull(gast.getAdresse(), "Fuer den Check-in wird die Adresse des Gastes benoetigt.");
         DomainAssertions.isTrue(gast.alterAm(checkinDatum) >= MINDESTALTER_CHECKIN,
             "Der Gast muss zum Check-in mindestens " + MINDESTALTER_CHECKIN + " Jahre alt sein.");
         status = Buchungsstatus.EINGECHECKT;
+        zugewiesenesZimmer = zimmer;
     }
 
     public void storniere() {
@@ -89,5 +100,13 @@ public final class Buchung extends AggregateRootBase<Buchung.BuchungId> {
         DomainAssertions.isFalse(status == Buchungsstatus.STORNIERT,
             "Die Buchung ist bereits storniert.");
         status = Buchungsstatus.STORNIERT;
+    }
+
+    @Override
+    public void validate() {
+        if (status != null) {
+            DomainAssertions.isTrue((status == Buchungsstatus.EINGECHECKT) == (zugewiesenesZimmer != null),
+                "Eine Buchung hat genau dann ein zugewiesenes Zimmer, wenn sie eingecheckt ist.");
+        }
     }
 }

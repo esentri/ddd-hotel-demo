@@ -1,5 +1,7 @@
 package com.esentri.hotel.rezeption.core.domain.buchung;
 
+import com.esentri.hotel.rezeption.core.domain.zimmer.Zimmer;
+import com.esentri.hotel.rezeption.core.domain.zimmer.Zimmerkategorie;
 import io.domainlifecycles.assertion.DomainAssertionException;
 import org.junit.jupiter.api.Test;
 
@@ -13,81 +15,87 @@ class BuchungTest {
 
     private static final LocalDate HEUTE = LocalDate.of(2026, 10, 15);
     private static final LocalDate ERWACHSEN = LocalDate.of(1980, 5, 1);
+    private static final Zimmer.ZimmerId ZIMMER = new Zimmer.ZimmerId(UUID.randomUUID());
 
     @Test
-    void walkInLegtEingecheckteBuchungAn() {
-        var buchung = walkIn(gast(ERWACHSEN));
+    void walkInLegtReservierteBuchungVorOrtAn() {
+        var buchung = Buchung.walkIn(gast(ERWACHSEN), zeitraum(), Zimmerkategorie.SUITE);
 
         assertThat(buchung.getId()).isNotNull();
-        assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.EINGECHECKT);
-        assertThat(buchung.getGewuenschteZimmerkategorie()).isEqualTo(Zimmerkategorie.SUITE);
+        assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.RESERVIERT);
+        assertThat(buchung.getZugewiesenesZimmer()).isNull();
     }
 
     @Test
-    void reservierteBuchungKannEingechecktWerden() {
-        var buchung = buchung(Buchungsstatus.RESERVIERT, gast(ERWACHSEN));
+    void checkinWeistZimmerZu() {
+        var buchung = reserviert(gast(ERWACHSEN));
 
-        buchung.checkeEin(HEUTE);
+        buchung.checkeEin(HEUTE, ZIMMER);
 
         assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.EINGECHECKT);
+        assertThat(buchung.getZugewiesenesZimmer()).isEqualTo(ZIMMER);
+    }
+
+    @Test
+    void checkinOhneZimmerIstNichtMoeglich() {
+        var buchung = reserviert(gast(ERWACHSEN));
+
+        assertThatThrownBy(() -> buchung.checkeEin(HEUTE, null))
+            .isInstanceOf(DomainAssertionException.class)
+            .hasMessageContaining("Zimmer");
+        assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.RESERVIERT);
     }
 
     @Test
     void buchungKannNurEinmalEingechecktWerden() {
-        var buchung = walkIn(gast(ERWACHSEN));
+        var buchung = reserviert(gast(ERWACHSEN));
+        buchung.checkeEin(HEUTE, ZIMMER);
 
-        assertThatThrownBy(() -> buchung.checkeEin(HEUTE))
+        assertThatThrownBy(() -> buchung.checkeEin(HEUTE, ZIMMER))
             .isInstanceOf(DomainAssertionException.class)
             .hasMessageContaining("bereits eingecheckt");
     }
 
     @Test
     void stornierteBuchungKannNichtEingechecktWerden() {
-        var buchung = buchung(Buchungsstatus.STORNIERT, gast(ERWACHSEN));
+        var buchung = buchung(Buchungsstatus.STORNIERT, gast(ERWACHSEN), null);
 
-        assertThatThrownBy(() -> buchung.checkeEin(HEUTE)).isInstanceOf(DomainAssertionException.class);
+        assertThatThrownBy(() -> buchung.checkeEin(HEUTE, ZIMMER)).isInstanceOf(DomainAssertionException.class);
     }
 
     @Test
     void gastMitGenau16JahrenKannEinchecken() {
-        var buchung = buchung(Buchungsstatus.RESERVIERT, gast(HEUTE.minusYears(16)));
+        var buchung = reserviert(gast(HEUTE.minusYears(16)));
 
-        buchung.checkeEin(HEUTE);
+        buchung.checkeEin(HEUTE, ZIMMER);
 
         assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.EINGECHECKT);
     }
 
     @Test
     void gastUnter16KannNichtEinchecken() {
-        var buchung = buchung(Buchungsstatus.RESERVIERT, gast(HEUTE.minusYears(16).plusDays(1)));
+        var buchung = reserviert(gast(HEUTE.minusYears(16).plusDays(1)));
 
-        assertThatThrownBy(() -> buchung.checkeEin(HEUTE))
+        assertThatThrownBy(() -> buchung.checkeEin(HEUTE, ZIMMER))
             .isInstanceOf(DomainAssertionException.class)
             .hasMessageContaining("mindestens 16 Jahre");
         assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.RESERVIERT);
     }
 
     @Test
-    void walkInUnter16WirdAbgelehnt() {
-        assertThatThrownBy(() -> walkIn(gast(HEUTE.minusYears(15))))
-            .isInstanceOf(DomainAssertionException.class)
-            .hasMessageContaining("mindestens 16 Jahre");
-    }
-
-    @Test
     void checkinOhneGeburtsdatumIstNichtMoeglich() {
-        var buchung = buchung(Buchungsstatus.RESERVIERT, gast(null));
+        var buchung = reserviert(gast(null));
 
-        assertThatThrownBy(() -> buchung.checkeEin(HEUTE))
+        assertThatThrownBy(() -> buchung.checkeEin(HEUTE, ZIMMER))
             .isInstanceOf(DomainAssertionException.class)
             .hasMessageContaining("Geburtsdatum");
     }
 
     @Test
     void checkinOhneAdresseIstNichtMoeglich() {
-        var buchung = buchung(Buchungsstatus.RESERVIERT, Gast.neu("Erika", "Mustermann", null, ERWACHSEN));
+        var buchung = reserviert(Gast.neu("Erika", "Mustermann", null, ERWACHSEN));
 
-        assertThatThrownBy(() -> buchung.checkeEin(HEUTE))
+        assertThatThrownBy(() -> buchung.checkeEin(HEUTE, ZIMMER))
             .isInstanceOf(DomainAssertionException.class)
             .hasMessageContaining("Adresse");
         assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.RESERVIERT);
@@ -95,14 +103,22 @@ class BuchungTest {
 
     @Test
     void reservierungOhneGeburtsdatumUndAdresseIstMoeglich() {
-        var buchung = buchung(Buchungsstatus.RESERVIERT, Gast.neu(null, "Mustermann", null, null));
+        var buchung = reserviert(Gast.neu(null, "Mustermann", null, null));
 
         assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.RESERVIERT);
     }
 
     @Test
+    void eingecheckteBuchungHatImmerEinZimmer() {
+        assertThatThrownBy(() -> buchung(Buchungsstatus.EINGECHECKT, gast(ERWACHSEN), null))
+            .isInstanceOf(DomainAssertionException.class);
+        assertThatThrownBy(() -> buchung(Buchungsstatus.RESERVIERT, gast(ERWACHSEN), ZIMMER))
+            .isInstanceOf(DomainAssertionException.class);
+    }
+
+    @Test
     void reservierteBuchungKannStorniertWerden() {
-        var buchung = buchung(Buchungsstatus.RESERVIERT, gast(ERWACHSEN));
+        var buchung = reserviert(gast(ERWACHSEN));
 
         buchung.storniere();
 
@@ -111,7 +127,8 @@ class BuchungTest {
 
     @Test
     void eingecheckteBuchungKannNichtStorniertWerden() {
-        var buchung = walkIn(gast(ERWACHSEN));
+        var buchung = reserviert(gast(ERWACHSEN));
+        buchung.checkeEin(HEUTE, ZIMMER);
 
         assertThatThrownBy(buchung::storniere)
             .isInstanceOf(DomainAssertionException.class)
@@ -137,10 +154,6 @@ class BuchungTest {
             .isInstanceOf(DomainAssertionException.class);
     }
 
-    private static Buchung walkIn(Gast gast) {
-        return Buchung.walkIn(gast, zeitraum(), Zimmerkategorie.SUITE);
-    }
-
     private static Buchungszeitraum zeitraum() {
         return new Buchungszeitraum(HEUTE, HEUTE.plusDays(2));
     }
@@ -149,13 +162,18 @@ class BuchungTest {
         return Gast.neu("Erika", "Mustermann", new Adresse("Hauptstrasse 1", "76131", "Karlsruhe", "Deutschland"), geburtsdatum);
     }
 
-    private static Buchung buchung(Buchungsstatus status, Gast gast) {
+    private static Buchung reserviert(Gast gast) {
+        return buchung(Buchungsstatus.RESERVIERT, gast, null);
+    }
+
+    private static Buchung buchung(Buchungsstatus status, Gast gast, Zimmer.ZimmerId zimmer) {
         return Buchung.builder()
             .id(new Buchung.BuchungId(UUID.randomUUID()))
             .gast(gast)
             .buchungszeitraum(new Buchungszeitraum(HEUTE, HEUTE.plusDays(3)))
             .gewuenschteZimmerkategorie(Zimmerkategorie.DOPPELZIMMER)
             .status(status)
+            .zugewiesenesZimmer(zimmer)
             .build();
     }
 }
