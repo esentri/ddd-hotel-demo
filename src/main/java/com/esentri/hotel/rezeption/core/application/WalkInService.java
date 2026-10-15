@@ -24,7 +24,7 @@ public class WalkInService implements ApplicationService {
     @Transactional
     public Buchung.BuchungId checkeWalkInEin(CheckeWalkInEin command) {
         var buchung = Buchung.walkIn(
-            Gast.neu(command.vorname(), command.nachname()),
+            Gast.neu(command.vorname(), command.nachname(), command.adresse(), command.geburtsdatum()),
             new Buchungszeitraum(LocalDate.now(clock), command.abreise()),
             command.gewuenschteZimmerkategorie());
         return buchungRepository.insert(buchung).getId();

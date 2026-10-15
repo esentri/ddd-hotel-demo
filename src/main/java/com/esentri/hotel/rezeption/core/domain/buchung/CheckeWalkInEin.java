@@ -15,6 +15,8 @@ import java.time.LocalDate;
 public record CheckeWalkInEin(
     @Size(max = 100) String vorname,
     @NotBlank @Size(max = 100) String nachname,
+    Adresse adresse,
+    LocalDate geburtsdatum,
     @NotNull LocalDate abreise,
     @NotNull Zimmerkategorie gewuenschteZimmerkategorie
 ) implements DomainCommand {

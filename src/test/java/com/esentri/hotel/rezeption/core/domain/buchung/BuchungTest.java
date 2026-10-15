@@ -12,10 +12,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class BuchungTest {
 
     private static final LocalDate HEUTE = LocalDate.of(2026, 10, 15);
+    private static final LocalDate ERWACHSEN = LocalDate.of(1980, 5, 1);
 
     @Test
     void walkInLegtEingecheckteBuchungAn() {
-        var buchung = Buchung.walkIn(gast(), new Buchungszeitraum(HEUTE, HEUTE.plusDays(2)), Zimmerkategorie.SUITE);
+        var buchung = walkIn(gast(ERWACHSEN));
 
         assertThat(buchung.getId()).isNotNull();
         assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.EINGECHECKT);
@@ -23,33 +24,85 @@ class BuchungTest {
     }
 
     @Test
-    void angelegteBuchungKannEingechecktWerden() {
-        var buchung = buchung(Buchungsstatus.ANGELEGT);
+    void reservierteBuchungKannEingechecktWerden() {
+        var buchung = buchung(Buchungsstatus.RESERVIERT, gast(ERWACHSEN));
 
-        buchung.checkeEin();
+        buchung.checkeEin(HEUTE);
 
         assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.EINGECHECKT);
     }
 
     @Test
     void buchungKannNurEinmalEingechecktWerden() {
-        var buchung = Buchung.walkIn(gast(), new Buchungszeitraum(HEUTE, HEUTE.plusDays(1)), Zimmerkategorie.EINZELZIMMER);
+        var buchung = walkIn(gast(ERWACHSEN));
 
-        assertThatThrownBy(buchung::checkeEin)
+        assertThatThrownBy(() -> buchung.checkeEin(HEUTE))
             .isInstanceOf(DomainAssertionException.class)
             .hasMessageContaining("bereits eingecheckt");
     }
 
     @Test
     void stornierteBuchungKannNichtEingechecktWerden() {
-        var buchung = buchung(Buchungsstatus.STORNIERT);
+        var buchung = buchung(Buchungsstatus.STORNIERT, gast(ERWACHSEN));
 
-        assertThatThrownBy(buchung::checkeEin).isInstanceOf(DomainAssertionException.class);
+        assertThatThrownBy(() -> buchung.checkeEin(HEUTE)).isInstanceOf(DomainAssertionException.class);
     }
 
     @Test
-    void nichtEingecheckteBuchungKannStorniertWerden() {
-        var buchung = buchung(Buchungsstatus.ANGELEGT);
+    void gastMitGenau16JahrenKannEinchecken() {
+        var buchung = buchung(Buchungsstatus.RESERVIERT, gast(HEUTE.minusYears(16)));
+
+        buchung.checkeEin(HEUTE);
+
+        assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.EINGECHECKT);
+    }
+
+    @Test
+    void gastUnter16KannNichtEinchecken() {
+        var buchung = buchung(Buchungsstatus.RESERVIERT, gast(HEUTE.minusYears(16).plusDays(1)));
+
+        assertThatThrownBy(() -> buchung.checkeEin(HEUTE))
+            .isInstanceOf(DomainAssertionException.class)
+            .hasMessageContaining("mindestens 16 Jahre");
+        assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.RESERVIERT);
+    }
+
+    @Test
+    void walkInUnter16WirdAbgelehnt() {
+        assertThatThrownBy(() -> walkIn(gast(HEUTE.minusYears(15))))
+            .isInstanceOf(DomainAssertionException.class)
+            .hasMessageContaining("mindestens 16 Jahre");
+    }
+
+    @Test
+    void checkinOhneGeburtsdatumIstNichtMoeglich() {
+        var buchung = buchung(Buchungsstatus.RESERVIERT, gast(null));
+
+        assertThatThrownBy(() -> buchung.checkeEin(HEUTE))
+            .isInstanceOf(DomainAssertionException.class)
+            .hasMessageContaining("Geburtsdatum");
+    }
+
+    @Test
+    void checkinOhneAdresseIstNichtMoeglich() {
+        var buchung = buchung(Buchungsstatus.RESERVIERT, Gast.neu("Erika", "Mustermann", null, ERWACHSEN));
+
+        assertThatThrownBy(() -> buchung.checkeEin(HEUTE))
+            .isInstanceOf(DomainAssertionException.class)
+            .hasMessageContaining("Adresse");
+        assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.RESERVIERT);
+    }
+
+    @Test
+    void reservierungOhneGeburtsdatumUndAdresseIstMoeglich() {
+        var buchung = buchung(Buchungsstatus.RESERVIERT, Gast.neu(null, "Mustermann", null, null));
+
+        assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.RESERVIERT);
+    }
+
+    @Test
+    void reservierteBuchungKannStorniertWerden() {
+        var buchung = buchung(Buchungsstatus.RESERVIERT, gast(ERWACHSEN));
 
         buchung.storniere();
 
@@ -58,7 +111,7 @@ class BuchungTest {
 
     @Test
     void eingecheckteBuchungKannNichtStorniertWerden() {
-        var buchung = Buchung.walkIn(gast(), new Buchungszeitraum(HEUTE, HEUTE.plusDays(1)), Zimmerkategorie.DOPPELZIMMER);
+        var buchung = walkIn(gast(ERWACHSEN));
 
         assertThatThrownBy(buchung::storniere)
             .isInstanceOf(DomainAssertionException.class)
@@ -68,30 +121,38 @@ class BuchungTest {
 
     @Test
     void buchungOhneGastIstUngueltig() {
-        assertThatThrownBy(() -> Buchung.walkIn(null, new Buchungszeitraum(HEUTE, HEUTE.plusDays(1)), Zimmerkategorie.SUITE))
+        assertThatThrownBy(() -> Buchung.walkIn(null, zeitraum(), Zimmerkategorie.SUITE))
             .isInstanceOf(DomainAssertionException.class);
     }
 
     @Test
     void buchungOhneBuchungszeitraumIstUngueltig() {
-        assertThatThrownBy(() -> Buchung.walkIn(gast(), null, Zimmerkategorie.SUITE))
+        assertThatThrownBy(() -> Buchung.walkIn(gast(ERWACHSEN), null, Zimmerkategorie.SUITE))
             .isInstanceOf(DomainAssertionException.class);
     }
 
     @Test
     void buchungOhneZimmerkategorieIstUngueltig() {
-        assertThatThrownBy(() -> Buchung.walkIn(gast(), new Buchungszeitraum(HEUTE, HEUTE.plusDays(1)), null))
+        assertThatThrownBy(() -> Buchung.walkIn(gast(ERWACHSEN), zeitraum(), null))
             .isInstanceOf(DomainAssertionException.class);
     }
 
-    private static Gast gast() {
-        return Gast.neu("Erika", "Mustermann");
+    private static Buchung walkIn(Gast gast) {
+        return Buchung.walkIn(gast, zeitraum(), Zimmerkategorie.SUITE);
     }
 
-    private static Buchung buchung(Buchungsstatus status) {
+    private static Buchungszeitraum zeitraum() {
+        return new Buchungszeitraum(HEUTE, HEUTE.plusDays(2));
+    }
+
+    private static Gast gast(LocalDate geburtsdatum) {
+        return Gast.neu("Erika", "Mustermann", new Adresse("Hauptstrasse 1", "76131", "Karlsruhe", "Deutschland"), geburtsdatum);
+    }
+
+    private static Buchung buchung(Buchungsstatus status, Gast gast) {
         return Buchung.builder()
             .id(new Buchung.BuchungId(UUID.randomUUID()))
-            .gast(gast())
+            .gast(gast)
             .buchungszeitraum(new Buchungszeitraum(HEUTE, HEUTE.plusDays(3)))
             .gewuenschteZimmerkategorie(Zimmerkategorie.DOPPELZIMMER)
             .status(status)

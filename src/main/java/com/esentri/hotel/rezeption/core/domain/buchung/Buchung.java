@@ -8,15 +8,19 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
  * Zentrales Konzept der Rezeption: die Buchung eines Gastes fuer einen Buchungszeitraum
- * mit gewuenschter Zimmerkategorie. Eine Buchung wird hoechstens einmal eingecheckt;
- * eine eingecheckte Buchung kann nicht mehr storniert werden.
+ * mit gewuenschter Zimmerkategorie. Eine Buchung wird hoechstens einmal eingecheckt, und nur wenn
+ * die Adresse des Gastes bekannt ist und er das Mindestalter erreicht hat; eine eingecheckte Buchung
+ * kann nicht mehr storniert werden.
  */
 @Getter
 public final class Buchung extends AggregateRootBase<Buchung.BuchungId> {
+
+    public static final int MINDESTALTER_CHECKIN = 16;
 
     public record BuchungId(@NotNull UUID value) implements Identity<UUID> {
     }
@@ -52,7 +56,7 @@ public final class Buchung extends AggregateRootBase<Buchung.BuchungId> {
 
     /**
      * Walk-In: ein Gast kommt ohne vorherige Buchung an den Tresen. Die Buchung entsteht
-     * vor Ort und wird sofort eingecheckt.
+     * vor Ort und wird am Tag der Anreise sofort eingecheckt.
      */
     @FactoryMethod
     public static Buchung walkIn(Gast gast, Buchungszeitraum buchungszeitraum, Zimmerkategorie gewuenschteZimmerkategorie) {
@@ -62,16 +66,20 @@ public final class Buchung extends AggregateRootBase<Buchung.BuchungId> {
             gast,
             buchungszeitraum,
             gewuenschteZimmerkategorie,
-            Buchungsstatus.ANGELEGT);
-        buchung.checkeEin();
+            Buchungsstatus.RESERVIERT);
+        buchung.checkeEin(buchungszeitraum.anreise());
         return buchung;
     }
 
-    public void checkeEin() {
+    public void checkeEin(LocalDate checkinDatum) {
         DomainAssertions.isFalse(status == Buchungsstatus.EINGECHECKT,
             "Die Buchung ist bereits eingecheckt.");
         DomainAssertions.isFalse(status == Buchungsstatus.STORNIERT,
             "Eine stornierte Buchung kann nicht eingecheckt werden.");
+        DomainAssertions.isNotNull(checkinDatum, "Das Check-in-Datum ist erforderlich.");
+        DomainAssertions.isNotNull(gast.getAdresse(), "Fuer den Check-in wird die Adresse des Gastes benoetigt.");
+        DomainAssertions.isTrue(gast.alterAm(checkinDatum) >= MINDESTALTER_CHECKIN,
+            "Der Gast muss zum Check-in mindestens " + MINDESTALTER_CHECKIN + " Jahre alt sein.");
         status = Buchungsstatus.EINGECHECKT;
     }
 
