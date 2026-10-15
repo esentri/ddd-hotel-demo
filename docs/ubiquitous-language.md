@@ -11,3 +11,13 @@ Ablaeufe vor Ort am Tresen des Hotels. Die Reservierung im Vorfeld ist ein eigen
 
 | Term | Definition | Code | Status | Avoid | Open question |
 |---|---|---|---|---|---|
+| Buchung | Zentrales Konzept: steht immer in Verbindung zu einem Gast, hat einen Buchungszeitraum und eine gewuenschte Zimmerkategorie. Wird hoechstens einmal eingecheckt; eingecheckt nicht mehr stornierbar, sonst schon. | `Buchung`, `Buchung.BuchungId`, `BuchungRepository` | candidate | | |
+| Gast | Person, fuer die gebucht ist; Teil der Buchung. Buchungen kommen ueber verschiedene Kanaele mit nicht immer vollstaendigen Gastdaten, die beim Check-in vervollstaendigt bzw. korrigiert werden koennen. | `Gast`, `Gast.GastId` | candidate | | Welche Gastdaten sind beim Check-in Pflicht (aktuell nur Nachname)? |
+| Buchungszeitraum | Zeitraum von der Anreise bis zur Abreise; die Abreise liegt nach der Anreise. | `Buchungszeitraum` | candidate | | |
+| Anreise | Erster Tag des Buchungszeitraums. | `Buchungszeitraum.anreise` | candidate | | |
+| Abreise | Letzter Tag des Buchungszeitraums. | `Buchungszeitraum.abreise` | candidate | | |
+| Zimmerkategorie | Kategorie des gewuenschten Zimmers: Einzelzimmer, Doppelzimmer, Suite. | `Zimmerkategorie`, `Buchung.gewuenschteZimmerkategorie` | candidate | | |
+| Buchungsstatus | Stand einer Buchung: angelegt, eingecheckt, storniert. | `Buchungsstatus` | candidate | | Ist "angelegt" der richtige Begriff fuer eine noch nicht eingecheckte Buchung? |
+| Einchecken | Der Gast einer Buchung wird vor Ort aufgenommen; nur einmal pro Buchung moeglich. | `Buchung.checkeEin` | candidate | | |
+| Stornieren | Eine Buchung wird zurueckgenommen; nicht moeglich, wenn sie eingecheckt ist. | `Buchung.storniere` | candidate | | |
+| Walk-In | Spontaner Check-in: ein Gast kommt ohne Buchung an den Tresen, die Buchung entsteht vor Ort (Anreise heute) und wird sofort eingecheckt. | `Buchung.walkIn`, `CheckeWalkInEin`, `WalkInService` | candidate | | |
