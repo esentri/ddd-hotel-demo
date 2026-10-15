@@ -17,7 +17,8 @@ import java.util.UUID;
  * Zentrales Konzept der Rezeption: die Buchung eines Gastes fuer einen Buchungszeitraum
  * mit gewuenschter Zimmerkategorie. Eine Buchung wird hoechstens einmal eingecheckt, und nur wenn
  * die Adresse des Gastes bekannt ist und er das Mindestalter erreicht hat; beim Check-in wird ihr ein Zimmer
- * zugewiesen. Eine eingecheckte Buchung kann nicht mehr storniert werden.
+ * zugewiesen. Nur eine eingecheckte Buchung kann ausgecheckt werden. Storniert werden kann nur eine
+ * reservierte Buchung.
  */
 @Getter
 public final class Buchung extends AggregateRootBase<Buchung.BuchungId> {
@@ -81,7 +82,7 @@ public final class Buchung extends AggregateRootBase<Buchung.BuchungId> {
      * gewuenschten Zimmerkategorie passt, prueft das Zimmer selbst ({@link Zimmer#belege}).
      */
     public void checkeEin(LocalDate checkinDatum, Zimmer.ZimmerId zimmer) {
-        DomainAssertions.isFalse(status == Buchungsstatus.EINGECHECKT,
+        DomainAssertions.isFalse(status == Buchungsstatus.EINGECHECKT || status == Buchungsstatus.AUSGECHECKT,
             "Die Buchung ist bereits eingecheckt.");
         DomainAssertions.isFalse(status == Buchungsstatus.STORNIERT,
             "Eine stornierte Buchung kann nicht eingecheckt werden.");
@@ -94,8 +95,18 @@ public final class Buchung extends AggregateRootBase<Buchung.BuchungId> {
         zugewiesenesZimmer = zimmer;
     }
 
+    /**
+     * Checkt die Buchung aus. Das zugewiesene Zimmer bleibt an der Buchung vermerkt; das Zimmer selbst wird
+     * geraeumt ({@link Zimmer#raeume}).
+     */
+    public void checkeAus() {
+        DomainAssertions.equals(status, Buchungsstatus.EINGECHECKT,
+            "Nur eine eingecheckte Buchung kann ausgecheckt werden.");
+        status = Buchungsstatus.AUSGECHECKT;
+    }
+
     public void storniere() {
-        DomainAssertions.isFalse(status == Buchungsstatus.EINGECHECKT,
+        DomainAssertions.isFalse(status == Buchungsstatus.EINGECHECKT || status == Buchungsstatus.AUSGECHECKT,
             "Eine eingecheckte Buchung kann nicht storniert werden.");
         DomainAssertions.isFalse(status == Buchungsstatus.STORNIERT,
             "Die Buchung ist bereits storniert.");
@@ -105,8 +116,9 @@ public final class Buchung extends AggregateRootBase<Buchung.BuchungId> {
     @Override
     public void validate() {
         if (status != null) {
-            DomainAssertions.isTrue((status == Buchungsstatus.EINGECHECKT) == (zugewiesenesZimmer != null),
-                "Eine Buchung hat genau dann ein zugewiesenes Zimmer, wenn sie eingecheckt ist.");
+            var warEingecheckt = status == Buchungsstatus.EINGECHECKT || status == Buchungsstatus.AUSGECHECKT;
+            DomainAssertions.isTrue(warEingecheckt == (zugewiesenesZimmer != null),
+                "Eine Buchung hat genau dann ein zugewiesenes Zimmer, wenn sie eingecheckt ist oder war.");
         }
     }
 }

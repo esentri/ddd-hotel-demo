@@ -12,7 +12,8 @@ import java.util.UUID;
 
 /**
  * Ein Zimmer des Hotels mit seinen Merkmalen. Nur ein bezugsfertiges Zimmer kann belegt werden,
- * und nur fuer eine Buchung, deren gewuenschte Zimmerkategorie es mindestens erfuellt.
+ * und nur fuer eine Buchung, deren gewuenschte Zimmerkategorie es mindestens erfuellt. Beim Check-out wird
+ * das Zimmer geraeumt und ist danach zu reinigen.
  */
 @Getter
 public final class Zimmer extends AggregateRootBase<Zimmer.ZimmerId> {
@@ -87,6 +88,18 @@ public final class Zimmer extends AggregateRootBase<Zimmer.ZimmerId> {
                 + gewuenschteZimmerkategorie + " nicht.");
         status = Zimmerstatus.BELEGT;
         belegtDurch = buchungId;
+    }
+
+    /**
+     * Raeumt das Zimmer beim Check-out der belegenden Buchung; danach ist es zu reinigen.
+     */
+    public void raeume(Buchung.BuchungId buchungId) {
+        DomainAssertions.equals(status, Zimmerstatus.BELEGT,
+            "Zimmer " + zimmernummer.value() + " ist nicht belegt.");
+        DomainAssertions.equals(belegtDurch, buchungId,
+            "Zimmer " + zimmernummer.value() + " ist nicht mit dieser Buchung belegt.");
+        status = Zimmerstatus.ZU_REINIGEN;
+        belegtDurch = null;
     }
 
     @Override

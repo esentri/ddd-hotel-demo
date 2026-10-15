@@ -137,6 +137,46 @@ class BuchungTest {
     }
 
     @Test
+    void eingecheckteBuchungWirdAusgechecktUndBehaeltIhrZimmer() {
+        var buchung = eingecheckt();
+
+        buchung.checkeAus();
+
+        assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.AUSGECHECKT);
+        assertThat(buchung.getZugewiesenesZimmer()).isEqualTo(ZIMMER);
+    }
+
+    @Test
+    void nurEingecheckteBuchungKannAusgechecktWerden() {
+        assertThatThrownBy(() -> reserviert(gast(ERWACHSEN)).checkeAus())
+            .isInstanceOf(DomainAssertionException.class)
+            .hasMessageContaining("Nur eine eingecheckte Buchung");
+        assertThatThrownBy(() -> buchung(Buchungsstatus.STORNIERT, gast(ERWACHSEN), null).checkeAus())
+            .isInstanceOf(DomainAssertionException.class);
+        var ausgecheckt = eingecheckt();
+        ausgecheckt.checkeAus();
+        assertThatThrownBy(ausgecheckt::checkeAus).isInstanceOf(DomainAssertionException.class);
+    }
+
+    @Test
+    void ausgecheckteBuchungKannWederEingechecktNochStorniertWerden() {
+        var buchung = eingecheckt();
+        buchung.checkeAus();
+
+        assertThatThrownBy(() -> buchung.checkeEin(HEUTE, ZIMMER))
+            .isInstanceOf(DomainAssertionException.class)
+            .hasMessageContaining("bereits eingecheckt");
+        assertThatThrownBy(buchung::storniere).isInstanceOf(DomainAssertionException.class);
+        assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.AUSGECHECKT);
+    }
+
+    @Test
+    void ausgecheckteBuchungHatImmerEinZimmer() {
+        assertThatThrownBy(() -> buchung(Buchungsstatus.AUSGECHECKT, gast(ERWACHSEN), null))
+            .isInstanceOf(DomainAssertionException.class);
+    }
+
+    @Test
     void buchungOhneGastIstUngueltig() {
         assertThatThrownBy(() -> Buchung.walkIn(null, zeitraum(), Zimmerkategorie.SUITE))
             .isInstanceOf(DomainAssertionException.class);
@@ -160,6 +200,12 @@ class BuchungTest {
 
     private static Gast gast(LocalDate geburtsdatum) {
         return Gast.neu("Erika", "Mustermann", new Adresse("Hauptstrasse 1", "76131", "Karlsruhe", "Deutschland"), geburtsdatum);
+    }
+
+    private static Buchung eingecheckt() {
+        var buchung = reserviert(gast(ERWACHSEN));
+        buchung.checkeEin(HEUTE, ZIMMER);
+        return buchung;
     }
 
     private static Buchung reserviert(Gast gast) {

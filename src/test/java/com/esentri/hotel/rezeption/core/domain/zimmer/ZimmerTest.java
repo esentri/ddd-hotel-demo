@@ -64,6 +64,38 @@ class ZimmerTest {
     }
 
     @Test
+    void geraeumtesZimmerIstZuReinigen() {
+        var zimmer = zimmer(Zimmerkategorie.SUITE, Zimmerstatus.BEZUGSFERTIG);
+        zimmer.belege(BUCHUNG, Zimmerkategorie.SUITE);
+
+        zimmer.raeume(BUCHUNG);
+
+        assertThat(zimmer.getStatus()).isEqualTo(Zimmerstatus.ZU_REINIGEN);
+        assertThat(zimmer.getBelegtDurch()).isNull();
+    }
+
+    @Test
+    void nurBelegtesZimmerKannGeraeumtWerden() {
+        var zimmer = zimmer(Zimmerkategorie.SUITE, Zimmerstatus.BEZUGSFERTIG);
+
+        assertThatThrownBy(() -> zimmer.raeume(BUCHUNG))
+            .isInstanceOf(DomainAssertionException.class)
+            .hasMessageContaining("nicht belegt");
+        assertThat(zimmer.getStatus()).isEqualTo(Zimmerstatus.BEZUGSFERTIG);
+    }
+
+    @Test
+    void zimmerWirdNurVonDerBelegendenBuchungGeraeumt() {
+        var zimmer = zimmer(Zimmerkategorie.SUITE, Zimmerstatus.BEZUGSFERTIG);
+        zimmer.belege(BUCHUNG, Zimmerkategorie.SUITE);
+
+        assertThatThrownBy(() -> zimmer.raeume(new Buchung.BuchungId(UUID.randomUUID())))
+            .isInstanceOf(DomainAssertionException.class)
+            .hasMessageContaining("nicht mit dieser Buchung belegt");
+        assertThat(zimmer.getStatus()).isEqualTo(Zimmerstatus.BELEGT);
+    }
+
+    @Test
     void belegtesZimmerGehoertImmerZuEinerBuchung() {
         assertThatThrownBy(() -> zimmerBuilder(Zimmerkategorie.SUITE, Zimmerstatus.BELEGT).build())
             .isInstanceOf(DomainAssertionException.class);
