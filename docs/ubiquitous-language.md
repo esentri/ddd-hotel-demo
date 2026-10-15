@@ -38,7 +38,8 @@ Ablaeufe vor Ort am Tresen des Hotels. Die Reservierung im Vorfeld ist ein eigen
 | Zimmerzuweisung | Beim Check-in wird der Buchung ein bezugsfertiges Zimmer der gewuenschten oder einer hoeheren Zimmerkategorie zugewiesen; der Gast kann mitentscheiden. | `Buchung.zugewiesenesZimmer`, `Zimmer.belege` | candidate | | |
 | Upgrade | Zuweisung eines Zimmers einer hoeheren als der gewuenschten Zimmerkategorie. | `VerfuegbaresZimmer.upgrade`, `Zimmerkategorie.istGleichOderHoeherAls` | candidate | | Ist ein Upgrade kostenfrei? |
 | Verfuegbares Zimmer | Bezugsfertiges Zimmer der gewuenschten oder einer hoeheren Zimmerkategorie; Uebersicht fuer die Zimmerauswahl an der Rezeption. | `VerfuegbaresZimmer`, `VerfuegbareZimmerQueryHandler` | candidate | | |
-| Auschecken | Der Gast reist ab: eine eingecheckte Buchung wird ausgecheckt, ihr Zimmer wird geraeumt und ist danach zu reinigen. Das zugewiesene Zimmer bleibt an der Buchung vermerkt. | `Buchung.checkeAus`, `CheckeAus`, `CheckoutService` | candidate | | |
+| Auschecken | Der Gast reist ab: eine eingecheckte Buchung wird ausgecheckt; als Folge wird ihr Zimmer geraeumt und ist danach zu reinigen. Das zugewiesene Zimmer bleibt an der Buchung vermerkt. | `Buchung.checkeAus`, `CheckeAus`, `BuchungService.checkeAus` | candidate | | |
+| Buchung ausgecheckt | Ereignis: eine Buchung wurde ausgecheckt; daraufhin wird das zugewiesene Zimmer geraeumt. | `BuchungAusgecheckt`, `ZimmerService.onBuchungAusgecheckt` | candidate | | |
 | Ausgecheckt | Buchungsstatus nach dem Check-out. | `Buchungsstatus.AUSGECHECKT` | candidate | | |
 | Zimmer raeumen | Beim Check-out wird das belegte Zimmer von der belegenden Buchung freigegeben; danach ist es zu reinigen. | `Zimmer.raeume` | candidate | | |
 | Zu reinigen | Zimmerstatus nach dem Check-out; das Zimmer ist nicht verfuegbar. | `Zimmerstatus.ZU_REINIGEN` | candidate | | |

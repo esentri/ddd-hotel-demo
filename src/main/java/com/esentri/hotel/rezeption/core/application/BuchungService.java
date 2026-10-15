@@ -1,20 +1,24 @@
 package com.esentri.hotel.rezeption.core.application;
 
+import com.esentri.hotel.rezeption.core.domain.buchung.BuchungRepository;
 import com.esentri.hotel.rezeption.core.domain.buchung.CheckeAus;
-import com.esentri.hotel.rezeption.core.domain.buchung.CheckoutService;
+import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.ApplicationService;
 import org.springframework.transaction.annotation.Transactional;
 
 public class BuchungService implements ApplicationService {
 
-    private final CheckoutService checkoutService;
+    private final BuchungRepository buchungRepository;
 
-    public BuchungService(CheckoutService checkoutService) {
-        this.checkoutService = checkoutService;
+    public BuchungService(BuchungRepository buchungRepository) {
+        this.buchungRepository = buchungRepository;
     }
 
     @Transactional
     public void checkeAus(CheckeAus command) {
-        checkoutService.checkeAus(command.buchungId());
+        var buchung = buchungRepository.findById(command.buchungId());
+        DomainAssertions.isTrue(buchung.isPresent(), "Die Buchung ist nicht bekannt.");
+        buchung.get().checkeAus();
+        buchungRepository.update(buchung.get());
     }
 }

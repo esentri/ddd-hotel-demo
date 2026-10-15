@@ -5,7 +5,9 @@ import com.esentri.hotel.rezeption.core.domain.zimmer.Zimmerkategorie;
 import io.domainlifecycles.assertion.DomainAssertions;
 import io.domainlifecycles.domain.types.FactoryMethod;
 import io.domainlifecycles.domain.types.Identity;
+import io.domainlifecycles.domain.types.Publishes;
 import io.domainlifecycles.domain.types.base.AggregateRootBase;
+import io.domainlifecycles.events.api.DomainEvents;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -96,13 +98,15 @@ public final class Buchung extends AggregateRootBase<Buchung.BuchungId> {
     }
 
     /**
-     * Checkt die Buchung aus. Das zugewiesene Zimmer bleibt an der Buchung vermerkt; das Zimmer selbst wird
-     * geraeumt ({@link Zimmer#raeume}).
+     * Checkt die Buchung aus. Das zugewiesene Zimmer bleibt an der Buchung vermerkt; geraeumt wird das Zimmer
+     * entkoppelt als Reaktion auf {@link BuchungAusgecheckt}.
      */
+    @Publishes(domainEventTypes = BuchungAusgecheckt.class)
     public void checkeAus() {
         DomainAssertions.equals(status, Buchungsstatus.EINGECHECKT,
             "Nur eine eingecheckte Buchung kann ausgecheckt werden.");
         status = Buchungsstatus.AUSGECHECKT;
+        DomainEvents.publish(new BuchungAusgecheckt(id, zugewiesenesZimmer));
     }
 
     public void storniere() {

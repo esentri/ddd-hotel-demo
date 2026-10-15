@@ -15,11 +15,13 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.Duration;
 import java.util.UUID;
 
 import static com.esentri.hotel.rezeption.RezeptionApi.gastJson;
 import static com.esentri.hotel.rezeption.RezeptionApi.neueZimmernummer;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -55,15 +57,15 @@ class CheckoutIntegrationTest {
         var buchung = buchungRepository.findById(new Buchung.BuchungId(buchungId)).orElseThrow();
         assertThat(buchung.getStatus()).isEqualTo(Buchungsstatus.AUSGECHECKT);
         assertThat(buchung.getZugewiesenesZimmer()).isEqualTo(new Zimmer.ZimmerId(zimmerId));
-        var zimmer = zimmerRepository.findById(new Zimmer.ZimmerId(zimmerId)).orElseThrow();
-        assertThat(zimmer.getStatus()).isEqualTo(Zimmerstatus.ZU_REINIGEN);
-        assertThat(zimmer.getBelegtDurch()).isNull();
+        warteBisZimmerZuReinigenIst(zimmerId);
+        assertThat(zimmerRepository.findById(new Zimmer.ZimmerId(zimmerId)).orElseThrow().getBelegtDurch()).isNull();
     }
 
     @Test
     void zuReinigendesZimmerIstNichtVerfuegbar() throws Exception {
         var zimmerId = api.legeZimmerAn(neueZimmernummer(), "DOPPELZIMMER");
         checkeAus(walkIn(zimmerId)).andExpect(status().isNoContent());
+        warteBisZimmerZuReinigenIst(zimmerId);
 
         var antwort = mockMvc.perform(get("/api/rezeption/zimmer/verfuegbar")
                 .param("gewuenschteZimmerkategorie", "DOPPELZIMMER"))
@@ -88,6 +90,15 @@ class CheckoutIntegrationTest {
         checkeAus(UUID.randomUUID())
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.detail").value("Die Buchung ist nicht bekannt."));
+    }
+
+    /**
+     * Das Zimmer wird entkoppelt nach dem Commit des Check-outs geraeumt (Domain Event).
+     */
+    private void warteBisZimmerZuReinigenIst(UUID zimmerId) {
+        await().atMost(Duration.ofSeconds(5)).untilAsserted(() ->
+            assertThat(zimmerRepository.findById(new Zimmer.ZimmerId(zimmerId)).orElseThrow().getStatus())
+                .isEqualTo(Zimmerstatus.ZU_REINIGEN));
     }
 
     private UUID walkIn(UUID zimmerId) throws Exception {
