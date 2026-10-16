@@ -1,0 +1,448 @@
+<svg version="1.1" baseProfile="full" width="1488.8" height="1565.0" viewBox="0 0 1488.75 1565" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events">
+	<desc >#.AF:visual=frame align=left
+	#.AF_R:visual=frame align=left;stroke=#FF0000
+	#.AF_N:visual=frame align=left;stroke=#108738
+	#.AR:fill=#8f8f bold
+	#.AR_R:fill=#8f8f bold;stroke=#FF0000
+	#.AR_N:fill=#8f8f bold;stroke=#108738
+	#.E:fill=#88AAFF bold
+	#.E_R:fill=#88AAFF bold;stroke=#FF0000
+	#.E_N:fill=#88AAFF bold;stroke=#108738
+	#.VO:fill=#FFFFCC bold
+	#.VO_R:fill=#FFFFCC bold;stroke=#FF0000
+	#.VO_N:fill=#FFFFCC bold;stroke=#108738
+	#.V:fill=#FFFFCC bold
+	#.V_R:fill=#FFFFCC bold;stroke=#FF0000
+	#.V_N:fill=#FFFFCC bold;stroke=#108738
+	#.I:fill=#FFFFCC bold
+	#.I_R:fill=#FFFFCC bold;stroke=#FF0000
+	#.I_N:fill=#FFFFCC bold;stroke=#108738
+	#.DC:fill=#FFB266 bold
+	#.DC_R:fill=#FFB266 bold;stroke=#FF0000
+	#.DC_N:fill=#FFB266 bold;stroke=#108738
+	#.DE:fill=#CCFFFF bold
+	#.DE_R:fill=#CCFFFF bold;stroke=#FF0000
+	#.DE_N:fill=#CCFFFF bold;stroke=#108738
+	#.AS:bold
+	#.AS_R:bold;stroke=#FF0000
+	#.AS_N:bold;stroke=#108738
+	#.DS:fill=#E0E0E0 bold
+	#.R:fill=#C0C0C0 bold
+	#.R_R:fill=#C0C0C0 bold;stroke=#FF0000
+	#.R_N:fill=#C0C0C0 bold;stroke=#108738
+	#.OS:fill=#C0C0C0 bold
+	#.OS_R:fill=#C0C0C0 bold;stroke=#FF0000
+	#.OS_N:fill=#C0C0C0 bold;stroke=#108738
+	#.F:fill=#E0F0E0 bold
+	#.F_R:fill=#E0F0E0 bold;stroke=#FF0000
+	#.F_N:fill=#E0F0E0 bold;stroke=#108738
+	#.SK:fill=#C0C0C0 bold
+	#.SK_R:fill=#C0C0C0 bold;stroke=#FF0000
+	#.SK_N:fill=#C0C0C0 bold;stroke=#108738
+	#.ND:fill=#EAEAEA
+	#.ND_R:fill=#EAEAEA;stroke=#FF0000
+	#.ND_N:fill=#EAEAEA;stroke=#108738
+	#.QH:fill=#C0C0C0 bold
+	#.QH_R:fill=#C0C0C0 bold;stroke=#FF0000
+	#.QH_N:fill=#C0C0C0 bold;stroke=#108738
+	#.RM:fill=#FFCCE5 bold
+	#.RM_R:fill=#FFCCE5 bold;stroke=#FF0000
+	#.RM_N:fill=#FFCCE5 bold;stroke=#108738
+	#font:Helvetica
+	#direction:down
+	#acycler: greedy
+	#ranker: longest-path
+	#background: transparent
+	#.note: fill=#ffffff italic
+	
+	// !!! com.esentri.hotel.rezeption.core.domain.buchung.CheckeWalkInEin !!!
+	[&lt;DC&gt; CheckeWalkInEin &lt;&lt;DomainCommand&gt;&gt; ]
+	// !!! com.esentri.hotel.rezeption.core.application.WalkInService !!!
+	[&lt;AS&gt; WalkInService &lt;&lt;ApplicationService&gt;&gt; |
+	+ Buchung$BuchungId checkeWalkInEin(CheckeWalkInEin)
+	]
+	// !!! com.esentri.hotel.rezeption.core.domain.buchung.CheckinService !!!
+	[&lt;DS&gt; CheckinService &lt;&lt;DomainService&gt;&gt; |
+	+ Buchung checkeWalkInEin(Gast,Buchungszeitraum,Zimmerkategorie,Zimmer$ZimmerId)
+	]
+	// !!! {Frame} com.esentri.hotel.rezeption.core.domain.buchung.Buchung !!!
+	[&lt;AF&gt; Buchung &lt;&lt;Aggregate&gt;&gt;|
+	// !!! com.esentri.hotel.rezeption.core.domain.buchung.Buchung !!!
+	[&lt;AR&gt; Buchung &lt;&lt;AggregateRoot&gt;&gt; |
+	\# +- id:&lt;ID&gt; Buchung$BuchungId
+	\# +- buchungszeitraum:&lt;VO&gt; Buchungszeitraum
+	\# +- gewuenschteZimmerkategorie:&lt;ENUM&gt; Zimmerkategorie
+	\# +- status:&lt;ENUM&gt; Buchungsstatus
+	o +- zugewiesenesZimmer:&lt;IDREF&gt; Zimmer$ZimmerId
+	|
+	+ void checkeEin(LocalDate,Zimmer$ZimmerId)
+	+ «factory» Buchung walkIn(Gast,Buchungszeitraum,Zimmerkategorie)
+	]
+	// !!! com.esentri.hotel.rezeption.core.domain.buchung.Gast !!!
+	[&lt;E&gt; Gast &lt;&lt;Entity&gt;&gt; |
+	\# +- id:&lt;ID&gt; Gast$GastId
+	o +- geburtsdatum:LocalDate{pastOrPresent}
+	o +- nachname:String\[0,100\]{notBlank}
+	o +- vorname:String\[0,100\]
+	|
+	+ int alterAm(LocalDate)
+	+ «factory» Gast neu(String,String,Adresse,LocalDate)
+	]
+	// !!! com.esentri.hotel.rezeption.core.domain.buchung.Adresse !!!
+	[&lt;VO&gt; Adresse &lt;&lt;ValueObject&gt;&gt; |
+	o +- land:String\[0,100\]{notBlank}
+	o +- ort:String\[0,100\]{notBlank}
+	o +- postleitzahl:String\[0,10\]{notBlank}
+	o +- strasse:String\[0,100\]{notBlank}
+	|
+	]
+	[&lt;AR&gt;Buchung &lt;&lt;AggregateRoot&gt;&gt;]  +-[&lt;label&gt; gast 1] - [&lt;E&gt;Gast &lt;&lt;Entity&gt;&gt;]
+	[&lt;E&gt;Gast &lt;&lt;Entity&gt;&gt;]  +-[&lt;label&gt; adresse 0..1] - [&lt;VO&gt;Adresse &lt;&lt;ValueObject&gt;&gt;]
+	]
+	// !!! {Frame} com.esentri.hotel.rezeption.core.domain.zimmer.Zimmer !!!
+	[&lt;AF&gt; Zimmer &lt;&lt;Aggregate&gt;&gt;|
+	// !!! com.esentri.hotel.rezeption.core.domain.zimmer.Zimmer !!!
+	[&lt;AR&gt; Zimmer &lt;&lt;AggregateRoot&gt;&gt; |
+	\# +- id:&lt;ID&gt; Zimmer$ZimmerId
+	o +- balkon:boolean
+	o +- barrierefrei:boolean
+	o +- belegtDurch:&lt;IDREF&gt; Buchung$BuchungId
+	\# +- bettart:&lt;ENUM&gt; Bettart
+	\# +- blickrichtung:&lt;ENUM&gt; Blickrichtung
+	o +- etage:int
+	o +- raucherzimmer:boolean
+	\# +- status:&lt;ENUM&gt; Zimmerstatus
+	\# +- zimmerkategorie:&lt;ENUM&gt; Zimmerkategorie
+	\# +- zimmernummer:&lt;VO&gt; Zimmernummer
+	|
+	+ void belege(Buchung$BuchungId,Zimmerkategorie)
+	]
+	]
+	[&lt;AF&gt; Buchung &lt;&lt;Aggregate&gt;&gt;]  --[&lt;label&gt; &lt;&lt;id-ref&gt;&gt; Buchung.zugewiesenesZimmer] --&gt; [&lt;AF&gt; Zimmer &lt;&lt;Aggregate&gt;&gt;]
+	[&lt;AF&gt; Buchung &lt;&lt;Aggregate&gt;&gt;]  &lt;--[&lt;label&gt; &lt;&lt;id-ref&gt;&gt; Zimmer.belegtDurch] -- [&lt;AF&gt; Zimmer &lt;&lt;Aggregate&gt;&gt;]
+	// !!! com.esentri.hotel.rezeption.outbound.JdbcZimmerRepository !!!
+	[&lt;R&gt; ZimmerRepository &lt;&lt;Repository&gt;&gt; |
+	+ Optional&lt;Zimmer&gt; findById(Zimmer$ZimmerId)
+	]
+	[&lt;DC&gt;CheckeWalkInEin &lt;&lt;DomainCommand&gt;&gt;]  --[&lt;label&gt; &lt;&lt;is processed by&gt;&gt; WalkInService.checkeWalkInEin] --&gt; [&lt;AS&gt;WalkInService &lt;&lt;ApplicationService&gt;&gt;]
+	[&lt;AS&gt;WalkInService &lt;&lt;ApplicationService&gt;&gt;]  -&gt; [&lt;DS&gt;CheckinService &lt;&lt;DomainService&gt;&gt;]
+	[&lt;DS&gt;CheckinService &lt;&lt;DomainService&gt;&gt;]  -&gt; [&lt;R&gt;ZimmerRepository &lt;&lt;Repository&gt;&gt;]
+	[&lt;R&gt;ZimmerRepository &lt;&lt;Repository&gt;&gt;]  --&gt; [&lt;AF&gt; Zimmer &lt;&lt;Aggregate&gt;&gt;]</desc>
+	<g stroke-width="1.0" text-align="left" font="12pt Helvetica, Arial, sans-serif" font-size="12pt" font-family="Helvetica" font-weight="bold" font-style="normal">
+		<g font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" stroke-width="3.0" stroke-linejoin="round" stroke-linecap="round" stroke="#33322E">
+			<g stroke="transparent" fill="transparent">
+				<rect x="0.0" y="0.0" height="1565.0" width="1488.8" stroke="none"></rect>
+			</g>
+			<g transform="translate(8, 8)" fill="#33322E">
+				<g transform="translate(20, 20)" fill="#33322E" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal">
+					<g stroke-dasharray="6 6">
+						<path d="M182.5 1019.0 L174 1039 L174 1075 L174.0 1075.0 " fill="none"></path>
+					</g>
+					<g stroke-dasharray="6 6">
+						<path d="M174.0 1107.0 L174 1143 L271.16403358136927 1196.6556751965786 L271.2 1196.7 " fill="none"></path>
+					</g>
+					<path d="M262.7 1198.1 L271.2 1196.7 L267.9 1188.8 L277.0 1199.9 Z"></path>
+					<g stroke-dasharray="6 6">
+						<path d="M517.4 1025.1 L523.5 1039 L523.5 1075 L523.5 1075.0 " fill="none"></path>
+					</g>
+					<path d="M525.0 1029.1 L517.4 1025.1 L515.2 1033.4 L514.8 1019.0 Z"></path>
+					<g stroke-dasharray="6 6">
+						<path d="M523.5 1107.0 L523.5 1143 L523.5 1163 L523.5 1163.0 " fill="none"></path>
+					</g>
+					<g stroke-dasharray="6 6">
+						<path d="M1069.8 32.0 L1069.75 52 L1069.75 72 L1069.8 72.0 " fill="none"></path>
+					</g>
+					<g stroke-dasharray="6 6">
+						<path d="M1069.8 104.0 L1069.75 124 L1069.75 137.33333333333334 L1069.8 137.3 " fill="none"></path>
+					</g>
+					<path d="M1064.4 130.7 L1069.8 137.3 L1075.1 130.7 L1069.8 144.0 Z"></path>
+					<path d="M1069.8 208.0 L1069.75 228 L1069.75 594.8333333333334 L1069.8 594.8 " fill="none"></path>
+					<path d="M1064.4 588.2 L1069.8 594.8 L1075.1 588.2 L1069.8 601.5 Z"></path>
+					<path d="M1069.8 665.5 L1069.75 1039 L1069.75 1052.3333333333333 L1069.8 1052.3 " fill="none"></path>
+					<path d="M1064.4 1045.7 L1069.8 1052.3 L1075.1 1045.7 L1069.8 1059.0 Z"></path>
+					<g stroke-dasharray="6 6">
+						<path d="M1069.8 1123.0 L1069.75 1143 L776.2858583227853 1246.6861864415605 L776.3 1246.7 " fill="none"></path>
+					</g>
+					<path d="M780.8 1239.4 L776.3 1246.7 L784.3 1249.5 L770.0 1248.9 Z"></path>
+					<g data-name="CheckeWalkInEin &lt;&lt;DomainCommand&gt;&gt;">
+						<g fill="#FFB266" stroke="#33322E" data-name="CheckeWalkInEin &lt;&lt;DomainCommand&gt;&gt;">
+							<rect x="899.8" y="0.0" height="32.0" width="340.0" data-name="CheckeWalkInEin &lt;&lt;DomainCommand&gt;&gt;"></rect>
+						</g>
+						<g transform="translate(899.75, 0)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="CheckeWalkInEin &lt;&lt;DomainCommand&gt;&gt;" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="CheckeWalkInEin &lt;&lt;DomainCommand&gt;&gt;" data-compartment="0">
+								<text x="162.0" y="14.1" stroke="none" text-anchor="middle" data-name="CheckeWalkInEin &lt;&lt;DomainCommand&gt;&gt;" data-compartment="0">CheckeWalkInEin &lt;&lt;DomainCommand&gt;&gt;</text>
+								
+							</g>
+						</g>
+					</g>
+					<g data-name="WalkInService &lt;&lt;ApplicationService&gt;&gt;">
+						<g fill="#eee8d5" stroke="#33322E" data-name="WalkInService &lt;&lt;ApplicationService&gt;&gt;">
+							<rect x="825.8" y="144.0" height="64.0" width="488.0" data-name="WalkInService &lt;&lt;ApplicationService&gt;&gt;"></rect>
+							<path d="M825.8 176.0 L1313.8 176.0" fill="none" data-name="WalkInService &lt;&lt;ApplicationService&gt;&gt;"></path>
+						</g>
+						<g transform="translate(825.75, 144)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="WalkInService &lt;&lt;ApplicationService&gt;&gt;" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="WalkInService &lt;&lt;ApplicationService&gt;&gt;" data-compartment="0">
+								<text x="236.0" y="14.1" stroke="none" text-anchor="middle" data-name="WalkInService &lt;&lt;ApplicationService&gt;&gt;" data-compartment="0">WalkInService &lt;&lt;ApplicationService&gt;&gt;</text>
+								
+							</g>
+						</g>
+						<g transform="translate(825.75, 176)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="WalkInService &lt;&lt;ApplicationService&gt;&gt;" data-compartment="1">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="WalkInService &lt;&lt;ApplicationService&gt;&gt;" data-compartment="1">
+								<text x="0.0" y="14.1" stroke="none" data-name="WalkInService &lt;&lt;ApplicationService&gt;&gt;" data-compartment="1">+ Buchung$BuchungId checkeWalkInEin(CheckeWalkInEin)</text>
+								
+							</g>
+						</g>
+					</g>
+					<g data-name="CheckinService &lt;&lt;DomainService&gt;&gt;">
+						<g fill="#E0E0E0" stroke="#33322E" data-name="CheckinService &lt;&lt;DomainService&gt;&gt;">
+							<rect x="706.8" y="601.5" height="64.0" width="726.0" data-name="CheckinService &lt;&lt;DomainService&gt;&gt;"></rect>
+							<path d="M706.8 633.5 L1432.8 633.5" fill="none" data-name="CheckinService &lt;&lt;DomainService&gt;&gt;"></path>
+						</g>
+						<g transform="translate(706.75, 601.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="CheckinService &lt;&lt;DomainService&gt;&gt;" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="CheckinService &lt;&lt;DomainService&gt;&gt;" data-compartment="0">
+								<text x="355.0" y="14.1" stroke="none" text-anchor="middle" data-name="CheckinService &lt;&lt;DomainService&gt;&gt;" data-compartment="0">CheckinService &lt;&lt;DomainService&gt;&gt;</text>
+								
+							</g>
+						</g>
+						<g transform="translate(706.75, 633.5)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="CheckinService &lt;&lt;DomainService&gt;&gt;" data-compartment="1">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="CheckinService &lt;&lt;DomainService&gt;&gt;" data-compartment="1">
+								<text x="0.0" y="14.1" stroke="none" data-name="CheckinService &lt;&lt;DomainService&gt;&gt;" data-compartment="1">+ Buchung checkeWalkInEin(Gast,Buchungszeitraum,Zimmerkategorie,Zimmer$ZimmerId)</text>
+								
+							</g>
+						</g>
+					</g>
+					<g data-name="Buchung &lt;&lt;Aggregate&gt;&gt;">
+						<g fill="#eee8d5" stroke="#33322E" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;">
+							<rect x="25.8" y="248.0" height="771.0" width="641.0" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;"></rect>
+							<path d="M25.8 280.0 L230.8 280.0 L246.8 264.0 L246.8 248.0" fill="none" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;"></path>
+						</g>
+						<g transform="translate(25.75, 248)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;" data-compartment="0">
+								<text x="0.0" y="14.1" stroke="none" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;" data-compartment="0">Buchung &lt;&lt;Aggregate&gt;&gt;</text>
+								
+							</g>
+						</g>
+						<g transform="translate(25.75, 280)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;" data-compartment="1">
+							<g transform="translate(8, 8)" fill="#33322E" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;" data-compartment="1">
+								<g transform="translate(20, 20)" fill="#33322E" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;" data-compartment="1">
+									<path d="M292.5 195.7 L292.5 197 L292.5 217 L292.5 217.0 " fill="none" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;" data-compartment="1"></path>
+									<g fill="#33322E" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;" data-compartment="1">
+										<path d="M297.8 186.3 L292.5 195.7 L287.2 186.3 L292.5 177.0 Z" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;" data-compartment="1"></path>
+									</g>
+									<path d="M292.5 249.0 L292.5 269 L292.5 289 L292.5 289.0 " fill="none" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;" data-compartment="1"></path>
+									<path d="M292.5 468.7 L292.5 470 L292.5 490 L292.5 490.0 " fill="none" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;" data-compartment="1"></path>
+									<g fill="#33322E" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;" data-compartment="1">
+										<path d="M297.8 459.3 L292.5 468.7 L287.2 459.3 L292.5 450.0 Z" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;" data-compartment="1"></path>
+									</g>
+									<path d="M292.5 522.0 L292.5 542 L292.5 562 L292.5 562.0 " fill="none" data-name="Buchung &lt;&lt;Aggregate&gt;&gt;" data-compartment="1"></path>
+									<g data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;">
+										<g fill="#8f8f" stroke="#33322E" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;">
+											<rect x="0.0" y="0.0" height="177.0" width="585.0" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;"></rect>
+											<path d="M0.0 32.0 L585.0 32.0" fill="none" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;"></path>
+											<path d="M0.0 129.0 L585.0 129.0" fill="none" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;"></path>
+										</g>
+										<g transform="translate(0, 0)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="0">
+											<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="0">
+												<text x="284.5" y="14.1" stroke="none" text-anchor="middle" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="0">Buchung &lt;&lt;AggregateRoot&gt;&gt;</text>
+												
+											</g>
+										</g>
+										<g transform="translate(0, 32)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1">
+											<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1">
+												<text x="0.0" y="14.1" stroke="none" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1"># +- id:&lt;ID&gt; Buchung$BuchungId</text>
+												<text x="0.0" y="30.3" stroke="none" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1"># +- buchungszeitraum:&lt;VO&gt; Buchungszeitraum</text>
+												<text x="0.0" y="46.5" stroke="none" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1"># +- gewuenschteZimmerkategorie:&lt;ENUM&gt; Zimmerkategorie</text>
+												<text x="0.0" y="62.7" stroke="none" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1"># +- status:&lt;ENUM&gt; Buchungsstatus</text>
+												<text x="0.0" y="78.9" stroke="none" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1">o +- zugewiesenesZimmer:&lt;IDREF&gt; Zimmer$ZimmerId</text>
+												
+											</g>
+										</g>
+										<g transform="translate(0, 129)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="2">
+											<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="2">
+												<text x="0.0" y="14.1" stroke="none" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="2">+ void checkeEin(LocalDate,Zimmer$ZimmerId)</text>
+												<text x="0.0" y="30.3" stroke="none" data-name="Buchung &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="2">+ «factory» Buchung walkIn(Gast,Buchungszeitraum,Zimmerkategorie)</text>
+												
+											</g>
+										</g>
+									</g>
+									<g data-name="Gast &lt;&lt;Entity&gt;&gt;">
+										<g fill="#88AAFF" stroke="#33322E" data-name="Gast &lt;&lt;Entity&gt;&gt;">
+											<rect x="63.5" y="289.0" height="161.0" width="458.0" data-name="Gast &lt;&lt;Entity&gt;&gt;"></rect>
+											<path d="M63.5 321.0 L521.5 321.0" fill="none" data-name="Gast &lt;&lt;Entity&gt;&gt;"></path>
+											<path d="M63.5 402.0 L521.5 402.0" fill="none" data-name="Gast &lt;&lt;Entity&gt;&gt;"></path>
+										</g>
+										<g transform="translate(63.5, 289)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Gast &lt;&lt;Entity&gt;&gt;" data-compartment="0">
+											<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Gast &lt;&lt;Entity&gt;&gt;" data-compartment="0">
+												<text x="221.0" y="14.1" stroke="none" text-anchor="middle" data-name="Gast &lt;&lt;Entity&gt;&gt;" data-compartment="0">Gast &lt;&lt;Entity&gt;&gt;</text>
+												
+											</g>
+										</g>
+										<g transform="translate(63.5, 321)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Gast &lt;&lt;Entity&gt;&gt;" data-compartment="1">
+											<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Gast &lt;&lt;Entity&gt;&gt;" data-compartment="1">
+												<text x="0.0" y="14.1" stroke="none" data-name="Gast &lt;&lt;Entity&gt;&gt;" data-compartment="1"># +- id:&lt;ID&gt; Gast$GastId</text>
+												<text x="0.0" y="30.3" stroke="none" data-name="Gast &lt;&lt;Entity&gt;&gt;" data-compartment="1">o +- geburtsdatum:LocalDate{pastOrPresent}</text>
+												<text x="0.0" y="46.5" stroke="none" data-name="Gast &lt;&lt;Entity&gt;&gt;" data-compartment="1">o +- nachname:String[0,100]{notBlank}</text>
+												<text x="0.0" y="62.7" stroke="none" data-name="Gast &lt;&lt;Entity&gt;&gt;" data-compartment="1">o +- vorname:String[0,100]</text>
+												
+											</g>
+										</g>
+										<g transform="translate(63.5, 402)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Gast &lt;&lt;Entity&gt;&gt;" data-compartment="2">
+											<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Gast &lt;&lt;Entity&gt;&gt;" data-compartment="2">
+												<text x="0.0" y="14.1" stroke="none" data-name="Gast &lt;&lt;Entity&gt;&gt;" data-compartment="2">+ int alterAm(LocalDate)</text>
+												<text x="0.0" y="30.3" stroke="none" data-name="Gast &lt;&lt;Entity&gt;&gt;" data-compartment="2">+ «factory» Gast neu(String,String,Adresse,LocalDate)</text>
+												
+											</g>
+										</g>
+									</g>
+									<g data-name="Adresse &lt;&lt;ValueObject&gt;&gt;">
+										<g fill="#FFFFCC" stroke="#33322E" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;">
+											<rect x="133.0" y="562.0" height="121.0" width="319.0" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;"></rect>
+											<path d="M133.0 594.0 L452.0 594.0" fill="none" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;"></path>
+											<path d="M133.0 675.0 L452.0 675.0" fill="none" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;"></path>
+										</g>
+										<g transform="translate(133, 562)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;" data-compartment="0">
+											<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;" data-compartment="0">
+												<text x="151.5" y="14.1" stroke="none" text-anchor="middle" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;" data-compartment="0">Adresse &lt;&lt;ValueObject&gt;&gt;</text>
+												
+											</g>
+										</g>
+										<g transform="translate(133, 594)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;" data-compartment="1">
+											<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;" data-compartment="1">
+												<text x="0.0" y="14.1" stroke="none" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;" data-compartment="1">o +- land:String[0,100]{notBlank}</text>
+												<text x="0.0" y="30.3" stroke="none" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;" data-compartment="1">o +- ort:String[0,100]{notBlank}</text>
+												<text x="0.0" y="46.5" stroke="none" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;" data-compartment="1">o +- postleitzahl:String[0,10]{notBlank}</text>
+												<text x="0.0" y="62.7" stroke="none" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;" data-compartment="1">o +- strasse:String[0,100]{notBlank}</text>
+												
+											</g>
+										</g>
+										<g transform="translate(133, 675)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;" data-compartment="2">
+											<g transform="translate(8, 8)" fill="#33322E" data-name="Adresse &lt;&lt;ValueObject&gt;&gt;" data-compartment="2">
+												
+											</g>
+										</g>
+									</g>
+									<g data-name="gast 1">
+										
+										<g transform="translate(260, 217)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="gast 1" data-compartment="0">
+											<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="gast 1" data-compartment="0">
+												<text x="24.5" y="14.1" stroke="none" text-anchor="middle" data-name="gast 1" data-compartment="0">gast 1</text>
+												
+											</g>
+										</g>
+									</g>
+									<g data-name="adresse 0..1">
+										
+										<g transform="translate(235, 490)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="adresse 0..1" data-compartment="0">
+											<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="adresse 0..1" data-compartment="0">
+												<text x="49.5" y="14.1" stroke="none" text-anchor="middle" data-name="adresse 0..1" data-compartment="0">adresse 0..1</text>
+												
+											</g>
+										</g>
+									</g>
+								</g>
+							</g>
+						</g>
+					</g>
+					<g data-name="Zimmer &lt;&lt;Aggregate&gt;&gt;">
+						<g fill="#eee8d5" stroke="#33322E" data-name="Zimmer &lt;&lt;Aggregate&gt;&gt;">
+							<rect x="277.0" y="1163.0" height="346.0" width="493.0" data-name="Zimmer &lt;&lt;Aggregate&gt;&gt;"></rect>
+							<path d="M277.0 1195.0 L470.0 1195.0 L486.0 1179.0 L486.0 1163.0" fill="none" data-name="Zimmer &lt;&lt;Aggregate&gt;&gt;"></path>
+						</g>
+						<g transform="translate(277, 1163)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Zimmer &lt;&lt;Aggregate&gt;&gt;" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Zimmer &lt;&lt;Aggregate&gt;&gt;" data-compartment="0">
+								<text x="0.0" y="14.1" stroke="none" data-name="Zimmer &lt;&lt;Aggregate&gt;&gt;" data-compartment="0">Zimmer &lt;&lt;Aggregate&gt;&gt;</text>
+								
+							</g>
+						</g>
+						<g transform="translate(277, 1195)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Zimmer &lt;&lt;Aggregate&gt;&gt;" data-compartment="1">
+							<g transform="translate(8, 8)" fill="#33322E" data-name="Zimmer &lt;&lt;Aggregate&gt;&gt;" data-compartment="1">
+								<g transform="translate(20, 20)" data-name="Zimmer &lt;&lt;Aggregate&gt;&gt;" data-compartment="1">
+									<g data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;">
+										<g fill="#8f8f" stroke="#33322E" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;">
+											<rect x="0.0" y="0.0" height="258.0" width="437.0" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;"></rect>
+											<path d="M0.0 32.0 L437.0 32.0" fill="none" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;"></path>
+											<path d="M0.0 226.0 L437.0 226.0" fill="none" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;"></path>
+										</g>
+										<g transform="translate(0, 0)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="0">
+											<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="0">
+												<text x="210.5" y="14.1" stroke="none" text-anchor="middle" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="0">Zimmer &lt;&lt;AggregateRoot&gt;&gt;</text>
+												
+											</g>
+										</g>
+										<g transform="translate(0, 32)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1">
+											<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1">
+												<text x="0.0" y="14.1" stroke="none" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1"># +- id:&lt;ID&gt; Zimmer$ZimmerId</text>
+												<text x="0.0" y="30.3" stroke="none" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1">o +- balkon:boolean</text>
+												<text x="0.0" y="46.5" stroke="none" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1">o +- barrierefrei:boolean</text>
+												<text x="0.0" y="62.7" stroke="none" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1">o +- belegtDurch:&lt;IDREF&gt; Buchung$BuchungId</text>
+												<text x="0.0" y="78.9" stroke="none" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1"># +- bettart:&lt;ENUM&gt; Bettart</text>
+												<text x="0.0" y="95.1" stroke="none" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1"># +- blickrichtung:&lt;ENUM&gt; Blickrichtung</text>
+												<text x="0.0" y="111.3" stroke="none" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1">o +- etage:int</text>
+												<text x="0.0" y="127.5" stroke="none" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1">o +- raucherzimmer:boolean</text>
+												<text x="0.0" y="143.7" stroke="none" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1"># +- status:&lt;ENUM&gt; Zimmerstatus</text>
+												<text x="0.0" y="159.9" stroke="none" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1"># +- zimmerkategorie:&lt;ENUM&gt; Zimmerkategorie</text>
+												<text x="0.0" y="176.1" stroke="none" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="1"># +- zimmernummer:&lt;VO&gt; Zimmernummer</text>
+												
+											</g>
+										</g>
+										<g transform="translate(0, 226)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="2">
+											<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="2">
+												<text x="0.0" y="14.1" stroke="none" data-name="Zimmer &lt;&lt;AggregateRoot&gt;&gt;" data-compartment="2">+ void belege(Buchung$BuchungId,Zimmerkategorie)</text>
+												
+											</g>
+										</g>
+									</g>
+								</g>
+							</g>
+						</g>
+					</g>
+					<g data-name="&lt;&lt;id-ref&gt;&gt; Buchung.zugewiesenesZimmer">
+						
+						<g transform="translate(0, 1075)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="&lt;&lt;id-ref&gt;&gt; Buchung.zugewiesenesZimmer" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="&lt;&lt;id-ref&gt;&gt; Buchung.zugewiesenesZimmer" data-compartment="0">
+								<text x="166.0" y="14.1" stroke="none" text-anchor="middle" data-name="&lt;&lt;id-ref&gt;&gt; Buchung.zugewiesenesZimmer" data-compartment="0">&lt;&lt;id-ref&gt;&gt; Buchung.zugewiesenesZimmer</text>
+								
+							</g>
+						</g>
+					</g>
+					<g data-name="&lt;&lt;id-ref&gt;&gt; Zimmer.belegtDurch">
+						
+						<g transform="translate(393, 1075)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="&lt;&lt;id-ref&gt;&gt; Zimmer.belegtDurch" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="&lt;&lt;id-ref&gt;&gt; Zimmer.belegtDurch" data-compartment="0">
+								<text x="122.5" y="14.1" stroke="none" text-anchor="middle" data-name="&lt;&lt;id-ref&gt;&gt; Zimmer.belegtDurch" data-compartment="0">&lt;&lt;id-ref&gt;&gt; Zimmer.belegtDurch</text>
+								
+							</g>
+						</g>
+					</g>
+					<g data-name="ZimmerRepository &lt;&lt;Repository&gt;&gt;">
+						<g fill="#C0C0C0" stroke="#33322E" data-name="ZimmerRepository &lt;&lt;Repository&gt;&gt;">
+							<rect x="871.3" y="1059.0" height="64.0" width="397.0" data-name="ZimmerRepository &lt;&lt;Repository&gt;&gt;"></rect>
+							<path d="M871.3 1091.0 L1268.3 1091.0" fill="none" data-name="ZimmerRepository &lt;&lt;Repository&gt;&gt;"></path>
+						</g>
+						<g transform="translate(871.25, 1059)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="ZimmerRepository &lt;&lt;Repository&gt;&gt;" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="ZimmerRepository &lt;&lt;Repository&gt;&gt;" data-compartment="0">
+								<text x="190.5" y="14.1" stroke="none" text-anchor="middle" data-name="ZimmerRepository &lt;&lt;Repository&gt;&gt;" data-compartment="0">ZimmerRepository &lt;&lt;Repository&gt;&gt;</text>
+								
+							</g>
+						</g>
+						<g transform="translate(871.25, 1091)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ZimmerRepository &lt;&lt;Repository&gt;&gt;" data-compartment="1">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="ZimmerRepository &lt;&lt;Repository&gt;&gt;" data-compartment="1">
+								<text x="0.0" y="14.1" stroke="none" data-name="ZimmerRepository &lt;&lt;Repository&gt;&gt;" data-compartment="1">+ Optional&lt;Zimmer&gt; findById(Zimmer$ZimmerId)</text>
+								
+							</g>
+						</g>
+					</g>
+					<g data-name="&lt;&lt;is processed by&gt;&gt; WalkInService.checkeWalkInEin">
+						
+						<g transform="translate(849.75, 72)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="&lt;&lt;is processed by&gt;&gt; WalkInService.checkeWalkInEin" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="&lt;&lt;is processed by&gt;&gt; WalkInService.checkeWalkInEin" data-compartment="0">
+								<text x="212.0" y="14.1" stroke="none" text-anchor="middle" data-name="&lt;&lt;is processed by&gt;&gt; WalkInService.checkeWalkInEin" data-compartment="0">&lt;&lt;is processed by&gt;&gt; WalkInService.checkeWalkInEin</text>
+								
+							</g>
+						</g>
+					</g>
+				</g>
+			</g>
+		</g>
+	</g>
+</svg>

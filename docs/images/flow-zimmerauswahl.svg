@@ -1,0 +1,152 @@
+<svg version="1.1" baseProfile="full" width="644.0" height="442.0" viewBox="0 0 644 442" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events">
+	<desc >#.AF:visual=frame align=left
+	#.AF_R:visual=frame align=left;stroke=#FF0000
+	#.AF_N:visual=frame align=left;stroke=#108738
+	#.AR:fill=#8f8f bold
+	#.AR_R:fill=#8f8f bold;stroke=#FF0000
+	#.AR_N:fill=#8f8f bold;stroke=#108738
+	#.E:fill=#88AAFF bold
+	#.E_R:fill=#88AAFF bold;stroke=#FF0000
+	#.E_N:fill=#88AAFF bold;stroke=#108738
+	#.VO:fill=#FFFFCC bold
+	#.VO_R:fill=#FFFFCC bold;stroke=#FF0000
+	#.VO_N:fill=#FFFFCC bold;stroke=#108738
+	#.V:fill=#FFFFCC bold
+	#.V_R:fill=#FFFFCC bold;stroke=#FF0000
+	#.V_N:fill=#FFFFCC bold;stroke=#108738
+	#.I:fill=#FFFFCC bold
+	#.I_R:fill=#FFFFCC bold;stroke=#FF0000
+	#.I_N:fill=#FFFFCC bold;stroke=#108738
+	#.DC:fill=#FFB266 bold
+	#.DC_R:fill=#FFB266 bold;stroke=#FF0000
+	#.DC_N:fill=#FFB266 bold;stroke=#108738
+	#.DE:fill=#CCFFFF bold
+	#.DE_R:fill=#CCFFFF bold;stroke=#FF0000
+	#.DE_N:fill=#CCFFFF bold;stroke=#108738
+	#.AS:bold
+	#.AS_R:bold;stroke=#FF0000
+	#.AS_N:bold;stroke=#108738
+	#.DS:fill=#E0E0E0 bold
+	#.R:fill=#C0C0C0 bold
+	#.R_R:fill=#C0C0C0 bold;stroke=#FF0000
+	#.R_N:fill=#C0C0C0 bold;stroke=#108738
+	#.OS:fill=#C0C0C0 bold
+	#.OS_R:fill=#C0C0C0 bold;stroke=#FF0000
+	#.OS_N:fill=#C0C0C0 bold;stroke=#108738
+	#.F:fill=#E0F0E0 bold
+	#.F_R:fill=#E0F0E0 bold;stroke=#FF0000
+	#.F_N:fill=#E0F0E0 bold;stroke=#108738
+	#.SK:fill=#C0C0C0 bold
+	#.SK_R:fill=#C0C0C0 bold;stroke=#FF0000
+	#.SK_N:fill=#C0C0C0 bold;stroke=#108738
+	#.ND:fill=#EAEAEA
+	#.ND_R:fill=#EAEAEA;stroke=#FF0000
+	#.ND_N:fill=#EAEAEA;stroke=#108738
+	#.QH:fill=#C0C0C0 bold
+	#.QH_R:fill=#C0C0C0 bold;stroke=#FF0000
+	#.QH_N:fill=#C0C0C0 bold;stroke=#108738
+	#.RM:fill=#FFCCE5 bold
+	#.RM_R:fill=#FFCCE5 bold;stroke=#FF0000
+	#.RM_N:fill=#FFCCE5 bold;stroke=#108738
+	#font:Helvetica
+	#direction:down
+	#acycler: greedy
+	#ranker: longest-path
+	#background: transparent
+	#.note: fill=#ffffff italic
+	
+	// !!! com.esentri.hotel.rezeption.core.application.ZimmerService !!!
+	[&lt;AS&gt; ZimmerService &lt;&lt;ApplicationService&gt;&gt; |
+	+ List&lt;VerfuegbaresZimmer&gt; findeVerfuegbareZimmer(Zimmerkategorie)
+	]
+	// !!! com.esentri.hotel.rezeption.core.domain.zimmer.VerfuegbaresZimmer !!!
+	[&lt;RM&gt; VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt; |
+	o +- balkon:boolean
+	o +- barrierefrei:boolean
+	o +- bettart:&lt;ENUM&gt; Bettart
+	o +- blickrichtung:&lt;ENUM&gt; Blickrichtung
+	o +- etage:int
+	o +- raucherzimmer:boolean
+	o +- upgrade:boolean
+	o +- zimmerId:&lt;IDREF&gt; Zimmer$ZimmerId
+	o +- zimmerkategorie:&lt;ENUM&gt; Zimmerkategorie
+	o +- zimmernummer:&lt;VO&gt; Zimmernummer
+	]
+	// !!! com.esentri.hotel.rezeption.outbound.JdbcVerfuegbareZimmerQueryHandler !!!
+	[&lt;QH&gt; VerfuegbareZimmerQueryHandler &lt;&lt;QueryHandler&gt;&gt; ]
+	[&lt;AS&gt;ZimmerService &lt;&lt;ApplicationService&gt;&gt;]  -&gt; [&lt;QH&gt;VerfuegbareZimmerQueryHandler &lt;&lt;QueryHandler&gt;&gt;]
+	[&lt;QH&gt;VerfuegbareZimmerQueryHandler &lt;&lt;QueryHandler&gt;&gt;]  --&gt; [&lt;RM&gt;VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;]</desc>
+	<g stroke-width="1.0" text-align="left" font="12pt Helvetica, Arial, sans-serif" font-size="12pt" font-family="Helvetica" font-weight="bold" font-style="normal">
+		<g font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" stroke-width="3.0" stroke-linejoin="round" stroke-linecap="round" stroke="#33322E">
+			<g stroke="transparent" fill="transparent">
+				<rect x="0.0" y="0.0" height="442.0" width="644.0" stroke="none"></rect>
+			</g>
+			<g transform="translate(8, 8)" fill="#33322E">
+				<g transform="translate(20, 20)" fill="#33322E" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal">
+					<path d="M294.0 64.0 L294 84 L294 97.33333333333333 L294.0 97.3 " fill="none"></path>
+					<path d="M288.7 90.7 L294.0 97.3 L299.3 90.7 L294.0 104.0 Z"></path>
+					<g stroke-dasharray="6 6">
+						<path d="M294.0 136.0 L294 156 L294 169.33333333333334 L294.0 169.3 " fill="none"></path>
+					</g>
+					<path d="M288.7 162.7 L294.0 169.3 L299.3 162.7 L294.0 176.0 Z"></path>
+					<g data-name="ZimmerService &lt;&lt;ApplicationService&gt;&gt;">
+						<g fill="#eee8d5" stroke="#33322E" data-name="ZimmerService &lt;&lt;ApplicationService&gt;&gt;">
+							<rect x="0.0" y="0.0" height="64.0" width="588.0" data-name="ZimmerService &lt;&lt;ApplicationService&gt;&gt;"></rect>
+							<path d="M0.0 32.0 L588.0 32.0" fill="none" data-name="ZimmerService &lt;&lt;ApplicationService&gt;&gt;"></path>
+						</g>
+						<g transform="translate(0, 0)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="ZimmerService &lt;&lt;ApplicationService&gt;&gt;" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="ZimmerService &lt;&lt;ApplicationService&gt;&gt;" data-compartment="0">
+								<text x="286.0" y="14.1" stroke="none" text-anchor="middle" data-name="ZimmerService &lt;&lt;ApplicationService&gt;&gt;" data-compartment="0">ZimmerService &lt;&lt;ApplicationService&gt;&gt;</text>
+								
+							</g>
+						</g>
+						<g transform="translate(0, 32)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="ZimmerService &lt;&lt;ApplicationService&gt;&gt;" data-compartment="1">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="ZimmerService &lt;&lt;ApplicationService&gt;&gt;" data-compartment="1">
+								<text x="0.0" y="14.1" stroke="none" data-name="ZimmerService &lt;&lt;ApplicationService&gt;&gt;" data-compartment="1">+ List&lt;VerfuegbaresZimmer&gt; findeVerfuegbareZimmer(Zimmerkategorie)</text>
+								
+							</g>
+						</g>
+					</g>
+					<g data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;">
+						<g fill="#FFCCE5" stroke="#33322E" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;">
+							<rect x="97.0" y="176.0" height="210.0" width="394.0" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;"></rect>
+							<path d="M97.0 208.0 L491.0 208.0" fill="none" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;"></path>
+						</g>
+						<g transform="translate(97, 176)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="0">
+								<text x="189.0" y="14.1" stroke="none" text-anchor="middle" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="0">VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;</text>
+								
+							</g>
+						</g>
+						<g transform="translate(97, 208)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="1">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="1">
+								<text x="0.0" y="14.1" stroke="none" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="1">o +- balkon:boolean</text>
+								<text x="0.0" y="30.3" stroke="none" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="1">o +- barrierefrei:boolean</text>
+								<text x="0.0" y="46.5" stroke="none" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="1">o +- bettart:&lt;ENUM&gt; Bettart</text>
+								<text x="0.0" y="62.7" stroke="none" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="1">o +- blickrichtung:&lt;ENUM&gt; Blickrichtung</text>
+								<text x="0.0" y="78.9" stroke="none" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="1">o +- etage:int</text>
+								<text x="0.0" y="95.1" stroke="none" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="1">o +- raucherzimmer:boolean</text>
+								<text x="0.0" y="111.3" stroke="none" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="1">o +- upgrade:boolean</text>
+								<text x="0.0" y="127.5" stroke="none" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="1">o +- zimmerId:&lt;IDREF&gt; Zimmer$ZimmerId</text>
+								<text x="0.0" y="143.7" stroke="none" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="1">o +- zimmerkategorie:&lt;ENUM&gt; Zimmerkategorie</text>
+								<text x="0.0" y="159.9" stroke="none" data-name="VerfuegbaresZimmer &lt;&lt;ReadModel&gt;&gt;" data-compartment="1">o +- zimmernummer:&lt;VO&gt; Zimmernummer</text>
+								
+							</g>
+						</g>
+					</g>
+					<g data-name="VerfuegbareZimmerQueryHandler &lt;&lt;QueryHandler&gt;&gt;">
+						<g fill="#C0C0C0" stroke="#33322E" data-name="VerfuegbareZimmerQueryHandler &lt;&lt;QueryHandler&gt;&gt;">
+							<rect x="75.5" y="104.0" height="32.0" width="437.0" data-name="VerfuegbareZimmerQueryHandler &lt;&lt;QueryHandler&gt;&gt;"></rect>
+						</g>
+						<g transform="translate(75.5, 104)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="VerfuegbareZimmerQueryHandler &lt;&lt;QueryHandler&gt;&gt;" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="VerfuegbareZimmerQueryHandler &lt;&lt;QueryHandler&gt;&gt;" data-compartment="0">
+								<text x="210.5" y="14.1" stroke="none" text-anchor="middle" data-name="VerfuegbareZimmerQueryHandler &lt;&lt;QueryHandler&gt;&gt;" data-compartment="0">VerfuegbareZimmerQueryHandler &lt;&lt;QueryHandler&gt;&gt;</text>
+								
+							</g>
+						</g>
+					</g>
+				</g>
+			</g>
+		</g>
+	</g>
+</svg>

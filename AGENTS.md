@@ -7,7 +7,7 @@ Demo-Projekt fuer taktisches Domain-Driven Design mit DomainLifeCycles (DLC).
 - Java 21, Gradle (Wrapper), Spring Boot 4.1, DLC 3.5.0 (`dlcVersion` in `gradle.properties`)
 - Bauen und testen: `./gradlew build`
 - Starten: `./gradlew bootRun` (H2 in-memory, Konsole unter `/h2-console`, OpenAPI unter `/swagger-ui.html`)
-- Domaenendiagramm: `./gradlew createDiagram` (Ausgabe in `build/`)
+- Domaenendiagramme: `./gradlew createDiagram` (Ausgabe in `docs/images`, im README eingebunden)
 
 ## DomainLifeCycles
 

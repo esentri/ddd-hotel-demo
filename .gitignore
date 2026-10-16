@@ -36,3 +36,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Domaenendiagramme fuer das README (vom DLC-Plugin erzeugt) ###
+!docs/images/*.svg

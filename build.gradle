@@ -63,15 +63,57 @@ tasks.named('bootRun') {
     jvmArgs '-XX:+EnableDynamicAgentLoading'
 }
 
+// Domaenendiagramme fuer die Dokumentation (README): ./gradlew createDiagram, Ausgabe in docs/images
 dlcGradlePlugin {
     diagram {
-        fileOutputDir = layout.buildDirectory
+        fileOutputDir = layout.projectDirectory.dir("docs/images")
         diagrams {
-            domainDiagram {
+            domaenenmodell {
                 domainModelPackages = ["com.esentri.hotel"]
                 format = "svg"
-                fileName = "domain-diagram"
+                fileName = "domaenenmodell"
+            }
+            aggregate {
+                domainModelPackages = ["com.esentri.hotel"]
+                showOnlyAggregateFrames = true
+                format = "svg"
+                fileName = "aggregate"
+            }
+            walkIn {
+                domainModelPackages = ["com.esentri.hotel"]
+                includeFlowsFrom = ["com.esentri.hotel.rezeption.core.application.WalkInService#checkeWalkInEin"]
+                format = "svg"
+                fileName = "flow-walk-in"
+            }
+            zimmerauswahl {
+                domainModelPackages = ["com.esentri.hotel"]
+                includeFlowsFrom = ["com.esentri.hotel.rezeption.core.application.ZimmerService#findeVerfuegbareZimmer"]
+                format = "svg"
+                fileName = "flow-zimmerauswahl"
+            }
+            zimmerAnlegen {
+                domainModelPackages = ["com.esentri.hotel"]
+                includeFlowsFrom = ["com.esentri.hotel.rezeption.core.application.ZimmerService#legeZimmerAn"]
+                format = "svg"
+                fileName = "flow-zimmer-anlegen"
+            }
+            checkout {
+                domainModelPackages = ["com.esentri.hotel"]
+                includeFlowsFrom = ["com.esentri.hotel.rezeption.core.application.BuchungService#checkeAus"]
+                format = "svg"
+                fileName = "flow-checkout"
             }
         }
+    }
+
+    // Upload des Domaenenmodells inkl. statischer Analyse in den DLC Diagram Viewer: ./gradlew domainModelUpload
+    // (API-Key aus der Umgebungsvariable DLC_VIEWER_API_KEY, siehe README)
+    domainModelUpload {
+        diagramViewerBaseUrl = "http://localhost:8090"
+        apiKey.set(providers.environmentVariable("DLC_VIEWER_API_KEY"))
+        projectName = "hotelverwaltung"
+        domainModelPackages = ["com.esentri.hotel"]
+        runStaticAnalysis = true
+        staticAnalysisPackages = ["com.esentri.hotel"]
     }
 }
